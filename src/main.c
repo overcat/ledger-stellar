@@ -23,6 +23,8 @@
 #include "globals.h"
 #include "sw.h"
 #include "types.h"
+#include "apdu/parser.h"
+#include "apdu/dispatcher.h"
 
 uint8_t G_io_seproxyhal_spi_buffer[IO_SEPROXYHAL_BUFFER_SIZE_B];
 io_state_e G_io_state;
@@ -57,11 +59,11 @@ void app_main() {
                 }
 
                 // Parse APDU command from G_io_apdu_buffer
-                // if (!apdu_parser(&cmd, G_io_apdu_buffer, input_len)) {
-                //     PRINTF("=> /!\\ BAD LENGTH: %.*H\n", input_len, G_io_apdu_buffer);
-                //     io_send_sw(SW_WRONG_DATA_LENGTH);
-                //     continue;
-                // }
+                if (!apdu_parser(&cmd, G_io_apdu_buffer, input_len)) {
+                    PRINTF("=> /!\\ BAD LENGTH: %.*H\n", input_len, G_io_apdu_buffer);
+                    io_send_sw(SW_WRONG_DATA_LENGTH);
+                    continue;
+                }
 
                 PRINTF("=> CLA=%02X | INS=%02X | P1=%02X | P2=%02X | Lc=%02X | CData=%.*H\n",
                        cmd.cla,
@@ -73,9 +75,9 @@ void app_main() {
                        cmd.data);
 
                 // Dispatch structured APDU command to handler
-                // if (apdu_dispatcher(&cmd) < 0) {
-                //     return;
-                // }
+                if (apdu_dispatcher(&cmd) < 0) {
+                    return;
+                }
             }
             CATCH(EXCEPTION_IO_RESET) {
                 THROW(EXCEPTION_IO_RESET);
@@ -104,16 +106,7 @@ void app_exit() {
     END_TRY_L(exit);
 }
 
-/**
- * Main loop to setup USB, Bluetooth, UI and launch ui_menu_main().
- */
-__attribute__((section(".boot"))) int main(int argc) {
-    // exit critical section
-    __asm volatile("cpsie i");
-
-    // ensure exception will work as planned
-    os_boot();
-
+void standalone_app_main() {
     for (;;) {
         // Reset UI
         memset(&G_ux, 0, sizeof(G_ux));
@@ -137,6 +130,7 @@ __attribute__((section(".boot"))) int main(int argc) {
                 app_main();
             }
             CATCH(EXCEPTION_IO_RESET) {
+                // reset IO and UX before continuing
                 CLOSE_TRY;
                 continue;
             }
@@ -151,5 +145,17 @@ __attribute__((section(".boot"))) int main(int argc) {
     }
 
     app_exit();
+}
+
+/**
+ * Main loop to setup USB, Bluetooth, UI and launch ui_menu_main().
+ */
+__attribute__((section(".boot"))) int main(int argc) {
+    // exit critical section
+    __asm volatile("cpsie i");
+    // ensure exception will work as planned
+    os_boot();
+    // called from dashboard as standalone Stellar App
+    standalone_app_main();
     return 0;
 }
