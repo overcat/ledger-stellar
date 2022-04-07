@@ -1,0 +1,8 @@
+
+{
+    "files.associations": {
+        "*.h": "c"
+    },
+    "C_Cpp.clang_format_path": "clang-format",
+    "editor.formatOnSave": true
+}

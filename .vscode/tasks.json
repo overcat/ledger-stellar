@@ -1,0 +1,89 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "make",
+            "type": "shell",
+            "command": "make clean && make",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": [
+                "$gcc"
+            ]
+        },
+        {
+            "label": "[debug] make",
+            "type": "shell",
+            "command": "make clean && make DEBUG=1",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": [
+                "$gcc"
+            ]
+        },
+        {
+            "label": "make clean",
+            "type": "shell",
+            "command": "make clean",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": [
+                "$gcc"
+            ]
+        },
+        {
+            "label": "make load",
+            "type": "shell",
+            "command": "make load",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": [
+                "$gcc"
+            ]
+        },
+        {
+            "label": "run Speculos",
+            "type": "shell",
+            "command": "speculos -m nanos -s $MNEMONIC --apdu-port 9999 --display headless ${workspaceFolder}/bin/app.elf",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "dependsOn": [
+                "make debug"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "[debug] run Speculos",
+            "type": "shell",
+            "command": "speculos -m nanos -s $MNEMONIC --apdu-port 9999 --display headless -d ${workspaceFolder}/bin/app.elf",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "dependsOn": [
+                "make debug"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "kill Speculos",
+            "type": "shell",
+            "command": "pkill -f speculos",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        }
+    ]
+}
