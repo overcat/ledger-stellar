@@ -5,6 +5,7 @@
 
 #include "os.h"
 #include "cx.h"
+#include "types.h"
 
 /**
  * Derive private key given BIP32 path.
@@ -41,4 +42,4 @@ int crypto_derive_private_key(cx_ecfp_private_key_t *private_key,
  */
 int crypto_init_public_key(cx_ecfp_private_key_t *private_key,
                            cx_ecfp_public_key_t *public_key,
-                           uint8_t raw_public_key[static 64]);
+                           uint8_t raw_public_key[static RAW_ED25519_PUBLIC_KEY_LENGTH]);

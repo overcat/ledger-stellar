@@ -5,6 +5,10 @@
 
 #include "common/bip32.h"
 
+#define ENCODED_ED25519_PUBLIC_KEY_LENGTH 57
+#define RAW_ED25519_PUBLIC_KEY_LENGTH     32
+#define RAW_ED25519_PRIVATE_KEY_LENGTH    32
+
 /**
  * Enumeration for the status of IO.
  */

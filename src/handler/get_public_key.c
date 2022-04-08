@@ -30,7 +30,7 @@
 #include "../sw.h"
 #include "../crypto.h"
 #include "../common/buffer.h"
-// #include "../ui/display.h"
+#include "../ui/display.h"
 #include "../helper/send_response.h"
 
 int handler_get_public_key(buffer_t *cdata, bool display) {
@@ -47,17 +47,15 @@ int handler_get_public_key(buffer_t *cdata, bool display) {
     }
 
     // derive private key according to BIP32 path
-    crypto_derive_private_key(&private_key,
-                              G_context.bip32_path,
-                              G_context.bip32_path_len);
+    crypto_derive_private_key(&private_key, G_context.bip32_path, G_context.bip32_path_len);
     // generate corresponding public key
     crypto_init_public_key(&private_key, &public_key, G_context.pk_info.raw_public_key);
     // reset private key
     explicit_bzero(&private_key, sizeof(private_key));
 
-    // if (display) {
-    //     return ui_display_address();
-    // }
+    if (display) {
+        return ui_display_address();
+    }
 
     return helper_send_response_pubkey();
 }

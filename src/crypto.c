@@ -27,7 +27,7 @@
 int crypto_derive_private_key(cx_ecfp_private_key_t *private_key,
                               const uint32_t *bip32_path,
                               uint8_t bip32_path_len) {
-    uint8_t raw_private_key[32] = {0};
+    uint8_t raw_private_key[RAW_ED25519_PRIVATE_KEY_LENGTH] = {0};
 
     BEGIN_TRY {
         TRY {
@@ -59,9 +59,10 @@ int crypto_derive_private_key(cx_ecfp_private_key_t *private_key,
 }
 
 // converts little endian 32 byte public key to big endian 32 byte public key
-void raw_public_key_le_to_be(cx_ecfp_public_key_t *public_key, uint8_t raw_public_key[static 32]) {
+void raw_public_key_le_to_be(cx_ecfp_public_key_t *public_key,
+                             uint8_t raw_public_key[static RAW_ED25519_PUBLIC_KEY_LENGTH]) {
     // copy public key little endian to big endian
-    for (uint8_t i = 0; i < 32; i++) {
+    for (uint8_t i = 0; i < RAW_ED25519_PUBLIC_KEY_LENGTH; i++) {
         raw_public_key[i] = public_key->W[64 - i];
     }
     // set sign bit
@@ -72,7 +73,7 @@ void raw_public_key_le_to_be(cx_ecfp_public_key_t *public_key, uint8_t raw_publi
 
 int crypto_init_public_key(cx_ecfp_private_key_t *private_key,
                            cx_ecfp_public_key_t *public_key,
-                           uint8_t raw_public_key[static 32]) {
+                           uint8_t raw_public_key[static RAW_ED25519_PUBLIC_KEY_LENGTH]) {
     BEGIN_TRY {
         TRY {
             // generate corresponding public key
