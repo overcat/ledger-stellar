@@ -1,0 +1,26 @@
+name: Code style check
+
+on:
+  push:
+  pull_request:
+    branches-ignore:
+      - 'temp*'
+      - 'tmp*'
+  release:
+    types: [ created ]
+
+jobs:
+  job_lint:
+    name: Lint
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Clone
+        uses: actions/checkout@v2
+
+      - name: Lint
+        uses: DoozyX/clang-format-lint-action@v0.13
+        with:
+          source: 'src unit_tests'
+          extensions: 'h,c'
+          clangFormatVersion: 12
