@@ -11,6 +11,7 @@
 /**
  * Status word for incorrect P1 or P2.
  */
+// TODO: 0x6B00?
 #define SW_WRONG_P1P2 0x6A86
 /**
  * Status word for either wrong Lc or lenght of APDU command less than 5.

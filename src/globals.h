@@ -31,3 +31,8 @@ extern bolos_ux_params_t G_ux_params;
  * Global enumeration with the state of IO (READY, RECEIVING, WAITING).
  */
 extern io_state_e G_io_state;
+
+/**
+ * Global context for user requests.
+ */
+extern global_ctx_t G_context;

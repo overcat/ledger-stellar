@@ -21,7 +21,7 @@ typedef enum {
     GET_APP_CONFIGURATION = 0x06,  /// app configuration of the application
     GET_VERSION = 0x03,            /// version of the application
     GET_APP_NAME = 0x04,           /// name of the application
-    GET_PUBLIC_KEY = 0x05,         /// public key of corresponding BIP32 path
+    GET_PUBLIC_KEY = 0x02,         /// public key of corresponding BIP32 path
     SIGN_TX = 0x06                 /// sign transaction with BIP32 path
 } command_e;
 
@@ -55,11 +55,20 @@ typedef enum {
 } state_e;
 
 /**
+ * Structure for public key context information.
+ */
+typedef struct {
+    uint8_t raw_public_key[32];
+} pubkey_ctx_t;
+
+/**
  * Structure for global context.
  */
 typedef struct {
     state_e state;  /// state of the context
-
+    union {
+        pubkey_ctx_t pk_info;  /// public key context
+    };
     request_type_e req_type;              /// user request
     uint32_t bip32_path[MAX_BIP32_PATH];  /// BIP32 path
     uint8_t bip32_path_len;               /// lenght of BIP32 path
