@@ -23,7 +23,7 @@
                 "USB_SEGMENT_SIZE=64",
                 "UNUSED(x)=(void)x",
                 "APPVERSION=\"1.0.0\"",
-                "APPNAME=\"Boilerplate\"",
+                "APPNAME=\"Stellar\"",
                 "MAJOR_VERSION=1",
                 "MINOR_VERSION=0",
                 "PATCH_VERSION=0",
@@ -31,7 +31,10 @@
                 "HAVE_UX_FLOW",
                 "DEBUG=1",
                 "HAVE_PRINTF",
-                "PRINTF=screen_printf"
+                "PRINTF=screen_printf",
+                "HAVE_ECC=1",
+                "HAVE_ECC_TWISTED_EDWARDS=1",
+                "HAVE_ED25519_CURVE=1"
             ],
             "compilerPath": "${env:ARM_EMBEDDED_TOOLCHAIN}/bin/arm-none-eabi-gcc",
             "cStandard": "c11",
