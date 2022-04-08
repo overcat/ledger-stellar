@@ -85,19 +85,16 @@ ifneq ($(NOCONSENT),)
 	DEFINES   += NO_CONSENT
 endif
 
-# Enabling debug PRINTF
-ifndef DEBUG
-	DEBUG = 0
-endif
-
+DEBUG = 0
 ifneq ($(DEBUG),0)
-	ifeq ($(TARGET_NAME),TARGET_NANOS)
-		DEFINES   += HAVE_PRINTF PRINTF=screen_printf
-	else
-		DEFINES   += HAVE_PRINTF PRINTF=mcu_usb_printf
-	endif
+    DEFINES += HAVE_PRINTF
+    ifeq ($(TARGET_NAME),TARGET_NANOS)
+        DEFINES += PRINTF=screen_printf
+    else
+        DEFINES += PRINTF=mcu_usb_printf
+    endif
 else
-	DEFINES   += PRINTF\(...\)=
+        DEFINES += PRINTF\(...\)=
 endif
 
 ##############
