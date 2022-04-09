@@ -34,7 +34,8 @@
                 "PRINTF=screen_printf",
                 "HAVE_ECC=1",
                 "HAVE_ECC_TWISTED_EDWARDS=1",
-                "HAVE_ED25519_CURVE=1"
+                "HAVE_ED25519_CURVE=1",
+                "HAVE_HASH=1"
             ],
             "compilerPath": "${env:ARM_EMBEDDED_TOOLCHAIN}/bin/arm-none-eabi-gcc",
             "cStandard": "c11",

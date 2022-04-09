@@ -38,6 +38,10 @@
  */
 #define SW_DISPLAY_ADDRESS_FAIL 0xB002
 /**
+ * Status word for fail to display transaction hash.
+ */
+#define SW_DISPLAY_TRANSACTION_HASH_FAIL 0xB003
+/**
  * Status word for fail to display amount.
  */
 #define SW_DISPLAY_AMOUNT_FAIL 0xB003
@@ -61,3 +65,8 @@
  * Status word for signature fail.
  */
 #define SW_SIGNATURE_FAIL 0xB008
+
+/**
+ * HASH MODE NOT ENABLED
+ */
+#define SW_TX_HASH_MODE_NOT_ENABLED 0x6C66

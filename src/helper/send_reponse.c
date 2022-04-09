@@ -31,3 +31,9 @@ int helper_send_response_pubkey() {
     size_t offset = PUBKEY_LEN;
     return io_send_response(&(const buffer_t){.ptr = resp, .size = offset, .offset = 0}, SW_OK);
 }
+
+int helper_send_response_sig() {
+    return io_send_response(
+        &(const buffer_t){.ptr = G_context.tx_hash_info.signature, .size = 64, .offset = 0},
+        SW_OK);
+}

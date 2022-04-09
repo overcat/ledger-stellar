@@ -33,6 +33,8 @@
 #include "../app_mode.h"
 
 int handler_get_app_configuration() {
+    PRINTF("handler_get_app_configuration invoked\n");
+
     _Static_assert(APPVERSION_LEN == 3, "Length of (MAJOR || MINOR || PATCH) must be 3!");
     _Static_assert(MAJOR_VERSION >= 0 && MAJOR_VERSION <= UINT8_MAX,
                    "MAJOR version must be between 0 and 255!");

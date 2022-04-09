@@ -26,7 +26,8 @@ typedef enum {
     GET_VERSION = 0x03,            /// version of the application
     GET_APP_NAME = 0x04,           /// name of the application
     GET_PUBLIC_KEY = 0x02,         /// public key of corresponding BIP32 path
-    SIGN_TX = 0x06                 /// sign transaction with BIP32 path
+    SIGN_TX = 0x06,                /// sign transaction with BIP32 path
+    INS_SIGN_TX_HASH = 0x08,       /// sign transaction in hash mode
 } command_e;
 
 /**
@@ -45,8 +46,9 @@ typedef struct {
  * Enumeration with user request type.
  */
 typedef enum {
-    CONFIRM_ADDRESS,     /// confirm address derived from public key
-    CONFIRM_TRANSACTION  /// confirm transaction information
+    CONFIRM_ADDRESS,          /// confirm address derived from public key
+    CONFIRM_TRANSACTION,      /// confirm transaction information
+    CONFIRM_TRANSACTION_HASH  /// confirm transaction hash information
 } request_type_e;
 
 /**
@@ -66,13 +68,23 @@ typedef struct {
 } pubkey_ctx_t;
 
 /**
+ * Structure for hash tx context information.
+ */
+typedef struct {
+    uint8_t hash[32];
+    uint8_t signature[64];
+} tx_hash_ctx_t;
+
+/**
  * Structure for global context.
  */
 typedef struct {
     state_e state;  /// state of the context
     union {
         pubkey_ctx_t pk_info;  /// public key context
+        tx_hash_ctx_t tx_hash_info;
     };
+    uint8_t tx_hash[32];
     request_type_e req_type;              /// user request
     uint32_t bip32_path[MAX_BIP32_PATH];  /// BIP32 path
     uint8_t bip32_path_len;               /// lenght of BIP32 path

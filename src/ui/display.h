@@ -14,3 +14,11 @@ typedef void (*action_validate_cb)(bool);
  *
  */
 int ui_display_address();
+
+/**
+ * TODO:
+ *
+ * @return 0 if success, negative integer otherwise.
+ *
+ */
+int ui_tx_blind_signing();
