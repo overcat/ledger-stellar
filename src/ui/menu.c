@@ -10,7 +10,7 @@ void ui_idle(void);
 void display_settings(const ux_flow_step_t* const start_step);
 void switch_settings_blind_signing();
 
-char display_container[12] = {0};
+static char g_hash_signing[12] = {0};
 
 // FLOW for the settings menu:
 // #1 screen: enable hash signing
@@ -20,7 +20,7 @@ UX_STEP_CB(ux_settings_hash_signing_step,
            switch_settings_blind_signing(),
            {
                .title = "Hash signing",
-               .text = display_container,
+               .text = g_hash_signing,
            });
 
 UX_STEP_CB(ux_settings_exit_step,
@@ -65,7 +65,7 @@ void ui_idle(void) {
 }
 
 void display_settings(const ux_flow_step_t* const start_step) {
-    strlcpy(display_container, (app_mode_hash_signing_enabled() ? "Enabled" : "NOT Enabled"), 12);
+    strlcpy(g_hash_signing, (app_mode_hash_signing_enabled() ? "Enabled" : "NOT Enabled"), 12);
     ux_flow_init(0, ux_settings_flow, start_step);
 }
 
