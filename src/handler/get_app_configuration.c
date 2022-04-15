@@ -23,7 +23,6 @@
 #include <limits.h>  // UINT8_MAX
 #include <assert.h>  // _Static_assert
 
-#include "get_version.h"
 #include "../globals.h"
 #include "../constants.h"
 #include "../io.h"

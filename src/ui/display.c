@@ -145,7 +145,7 @@ int ui_tx_blind_signing() {
     }
 
     memset(g_hash, 0, sizeof(g_hash));
-    if (!format_hex(G_context.tx_hash_info.hash, 32, g_hash, sizeof(g_hash))) {
+    if (!format_hex(G_context.hash, 32, g_hash, sizeof(g_hash))) {
         return io_send_sw(SW_DISPLAY_TRANSACTION_HASH_FAIL);
     }
     g_validate_callback = &ui_action_validate_transaction;

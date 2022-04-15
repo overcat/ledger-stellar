@@ -105,14 +105,14 @@ int crypto_sign_message() {
             sig_len = cx_eddsa_sign(&private_key,
                                     CX_LAST,
                                     CX_SHA512,
-                                    G_context.tx_hash_info.hash,
-                                    sizeof(G_context.tx_hash_info.hash),
+                                    G_context.hash,
+                                    sizeof(G_context.hash),
                                     NULL,
                                     0,
-                                    G_context.tx_hash_info.signature,
-                                    sizeof(G_context.tx_hash_info.signature),
+                                    G_context.signature,
+                                    sizeof(G_context.signature),
                                     NULL);
-            PRINTF("Signature: %.*H\n", sig_len, G_context.tx_hash_info.signature);
+            PRINTF("Signature: %.*H\n", sig_len, G_context.signature);
         }
         CATCH_OTHER(e) {
             THROW(e);

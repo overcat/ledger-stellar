@@ -13,11 +13,15 @@
 /**
  * Parameter 1 for first APDU number.
  */
-#define P1_START 0x00
+#define P1_FIRST 0x00
 /**
- * Parameter 1 for maximum APDU number.
+ * Parameter 1 for more APDU to receive.
  */
-#define P1_MAX 0x03
+#define P1_MORE 0x80
+///**
+// * Parameter 1 for maximum APDU number.
+// */
+//#define P1_MAX 0x03
 
 /**
  * Dispatch APDU command received to the right handler.

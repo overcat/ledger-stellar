@@ -34,7 +34,7 @@ int handler_sign_tx_hash(buffer_t *cdata) {
         return io_send_sw(SW_WRONG_DATA_LENGTH);
     }
 
-    memcpy(G_context.tx_hash_info.hash, cdata->ptr + cdata->offset, 32);
+    memcpy(G_context.hash, cdata->ptr + cdata->offset, 32);
 
     return ui_tx_blind_signing();
 };

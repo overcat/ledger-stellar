@@ -31,7 +31,6 @@ int helper_send_response_pubkey() {
 }
 
 int helper_send_response_sig() {
-    return io_send_response(
-        &(const buffer_t){.ptr = G_context.tx_hash_info.signature, .size = 64, .offset = 0},
-        SW_OK);
+    return io_send_response(&(const buffer_t){.ptr = G_context.signature, .size = 64, .offset = 0},
+                            SW_OK);
 }

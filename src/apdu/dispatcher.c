@@ -25,10 +25,10 @@
 #include "../io.h"
 #include "../sw.h"
 #include "../common/buffer.h"
-#include "../handler/get_version.h"
 #include "../handler/get_app_configuration.h"
 #include "../handler/get_public_key.h"
 #include "../handler/sign_tx_hash.h"
+#include "../handler/sign_tx.h"
 
 int apdu_dispatcher(const command_t *cmd) {
     if (cmd->cla != CLA) {
@@ -68,22 +68,21 @@ int apdu_dispatcher(const command_t *cmd) {
             buf.size = cmd->lc;
             buf.offset = 0;
             return handler_sign_tx_hash(&buf);
-        // case SIGN_TX:
-        //     if ((cmd->p1 == P1_START && cmd->p2 != P2_MORE) ||  //
-        //         cmd->p1 > P1_MAX ||                             //
-        //         (cmd->p2 != P2_LAST && cmd->p2 != P2_MORE)) {
-        //         return io_send_sw(SW_WRONG_P1P2);
-        //     }
+        case SIGN_TX:
+            if ((cmd->p1 != P1_FIRST && cmd->p1 != P1_MORE) ||
+                (cmd->p2 != P2_LAST && cmd->p2 != P2_MORE)) {
+                return io_send_sw(SW_WRONG_P1P2);
+            }
 
-        //     if (!cmd->data) {
-        //         return io_send_sw(SW_WRONG_DATA_LENGTH);
-        //     }
+            if (!cmd->data) {
+                return io_send_sw(SW_WRONG_DATA_LENGTH);
+            }
 
-        //     buf.ptr = cmd->data;
-        //     buf.size = cmd->lc;
-        //     buf.offset = 0;
+            buf.ptr = cmd->data;
+            buf.size = cmd->lc;
+            buf.offset = 0;
 
-        //     return handler_sign_tx(&buf, cmd->p1, (bool) (cmd->p2 & P2_MORE));
+            return handler_sign_tx(&buf, !cmd->p1, (bool) (cmd->p2 & P2_MORE));
         default:
             return io_send_sw(SW_INS_NOT_SUPPORTED);
     }
