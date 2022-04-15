@@ -65,9 +65,7 @@ int ui_display_address() {
     }
 
     memset(g_address, 0, sizeof(g_address));
-    if (!encode_ed25519_public_key(G_context.pk_info.raw_public_key,
-                                   g_address,
-                                   sizeof(g_address))) {
+    if (!encode_ed25519_public_key(G_context.raw_public_key, g_address, sizeof(g_address))) {
         return io_send_sw(SW_DISPLAY_ADDRESS_FAIL);
     }
     g_validate_callback = &ui_action_validate_pubkey;
@@ -142,9 +140,7 @@ int ui_tx_blind_signing() {
     }
 
     memset(g_address, 0, sizeof(g_address));
-    if (!encode_ed25519_public_key(G_context.pk_info.raw_public_key,
-                                   g_address,
-                                   sizeof(g_address))) {
+    if (!encode_ed25519_public_key(G_context.raw_public_key, g_address, sizeof(g_address))) {
         return io_send_sw(SW_DISPLAY_ADDRESS_FAIL);
     }
 

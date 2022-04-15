@@ -61,13 +61,6 @@ typedef enum {
 } state_e;
 
 /**
- * Structure for public key context information.
- */
-typedef struct {
-    uint8_t raw_public_key[32];
-} pubkey_ctx_t;
-
-/**
  * Structure for hash tx context information.
  */
 typedef struct {
@@ -81,11 +74,11 @@ typedef struct {
 typedef struct {
     state_e state;  /// state of the context
     union {
-        pubkey_ctx_t pk_info;  /// public key context
         tx_hash_ctx_t tx_hash_info;
     };
     uint8_t tx_hash[32];
     request_type_e req_type;              /// user request
     uint32_t bip32_path[MAX_BIP32_PATH];  /// BIP32 path
     uint8_t bip32_path_len;               /// lenght of BIP32 path
+    uint8_t raw_public_key[32];
 } global_ctx_t;

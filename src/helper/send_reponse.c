@@ -15,20 +15,18 @@
  *  limitations under the License.
  *****************************************************************************/
 
-#include <stddef.h>  // size_t
 #include <stdint.h>  // uint*_t
 #include <string.h>  // memmove
 
 #include "send_response.h"
-#include "../constants.h"
 #include "../globals.h"
 #include "../sw.h"
 #include "common/buffer.h"
 
 int helper_send_response_pubkey() {
-    uint8_t resp[PUBKEY_LEN] = {0};
-    memmove(resp, G_context.pk_info.raw_public_key, PUBKEY_LEN);
-    size_t offset = PUBKEY_LEN;
+    uint8_t resp[RAW_ED25519_PUBLIC_KEY_LENGTH] = {0};
+    memmove(resp, G_context.raw_public_key, RAW_ED25519_PUBLIC_KEY_LENGTH);
+    size_t offset = RAW_ED25519_PUBLIC_KEY_LENGTH;
     return io_send_response(&(const buffer_t){.ptr = resp, .size = offset, .offset = 0}, SW_OK);
 }
 
