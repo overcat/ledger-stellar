@@ -1,7 +1,7 @@
 // For format details, see https://aka.ms/vscode-remote/devcontainer.json or the definition README at
 // https://github.com/microsoft/vscode-dev-containers/tree/master/containers/ubuntu-18.04-git
 {
-  "name": "Ledger Development Environment",
+  "name": "Ledger Dev",
   "dockerFile": "Dockerfile",
   "build": {
     "args": {}
@@ -10,8 +10,9 @@
   // BOLOS_SDK can be one of NANOS_SDK, NANOX_SDK and NANOSPLUS_SDK
   "remoteEnv": {
     "BOLOS_SDK": "${containerEnv:NANOS_SDK}",
-    "MNEMONIC": "other base behind follow wet put glad muscle unlock sell income october",
-    "CTEST_OUTPUT_ON_FAILURE": "1"
+    "MNEMONIC": "other base behind follow wet put glad muscle unlock sell income october", // "${localEnv:MNEMONIC}"
+    "CTEST_OUTPUT_ON_FAILURE": "1",
+    "PIP_INDEX_URL": "https://mirrors.ustc.edu.cn/pypi/web/simple"
   },
   // The optional 'runArgs' property can be used to specify additional runtime arguments.
   "runArgs": [
@@ -47,15 +48,16 @@
     },
   },
   // Use 'otherPortsAttributes' to configure any ports that aren't configured using 'portsAttributes'.
-  // "otherPortsAttributes": {
-  // 		"onAutoForward": "silent"
-  // },
+  "otherPortsAttributes": {
+    "onAutoForward": "silent"
+  },
   // Uncomment the next line to run commands after the container is created.
-  "postCreateCommand": "pip config set global.index 'https://mirrors.aliyun.com/pypi' && pip config set global.index-url 'https://mirrors.aliyun.com/pypi/simple/'",
+  // "postCreateCommand": "",
   // Add the IDs of extensions you want installed when the container is created in the array below.
   "extensions": [
     "ms-vscode.cpptools-extension-pack",
-    "spmeesseman.vscode-taskexplorer"
+    "spmeesseman.vscode-taskexplorer",
+    "webfreak.debug"
   ],
   // Comment out to connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
   // On Linux, this will prevent new files getting created as root, but you may need to update the USER_UID
