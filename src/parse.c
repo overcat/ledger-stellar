@@ -4,6 +4,11 @@
 #include "common/buffer.h"
 #include "parse.h"
 
+#define PARSER_CHECK(x)         \
+    {                           \
+        if (!(x)) return false; \
+    }
+
 /* SHA256("Public Global Stellar Network ; September 2015") */
 static const uint8_t NETWORK_ID_PUBLIC_HASH[32] = {
     0x7a, 0xc3, 0x39, 0x97, 0x54, 0x4e, 0x31, 0x75, 0xd2, 0x66, 0xbd, 0x02, 0x24, 0x39, 0xb2, 0x2c,
@@ -13,36 +18,18 @@ static const uint8_t NETWORK_ID_PUBLIC_HASH[32] = {
 static const uint8_t NETWORK_ID_TEST_HASH[32] = {
     0xce, 0xe0, 0x30, 0x2d, 0x59, 0x84, 0x4d, 0x32, 0xbd, 0xca, 0x91, 0x5c, 0x82, 0x03, 0xdd, 0x44,
     0xb3, 0x3f, 0xbb, 0x7e, 0xdc, 0x19, 0x05, 0x1e, 0xa3, 0x7a, 0xbe, 0xdf, 0x28, 0xec, 0xd4, 0x72};
-uint8_t network_id;
+uint8_t network_id;  // TODO: remove it?
 
 static void buffer_advance(buffer_t *buffer, size_t num_bytes) {
-    buffer->offset += num_bytes;
+    buffer_seek_cur(buffer, num_bytes);
 }
 
 static bool buffer_read32(buffer_t *buffer, uint32_t *n) {
-    if (!buffer_can_read(buffer, 4)) {
-        *n = 0;
-        return false;
-    }
-
-    const uint8_t *ptr = buffer->ptr + buffer->offset;
-    *n = ptr[3] + (ptr[2] << 8u) + (ptr[1] << 16u) + (ptr[0] << 24u);
-    buffer_advance(buffer, 4);
-    return true;
+    return buffer_read_u32(buffer, n, BE);
 }
 
-bool buffer_read64(buffer_t *buffer, uint64_t *n) {
-    if (buffer->size - buffer->offset < 8) {
-        *n = 0;
-        return false;
-    }
-
-    const uint8_t *ptr = buffer->ptr + buffer->offset;
-    uint32_t i1 = ptr[3] + (ptr[2] << 8u) + (ptr[1] << 16u) + (ptr[0] << 24u);
-    uint32_t i2 = ptr[7] + (ptr[6] << 8u) + (ptr[5] << 16u) + (ptr[4] << 24u);
-    *n = i2 | ((uint64_t) i1 << 32u);
-    buffer->offset += 8;
-    return true;
+static bool buffer_read64(buffer_t *buffer, uint64_t *n) {
+    return buffer_read_u64(buffer, n, BE);
 }
 
 static bool buffer_read_bool(buffer_t *buffer, bool *b) {
@@ -59,12 +46,7 @@ static bool buffer_read_bool(buffer_t *buffer, bool *b) {
 }
 
 static bool buffer_read_bytes(buffer_t *buffer, uint8_t *out, size_t size) {
-    if (buffer->size - buffer->offset < size) {
-        return false;
-    }
-    memcpy(out, buffer->ptr + buffer->offset, size);
-    buffer->offset += size;
-    return true;
+    return buffer_move(buffer, out, size);
 }
 
 static size_t num_bytes(size_t size) {
@@ -83,175 +65,6 @@ static bool check_padding(const uint8_t *buffer, size_t offset, size_t length) {
         }
     }
     return true;
-}
-
-typedef bool (*xdr_type_parser)(buffer_t *, void *);
-
-static bool parse_optional_type(buffer_t *buffer, xdr_type_parser parser, void *dst, bool *opted) {
-    bool isPresent;
-
-    if (!buffer_read_bool(buffer, &isPresent)) {
-        return false;
-    }
-    if (isPresent) {
-        if (opted) {
-            *opted = true;
-        }
-        return parser(buffer, dst);
-    } else {
-        if (opted) {
-            *opted = false;
-        }
-        return true;
-    }
-}
-
-#define PARSER_CHECK(x)         \
-    {                           \
-        if (!(x)) return false; \
-    }
-
-static bool parse_signer_key(buffer_t *buffer, SignerKey *key) {
-    uint32_t signerType;
-
-    PARSER_CHECK(buffer_read32(buffer, &signerType));
-    key->type = signerType;
-
-    switch (signerType) {
-        case SIGNER_KEY_TYPE_ED25519:
-        case SIGNER_KEY_TYPE_PRE_AUTH_TX:
-        case SIGNER_KEY_TYPE_HASH_X:
-            PARSER_CHECK(buffer_can_read(buffer, 32));
-            key->data = buffer->ptr + buffer->offset;
-            buffer_advance(buffer, 32);
-            return true;
-        case SIGNER_KEY_TYPE_ED25519_SIGNED_PAYLOAD:
-            PARSER_CHECK(buffer_can_read(buffer, 32));
-            key->data = buffer->ptr + buffer->offset;
-            buffer_advance(buffer, 32);
-            uint32_t payloadLength;
-            PARSER_CHECK(buffer_read32(buffer, &payloadLength));
-            // valid length [1, 64]
-            if (payloadLength == 0 || payloadLength > 64) {
-                return false;
-            }
-            payloadLength += (4 - payloadLength % 4) % 4;
-            PARSER_CHECK(buffer_can_read(buffer, payloadLength));
-            buffer_advance(buffer, payloadLength);
-            return true;
-        default:
-            return false;
-    }
-}
-
-bool parse_account_id(buffer_t *buffer, const uint8_t **account_id) {
-    uint32_t accountType;
-
-    if (!buffer_read32(buffer, &accountType) || accountType != PUBLIC_KEY_TYPE_ED25519) {
-        return false;
-    }
-    if (!buffer_can_read(buffer, 32)) {
-        return false;
-    }
-    *account_id = buffer->ptr + buffer->offset;
-    buffer_advance(buffer, 32);
-    return true;
-}
-
-static bool parse_muxed_account(buffer_t *buffer, MuxedAccount *muxed_account) {
-    uint32_t cryptoKeyType;
-    PARSER_CHECK(buffer_read32(buffer, &cryptoKeyType))
-    muxed_account->type = cryptoKeyType;
-
-    switch (muxed_account->type) {
-        case KEY_TYPE_ED25519:
-            PARSER_CHECK(buffer_can_read(buffer, 32));
-            muxed_account->ed25519 = buffer->ptr + buffer->offset;
-            buffer_advance(buffer, 32);
-            return true;
-        case KEY_TYPE_MUXED_ED25519:
-            PARSER_CHECK(buffer_read64(buffer, &muxed_account->med25519.id));
-            PARSER_CHECK(buffer_can_read(buffer, 32));
-            muxed_account->med25519.ed25519 = buffer->ptr + buffer->offset;
-            buffer_advance(buffer, 32);
-            return true;
-        default:
-            return false;
-    }
-}
-
-static bool parse_network(buffer_t *buffer, uint8_t *network) {
-    if (!buffer_can_read(buffer, HASH_SIZE)) {
-        return false;
-    }
-    if (memcmp(buffer->ptr, NETWORK_ID_PUBLIC_HASH, HASH_SIZE) == 0) {
-        network_id = *network = NETWORK_TYPE_PUBLIC;
-    } else if (memcmp(buffer->ptr, NETWORK_ID_TEST_HASH, HASH_SIZE) == 0) {
-        network_id = *network = NETWORK_TYPE_TEST;
-    } else {
-        network_id = *network = NETWORK_TYPE_UNKNOWN;
-    }
-    buffer_advance(buffer, HASH_SIZE);
-    return true;
-}
-
-static bool parse_time_bounds(buffer_t *buffer, TimeBounds *bounds) {
-    if (!buffer_read64(buffer, &bounds->minTime)) {
-        return false;
-    }
-    return buffer_read64(buffer, &bounds->maxTime);
-}
-
-static bool parse_ledger_bounds(buffer_t *buffer, LedgerBounds *ledgerBounds) {
-    PARSER_CHECK(buffer_read32(buffer, (uint32_t *) &ledgerBounds->minLedger));
-    PARSER_CHECK(buffer_read32(buffer, (uint32_t *) &ledgerBounds->maxLedger));
-    return true;
-}
-
-static bool parse_extra_signers(buffer_t *buffer) {
-    uint32_t length;
-    PARSER_CHECK(buffer_read32(buffer, &length));
-    if (length > 2) {  // maximum length is 2
-        return false;
-    }
-
-    SignerKey signerKey;
-    for (uint32_t i = 0; i < length; i++) {
-        PARSER_CHECK(parse_signer_key(buffer, &signerKey));
-    }
-    return true;
-}
-
-static bool parse_preconditions(buffer_t *buffer, Preconditions *cond) {
-    uint32_t preconditionType;
-    PARSER_CHECK(buffer_read32(buffer, &preconditionType));
-    switch (preconditionType) {
-        case PRECOND_NONE:
-            return true;
-        case PRECOND_TIME:
-            cond->hasTimeBounds = true;
-            PARSER_CHECK(parse_time_bounds(buffer, &cond->timeBounds));
-            return true;
-        case PRECOND_V2:
-            PARSER_CHECK(parse_optional_type(buffer,
-                                             (xdr_type_parser) parse_time_bounds,
-                                             &cond->timeBounds,
-                                             &cond->hasTimeBounds));
-            PARSER_CHECK(parse_optional_type(buffer,
-                                             (xdr_type_parser) parse_ledger_bounds,
-                                             &cond->ledgerBounds,
-                                             &cond->hasLedgerBounds));
-            PARSER_CHECK(parse_optional_type(buffer,
-                                             (xdr_type_parser) buffer_read64,
-                                             (uint64_t *) &cond->minSeqNum,
-                                             &cond->hasMinSeqNum));
-            PARSER_CHECK(buffer_read64(buffer, (uint64_t *) &cond->minSeqAge));
-            PARSER_CHECK(buffer_read32(buffer, &cond->minSeqLedgerGap));
-            PARSER_CHECK(parse_extra_signers(buffer));
-            return true;
-        default:
-            return false;
-    }
 }
 
 /* TODO: max_length does not include terminal null character */
@@ -277,6 +90,160 @@ static bool parse_string_ptr(buffer_t *buffer,
     }
     buffer_advance(buffer, num_bytes(size));
     return true;
+}
+
+typedef bool (*xdr_type_parser)(buffer_t *, void *);
+
+static bool parse_optional_type(buffer_t *buffer, xdr_type_parser parser, void *dst, bool *opted) {
+    bool isPresent;
+
+    PARSER_CHECK(buffer_read_bool(buffer, &isPresent))
+    if (isPresent) {
+        if (opted) {
+            *opted = true;
+        }
+        return parser(buffer, dst);
+    } else {
+        if (opted) {
+            *opted = false;
+        }
+        return true;
+    }
+}
+
+static bool parse_signer_key(buffer_t *buffer, SignerKey *key) {
+    uint32_t signerType;
+
+    PARSER_CHECK(buffer_read32(buffer, &signerType))
+    key->type = signerType;
+
+    switch (signerType) {
+        case SIGNER_KEY_TYPE_ED25519:
+        case SIGNER_KEY_TYPE_PRE_AUTH_TX:
+        case SIGNER_KEY_TYPE_HASH_X:
+            PARSER_CHECK(buffer_can_read(buffer, 32))
+            key->data = buffer->ptr + buffer->offset;
+            buffer_advance(buffer, 32);
+            return true;
+        case SIGNER_KEY_TYPE_ED25519_SIGNED_PAYLOAD:
+            PARSER_CHECK(buffer_can_read(buffer, 32))
+            key->data = buffer->ptr + buffer->offset;
+            buffer_advance(buffer, 32);
+            uint32_t payloadLength;
+            PARSER_CHECK(buffer_read32(buffer, &payloadLength))
+            // valid length [1, 64]
+            if (payloadLength == 0 || payloadLength > 64) {
+                return false;
+            }
+            payloadLength += (4 - payloadLength % 4) % 4;
+            PARSER_CHECK(buffer_can_read(buffer, payloadLength))
+            buffer_advance(buffer, payloadLength);
+            return true;
+        default:
+            return false;
+    }
+}
+
+bool parse_account_id(buffer_t *buffer, const uint8_t **account_id) {
+    uint32_t accountType;
+
+    PARSER_CHECK(buffer_read32(buffer, &accountType) || accountType != PUBLIC_KEY_TYPE_ED25519)
+    PARSER_CHECK(buffer_can_read(buffer, 32))
+    *account_id = buffer->ptr + buffer->offset;
+    buffer_advance(buffer, 32);
+    return true;
+}
+
+static bool parse_muxed_account(buffer_t *buffer, MuxedAccount *muxed_account) {
+    uint32_t cryptoKeyType;
+    PARSER_CHECK(buffer_read32(buffer, &cryptoKeyType))
+    muxed_account->type = cryptoKeyType;
+
+    switch (muxed_account->type) {
+        case KEY_TYPE_ED25519:
+            PARSER_CHECK(buffer_can_read(buffer, 32))
+            muxed_account->ed25519 = buffer->ptr + buffer->offset;
+            buffer_advance(buffer, 32);
+            return true;
+        case KEY_TYPE_MUXED_ED25519:
+            PARSER_CHECK(buffer_read64(buffer, &muxed_account->med25519.id))
+            PARSER_CHECK(buffer_can_read(buffer, 32))
+            muxed_account->med25519.ed25519 = buffer->ptr + buffer->offset;
+            buffer_advance(buffer, 32);
+            return true;
+        default:
+            return false;
+    }
+}
+
+static bool parse_network(buffer_t *buffer, uint8_t *network) {
+    PARSER_CHECK(buffer_can_read(buffer, HASH_SIZE))
+    if (memcmp(buffer->ptr, NETWORK_ID_PUBLIC_HASH, HASH_SIZE) == 0) {
+        network_id = *network = NETWORK_TYPE_PUBLIC;
+    } else if (memcmp(buffer->ptr, NETWORK_ID_TEST_HASH, HASH_SIZE) == 0) {
+        network_id = *network = NETWORK_TYPE_TEST;
+    } else {
+        network_id = *network = NETWORK_TYPE_UNKNOWN;
+    }
+    buffer_advance(buffer, HASH_SIZE);
+    return true;
+}
+
+static bool parse_time_bounds(buffer_t *buffer, TimeBounds *bounds) {
+    PARSER_CHECK(buffer_read64(buffer, &bounds->minTime))
+    return buffer_read64(buffer, &bounds->maxTime);
+}
+
+static bool parse_ledger_bounds(buffer_t *buffer, LedgerBounds *ledgerBounds) {
+    PARSER_CHECK(buffer_read32(buffer, (uint32_t *) &ledgerBounds->minLedger))
+    PARSER_CHECK(buffer_read32(buffer, (uint32_t *) &ledgerBounds->maxLedger))
+    return true;
+}
+
+static bool parse_extra_signers(buffer_t *buffer) {
+    uint32_t length;
+    PARSER_CHECK(buffer_read32(buffer, &length))
+    if (length > 2) {  // maximum length is 2
+        return false;
+    }
+
+    SignerKey signerKey;
+    for (uint32_t i = 0; i < length; i++) {
+        PARSER_CHECK(parse_signer_key(buffer, &signerKey))
+    }
+    return true;
+}
+
+static bool parse_preconditions(buffer_t *buffer, Preconditions *cond) {
+    uint32_t preconditionType;
+    PARSER_CHECK(buffer_read32(buffer, &preconditionType))
+    switch (preconditionType) {
+        case PRECOND_NONE:
+            return true;
+        case PRECOND_TIME:
+            cond->hasTimeBounds = true;
+            PARSER_CHECK(parse_time_bounds(buffer, &cond->timeBounds))
+            return true;
+        case PRECOND_V2:
+            PARSER_CHECK(parse_optional_type(buffer,
+                                             (xdr_type_parser) parse_time_bounds,
+                                             &cond->timeBounds,
+                                             &cond->hasTimeBounds))
+            PARSER_CHECK(parse_optional_type(buffer,
+                                             (xdr_type_parser) parse_ledger_bounds,
+                                             &cond->ledgerBounds,
+                                             &cond->hasLedgerBounds))
+            PARSER_CHECK(parse_optional_type(buffer,
+                                             (xdr_type_parser) buffer_read64,
+                                             (uint64_t *) &cond->minSeqNum,
+                                             &cond->hasMinSeqNum))
+            PARSER_CHECK(buffer_read64(buffer, (uint64_t *) &cond->minSeqAge))
+            PARSER_CHECK(buffer_read32(buffer, &cond->minSeqLedgerGap))
+            PARSER_CHECK(parse_extra_signers(buffer))
+            return true;
+        default:
+            return false;
+    }
 }
 
 static bool parse_memo(buffer_t *buffer, Memo *memo) {
@@ -307,25 +274,25 @@ static bool parse_memo(buffer_t *buffer, Memo *memo) {
 }
 
 static bool parse_alpha_num4_asset(buffer_t *buffer, AlphaNum4 *asset) {
-    PARSER_CHECK(buffer_can_read(buffer, 4));
+    PARSER_CHECK(buffer_can_read(buffer, 4))
     asset->assetCode = (const char *) buffer->ptr + buffer->offset;
     buffer_advance(buffer, 4);
-    PARSER_CHECK(parse_account_id(buffer, &asset->issuer));
+    PARSER_CHECK(parse_account_id(buffer, &asset->issuer))
     return true;
 }
 
 static bool parse_alpha_num12_asset(buffer_t *buffer, AlphaNum12 *asset) {
-    PARSER_CHECK(buffer_can_read(buffer, 12));
+    PARSER_CHECK(buffer_can_read(buffer, 12))
     asset->assetCode = (const char *) buffer->ptr + buffer->offset;
     buffer_advance(buffer, 12);
-    PARSER_CHECK(parse_account_id(buffer, &asset->issuer));
+    PARSER_CHECK(parse_account_id(buffer, &asset->issuer))
     return true;
 }
 
 static bool parse_asset(buffer_t *buffer, Asset *asset) {
     uint32_t assetType;
 
-    PARSER_CHECK(buffer_read32(buffer, &assetType));
+    PARSER_CHECK(buffer_read32(buffer, &assetType))
     asset->type = assetType;
     switch (asset->type) {
         case ASSET_TYPE_NATIVE: {
@@ -345,7 +312,7 @@ static bool parse_asset(buffer_t *buffer, Asset *asset) {
 static bool parse_trust_line_asset(buffer_t *buffer, TrustLineAsset *asset) {
     uint32_t assetType;
 
-    PARSER_CHECK(buffer_read32(buffer, &assetType));
+    PARSER_CHECK(buffer_read32(buffer, &assetType))
     asset->type = assetType;
     switch (asset->type) {
         case ASSET_TYPE_NATIVE: {
@@ -368,13 +335,13 @@ static bool parse_trust_line_asset(buffer_t *buffer, TrustLineAsset *asset) {
 static bool parse_liquidity_pool_parameters(buffer_t *buffer,
                                             LiquidityPoolParameters *liquidityPoolParameters) {
     uint32_t liquidityPoolType;
-    PARSER_CHECK(buffer_read32(buffer, &liquidityPoolType));
+    PARSER_CHECK(buffer_read32(buffer, &liquidityPoolType))
     switch (liquidityPoolType) {
         case LIQUIDITY_POOL_CONSTANT_PRODUCT: {
-            PARSER_CHECK(parse_asset(buffer, &liquidityPoolParameters->constantProduct.assetA));
-            PARSER_CHECK(parse_asset(buffer, &liquidityPoolParameters->constantProduct.assetB));
+            PARSER_CHECK(parse_asset(buffer, &liquidityPoolParameters->constantProduct.assetA))
+            PARSER_CHECK(parse_asset(buffer, &liquidityPoolParameters->constantProduct.assetB))
             PARSER_CHECK(
-                buffer_read32(buffer, (uint32_t *) &liquidityPoolParameters->constantProduct.fee));
+                buffer_read32(buffer, (uint32_t *) &liquidityPoolParameters->constantProduct.fee))
             return true;
         }
         default:
@@ -385,9 +352,7 @@ static bool parse_liquidity_pool_parameters(buffer_t *buffer,
 static bool parse_change_trust_asset(buffer_t *buffer, ChangeTrustAsset *asset) {
     uint32_t assetType;
 
-    if (!buffer_read32(buffer, &assetType)) {
-        return false;
-    }
+    PARSER_CHECK(buffer_read32(buffer, &assetType))
     asset->type = assetType;
     switch (asset->type) {
         case ASSET_TYPE_NATIVE: {
@@ -408,20 +373,14 @@ static bool parse_change_trust_asset(buffer_t *buffer, ChangeTrustAsset *asset) 
 }
 
 static bool parse_create_account(buffer_t *buffer, CreateAccountOp *createAccount) {
-    if (!parse_account_id(buffer, &createAccount->destination)) {
-        return false;
-    }
+    PARSER_CHECK(parse_account_id(buffer, &createAccount->destination))
     return buffer_read64(buffer, (uint64_t *) &createAccount->startingBalance);
 }
 
 static bool parse_payment(buffer_t *buffer, PaymentOp *payment) {
-    if (!parse_muxed_account(buffer, &payment->destination)) {
-        return false;
-    }
+    PARSER_CHECK(parse_muxed_account(buffer, &payment->destination))
 
-    if (!parse_asset(buffer, &payment->asset)) {
-        return false;
-    }
+    PARSER_CHECK(parse_asset(buffer, &payment->asset))
 
     return buffer_read64(buffer, (uint64_t *) &payment->amount);
 }
@@ -429,19 +388,19 @@ static bool parse_payment(buffer_t *buffer, PaymentOp *payment) {
 static bool parse_path_payment_strict_receive(buffer_t *buffer, PathPaymentStrictReceiveOp *op) {
     uint32_t pathLen;
 
-    PARSER_CHECK(parse_asset(buffer, &op->sendAsset));
-    PARSER_CHECK(buffer_read64(buffer, (uint64_t *) &op->sendMax));
-    PARSER_CHECK(parse_muxed_account(buffer, &op->destination));
-    PARSER_CHECK(parse_asset(buffer, &op->destAsset));
-    PARSER_CHECK(buffer_read64(buffer, (uint64_t *) &op->destAmount));
+    PARSER_CHECK(parse_asset(buffer, &op->sendAsset))
+    PARSER_CHECK(buffer_read64(buffer, (uint64_t *) &op->sendMax))
+    PARSER_CHECK(parse_muxed_account(buffer, &op->destination))
+    PARSER_CHECK(parse_asset(buffer, &op->destAsset))
+    PARSER_CHECK(buffer_read64(buffer, (uint64_t *) &op->destAmount))
 
-    PARSER_CHECK(buffer_read32(buffer, (uint32_t *) &pathLen));
+    PARSER_CHECK(buffer_read32(buffer, (uint32_t *) &pathLen))
     op->pathLen = pathLen;
     if (op->pathLen > 5) {
         return false;
     }
     for (int i = 0; i < op->pathLen; i++) {
-        PARSER_CHECK(parse_asset(buffer, &op->path[i]));
+        PARSER_CHECK(parse_asset(buffer, &op->path[i]))
     }
     return true;
 }
@@ -449,26 +408,17 @@ static bool parse_path_payment_strict_receive(buffer_t *buffer, PathPaymentStric
 static bool parse_allow_trust(buffer_t *buffer, AllowTrustOp *op) {
     uint32_t assetType;
 
-    if (!parse_account_id(buffer, &op->trustor)) {
-        return false;
-    }
-
-    if (!buffer_read32(buffer, &assetType)) {
-        return false;
-    }
+    PARSER_CHECK(parse_account_id(buffer, &op->trustor))
+    PARSER_CHECK(buffer_read32(buffer, &assetType))
 
     switch (assetType) {
         case ASSET_TYPE_CREDIT_ALPHANUM4: {
-            if (!buffer_read_bytes(buffer, (uint8_t *) op->assetCode, 4)) {
-                return false;
-            }
-            op->assetCode[4] = '\0';
+            PARSER_CHECK(buffer_read_bytes(buffer, (uint8_t *) op->assetCode, 4))
+            op->assetCode[4] = '\0';  // FIXME: it's OK?
             break;
         }
         case ASSET_TYPE_CREDIT_ALPHANUM12: {
-            if (!buffer_read_bytes(buffer, (uint8_t *) op->assetCode, 12)) {
-                return false;
-            }
+            PARSER_CHECK(buffer_read_bytes(buffer, (uint8_t *) op->assetCode, 12))
             op->assetCode[12] = '\0';
             break;
         }
@@ -486,20 +436,15 @@ static bool parse_account_merge(buffer_t *buffer, MuxedAccount *destination) {
 static bool parse_manage_data(buffer_t *buffer, ManageDataOp *op) {
     size_t size;
 
-    if (!parse_string_ptr(buffer, (const char **) &op->dataName, &size, DATA_NAME_MAX_SIZE)) {
-        return false;
-    }
+    PARSER_CHECK(parse_string_ptr(buffer, (const char **) &op->dataName, &size, DATA_NAME_MAX_SIZE))
     op->dataNameSize = size;
 
     // DataValue* dataValue;
     bool hasValue;
-    if (!buffer_read_bool(buffer, &hasValue)) {
-        return false;
-    }
+    PARSER_CHECK(buffer_read_bool(buffer, &hasValue))
     if (hasValue) {
-        if (!parse_string_ptr(buffer, (const char **) &op->dataValue, &size, DATA_VALUE_MAX_SIZE)) {
-            return false;
-        }
+        PARSER_CHECK(
+            parse_string_ptr(buffer, (const char **) &op->dataValue, &size, DATA_VALUE_MAX_SIZE))
         op->dataValueSize = size;
     } else {
         op->dataValueSize = 0;
@@ -509,103 +454,79 @@ static bool parse_manage_data(buffer_t *buffer, ManageDataOp *op) {
 
 static bool parse_price(buffer_t *buffer, Price *price) {
     // FIXME: must correctly read int32_t
-    PARSER_CHECK(buffer_read32(buffer, (uint32_t *) &price->n));
-    PARSER_CHECK(buffer_read32(buffer, (uint32_t *) &price->d));
+    PARSER_CHECK(buffer_read32(buffer, (uint32_t *) &price->n))
+    PARSER_CHECK(buffer_read32(buffer, (uint32_t *) &price->d))
 
     // Denominator cannot be null, as it would lead to a division by zero.
     return price->d != 0;
 }
 
 static bool parse_manage_sell_offer(buffer_t *buffer, ManageSellOfferOp *op) {
-    PARSER_CHECK(parse_asset(buffer, &op->selling));
-    PARSER_CHECK(parse_asset(buffer, &op->buying));
-    PARSER_CHECK(buffer_read64(buffer, (uint64_t *) &op->amount));
-    PARSER_CHECK(parse_price(buffer, &op->price));
-
-    PARSER_CHECK(buffer_read64(buffer, (uint64_t *) &op->offerID));
+    PARSER_CHECK(parse_asset(buffer, &op->selling))
+    PARSER_CHECK(parse_asset(buffer, &op->buying))
+    PARSER_CHECK(buffer_read64(buffer, (uint64_t *) &op->amount))
+    PARSER_CHECK(parse_price(buffer, &op->price))
+    PARSER_CHECK(buffer_read64(buffer, (uint64_t *) &op->offerID))
     return true;
 }
 
 static bool parse_manage_buy_offer(buffer_t *buffer, ManageBuyOfferOp *op) {
-    PARSER_CHECK(parse_asset(buffer, &op->selling));
-    PARSER_CHECK(parse_asset(buffer, &op->buying));
-    PARSER_CHECK(buffer_read64(buffer, (uint64_t *) &op->buyAmount));
-    PARSER_CHECK(parse_price(buffer, &op->price));
-
-    PARSER_CHECK(buffer_read64(buffer, (uint64_t *) &op->offerID));
+    PARSER_CHECK(parse_asset(buffer, &op->selling))
+    PARSER_CHECK(parse_asset(buffer, &op->buying))
+    PARSER_CHECK(buffer_read64(buffer, (uint64_t *) &op->buyAmount))
+    PARSER_CHECK(parse_price(buffer, &op->price))
+    PARSER_CHECK(buffer_read64(buffer, (uint64_t *) &op->offerID))
     return true;
 }
 
 static bool parse_create_passive_sell_offer(buffer_t *buffer, CreatePassiveSellOfferOp *op) {
-    PARSER_CHECK(parse_asset(buffer, &op->selling));
-    PARSER_CHECK(parse_asset(buffer, &op->buying));
-    PARSER_CHECK(buffer_read64(buffer, (uint64_t *) &op->amount));
-    PARSER_CHECK(parse_price(buffer, &op->price));
+    PARSER_CHECK(parse_asset(buffer, &op->selling))
+    PARSER_CHECK(parse_asset(buffer, &op->buying))
+    PARSER_CHECK(buffer_read64(buffer, (uint64_t *) &op->amount))
+    PARSER_CHECK(parse_price(buffer, &op->price))
     return true;
 }
 
 static bool parse_change_trust(buffer_t *buffer, ChangeTrustOp *op) {
-    if (!parse_change_trust_asset(buffer, &op->line)) {
-        return false;
-    }
+    PARSER_CHECK(parse_change_trust_asset(buffer, &op->line))
     return buffer_read64(buffer, &op->limit);
 }
 
 static bool parse_signer(buffer_t *buffer, signer_t *signer) {
-    PARSER_CHECK(parse_signer_key(buffer, &signer->key));
-    PARSER_CHECK(buffer_read32(buffer, &signer->weight));
+    PARSER_CHECK(parse_signer_key(buffer, &signer->key))
+    PARSER_CHECK(buffer_read32(buffer, &signer->weight))
     return true;
 }
 
 static bool parse_set_options(buffer_t *buffer, SetOptionsOp *setOptions) {
-    if (!parse_optional_type(buffer,
-                             (xdr_type_parser) parse_account_id,
-                             &setOptions->inflationDestination,
-                             &setOptions->inflationDestinationPresent)) {
-        return false;
-    }
+    PARSER_CHECK(parse_optional_type(buffer,
+                                     (xdr_type_parser) parse_account_id,
+                                     &setOptions->inflationDestination,
+                                     &setOptions->inflationDestinationPresent))
 
-    if (!parse_optional_type(buffer,
-                             (xdr_type_parser) buffer_read32,
-                             &setOptions->clearFlags,
-                             NULL)) {
-        return false;
-    }
-    if (!parse_optional_type(buffer,
-                             (xdr_type_parser) buffer_read32,
-                             &setOptions->setFlags,
-                             NULL)) {
-        return false;
-    }
-    if (!parse_optional_type(buffer,
-                             (xdr_type_parser) buffer_read32,
-                             &setOptions->masterWeight,
-                             &setOptions->masterWeightPresent)) {
-        return false;
-    }
-    if (!parse_optional_type(buffer,
-                             (xdr_type_parser) buffer_read32,
-                             &setOptions->lowThreshold,
-                             &setOptions->lowThresholdPresent)) {
-        return false;
-    }
-    if (!parse_optional_type(buffer,
-                             (xdr_type_parser) buffer_read32,
-                             &setOptions->mediumThreshold,
-                             &setOptions->mediumThresholdPresent)) {
-        return false;
-    }
-    if (!parse_optional_type(buffer,
-                             (xdr_type_parser) buffer_read32,
-                             &setOptions->highThreshold,
-                             &setOptions->highThresholdPresent)) {
-        return false;
-    }
+    PARSER_CHECK(
+        parse_optional_type(buffer, (xdr_type_parser) buffer_read32, &setOptions->clearFlags, NULL))
+    PARSER_CHECK(
+        parse_optional_type(buffer, (xdr_type_parser) buffer_read32, &setOptions->setFlags, NULL))
+    PARSER_CHECK(parse_optional_type(buffer,
+                                     (xdr_type_parser) buffer_read32,
+                                     &setOptions->masterWeight,
+                                     &setOptions->masterWeightPresent))
+    PARSER_CHECK(parse_optional_type(buffer,
+                                     (xdr_type_parser) buffer_read32,
+                                     &setOptions->lowThreshold,
+                                     &setOptions->lowThresholdPresent))
+    PARSER_CHECK(parse_optional_type(buffer,
+                                     (xdr_type_parser) buffer_read32,
+                                     &setOptions->mediumThreshold,
+                                     &setOptions->mediumThresholdPresent))
+    PARSER_CHECK(parse_optional_type(buffer,
+                                     (xdr_type_parser) buffer_read32,
+                                     &setOptions->highThreshold,
+                                     &setOptions->highThresholdPresent))
 
     uint32_t homeDomainPresent;
-    if (!buffer_read32(buffer, &homeDomainPresent)) {
-        return false;
-    }
+    PARSER_CHECK(buffer_read32(buffer, &homeDomainPresent))
     setOptions->homeDomainPresent = homeDomainPresent ? true : false;
     if (setOptions->homeDomainPresent) {
         if (!buffer_read32(buffer, &setOptions->homeDomainSize) ||
@@ -616,11 +537,9 @@ static bool parse_set_options(buffer_t *buffer, SetOptionsOp *setOptions) {
             return false;
         }
         setOptions->homeDomain = buffer->ptr + buffer->offset;
-        if (!check_padding(setOptions->homeDomain,
-                           setOptions->homeDomainSize,
-                           num_bytes(setOptions->homeDomainSize))) {  // security check
-            return false;
-        }
+        PARSER_CHECK(check_padding(setOptions->homeDomain,
+                                   setOptions->homeDomainSize,
+                                   num_bytes(setOptions->homeDomainSize)))  // security check
         buffer->offset += num_bytes(setOptions->homeDomainSize);
     } else {
         setOptions->homeDomainSize = 0;
@@ -639,18 +558,18 @@ static bool parse_bump_sequence(buffer_t *buffer, BumpSequenceOp *op) {
 static bool parse_path_payment_strict_send(buffer_t *buffer, PathPaymentStrictSendOp *op) {
     uint32_t pathLen;
 
-    PARSER_CHECK(parse_asset(buffer, &op->sendAsset));
-    PARSER_CHECK(buffer_read64(buffer, (uint64_t *) &op->sendAmount));
-    PARSER_CHECK(parse_muxed_account(buffer, &op->destination));
-    PARSER_CHECK(parse_asset(buffer, &op->destAsset));
-    PARSER_CHECK(buffer_read64(buffer, (uint64_t *) &op->destMin));
-    PARSER_CHECK(buffer_read32(buffer, (uint32_t *) &pathLen));
+    PARSER_CHECK(parse_asset(buffer, &op->sendAsset))
+    PARSER_CHECK(buffer_read64(buffer, (uint64_t *) &op->sendAmount))
+    PARSER_CHECK(parse_muxed_account(buffer, &op->destination))
+    PARSER_CHECK(parse_asset(buffer, &op->destAsset))
+    PARSER_CHECK(buffer_read64(buffer, (uint64_t *) &op->destMin))
+    PARSER_CHECK(buffer_read32(buffer, (uint32_t *) &pathLen))
     op->pathLen = pathLen;
     if (op->pathLen > 5) {
         return false;
     }
     for (int i = 0; i < op->pathLen; i++) {
-        PARSER_CHECK(parse_asset(buffer, &op->path[i]));
+        PARSER_CHECK(parse_asset(buffer, &op->path[i]))
     }
     return true;
 }
@@ -664,30 +583,30 @@ static bool parse_claimant_predicate(buffer_t *buffer) {
     bool notPredicatePresent;
     int64_t absBefore;
     int64_t relBefore;
-    PARSER_CHECK(buffer_read32(buffer, &claimPredicateType));
+    PARSER_CHECK(buffer_read32(buffer, &claimPredicateType))
     switch (claimPredicateType) {
         case CLAIM_PREDICATE_UNCONDITIONAL:
             return true;
         case CLAIM_PREDICATE_AND:
         case CLAIM_PREDICATE_OR:
-            PARSER_CHECK(buffer_read32(buffer, &predicatesLen));
+            PARSER_CHECK(buffer_read32(buffer, &predicatesLen))
             if (predicatesLen != 2) {
                 return false;
             }
-            PARSER_CHECK(parse_claimant_predicate(buffer));
-            PARSER_CHECK(parse_claimant_predicate(buffer));
+            PARSER_CHECK(parse_claimant_predicate(buffer))
+            PARSER_CHECK(parse_claimant_predicate(buffer))
             return true;
         case CLAIM_PREDICATE_NOT:
-            PARSER_CHECK(buffer_read_bool(buffer, &notPredicatePresent));
+            PARSER_CHECK(buffer_read_bool(buffer, &notPredicatePresent))
             if (notPredicatePresent) {
-                PARSER_CHECK(parse_claimant_predicate(buffer));
+                PARSER_CHECK(parse_claimant_predicate(buffer))
             }
             return true;
         case CLAIM_PREDICATE_BEFORE_ABSOLUTE_TIME:
-            PARSER_CHECK(buffer_read64(buffer, (uint64_t *) &absBefore));
+            PARSER_CHECK(buffer_read64(buffer, (uint64_t *) &absBefore))
             return true;
         case CLAIM_PREDICATE_BEFORE_RELATIVE_TIME:
-            PARSER_CHECK(buffer_read64(buffer, (uint64_t *) &relBefore));
+            PARSER_CHECK(buffer_read64(buffer, (uint64_t *) &relBefore))
             return true;
         default:
             return false;
@@ -696,13 +615,13 @@ static bool parse_claimant_predicate(buffer_t *buffer) {
 
 static bool parse_claimant(buffer_t *buffer, Claimant *claimant) {
     uint32_t claimantType;
-    PARSER_CHECK(buffer_read32(buffer, &claimantType));
+    PARSER_CHECK(buffer_read32(buffer, &claimantType))
     claimant->type = claimantType;
 
     switch (claimant->type) {
         case CLAIMANT_TYPE_V0:
-            PARSER_CHECK(parse_account_id(buffer, &claimant->v0.destination));
-            PARSER_CHECK(parse_claimant_predicate(buffer));
+            PARSER_CHECK(parse_account_id(buffer, &claimant->v0.destination))
+            PARSER_CHECK(parse_claimant_predicate(buffer))
             return true;
         default:
             return false;
@@ -711,26 +630,26 @@ static bool parse_claimant(buffer_t *buffer, Claimant *claimant) {
 
 static bool parse_create_claimable_balance(buffer_t *buffer, CreateClaimableBalanceOp *op) {
     uint32_t claimantLen;
-    PARSER_CHECK(parse_asset(buffer, &op->asset));
-    PARSER_CHECK(buffer_read64(buffer, (uint64_t *) &op->amount));
-    PARSER_CHECK(buffer_read32(buffer, (uint32_t *) &claimantLen));
+    PARSER_CHECK(parse_asset(buffer, &op->asset))
+    PARSER_CHECK(buffer_read64(buffer, (uint64_t *) &op->amount))
+    PARSER_CHECK(buffer_read32(buffer, (uint32_t *) &claimantLen))
     if (claimantLen > 10) {
         return false;
     }
     op->claimantLen = claimantLen;
     for (int i = 0; i < op->claimantLen; i++) {
-        PARSER_CHECK(parse_claimant(buffer, &op->claimants[i]));
+        PARSER_CHECK(parse_claimant(buffer, &op->claimants[i]))
     }
     return true;
 }
 static bool parse_claimable_balance_id(buffer_t *buffer, ClaimableBalanceID *claimableBalanceID) {
     uint32_t claimableBalanceIDType;
-    PARSER_CHECK(buffer_read32(buffer, &claimableBalanceIDType));
+    PARSER_CHECK(buffer_read32(buffer, &claimableBalanceIDType))
     claimableBalanceID->type = claimableBalanceIDType;
 
     switch (claimableBalanceID->type) {
         case CLAIMABLE_BALANCE_ID_TYPE_V0:
-            PARSER_CHECK(buffer_read_bytes(buffer, claimableBalanceID->v0, 32));
+            PARSER_CHECK(buffer_read_bytes(buffer, claimableBalanceID->v0, 32))
             return true;
         default:
             return false;
@@ -738,47 +657,46 @@ static bool parse_claimable_balance_id(buffer_t *buffer, ClaimableBalanceID *cla
 }
 
 static bool parse_claim_claimable_balance(buffer_t *buffer, ClaimClaimableBalanceOp *op) {
-    PARSER_CHECK(parse_claimable_balance_id(buffer, &op->balanceID));
+    PARSER_CHECK(parse_claimable_balance_id(buffer, &op->balanceID))
     return true;
 }
 
 static bool parse_begin_sponsoring_future_reserves(buffer_t *buffer,
                                                    BeginSponsoringFutureReservesOp *op) {
-    PARSER_CHECK(parse_account_id(buffer, &op->sponsoredID));
+    PARSER_CHECK(parse_account_id(buffer, &op->sponsoredID))
     return true;
 }
 
 static bool parse_ledger_key(buffer_t *buffer, LedgerKey *ledgerKey) {
     uint32_t ledgerEntryType;
-    PARSER_CHECK(buffer_read32(buffer, &ledgerEntryType));
+    PARSER_CHECK(buffer_read32(buffer, &ledgerEntryType))
     ledgerKey->type = ledgerEntryType;
     switch (ledgerKey->type) {
         case ACCOUNT:
-            PARSER_CHECK(parse_account_id(buffer, &ledgerKey->account.accountID));
+            PARSER_CHECK(parse_account_id(buffer, &ledgerKey->account.accountID))
             return true;
         case TRUSTLINE:
-            PARSER_CHECK(parse_account_id(buffer, &ledgerKey->trustLine.accountID));
-            PARSER_CHECK(parse_trust_line_asset(buffer, &ledgerKey->trustLine.asset));
+            PARSER_CHECK(parse_account_id(buffer, &ledgerKey->trustLine.accountID))
+            PARSER_CHECK(parse_trust_line_asset(buffer, &ledgerKey->trustLine.asset))
             return true;
         case OFFER:
-            PARSER_CHECK(parse_account_id(buffer, &ledgerKey->offer.sellerID));
-            PARSER_CHECK(buffer_read64(buffer, (uint64_t *) &ledgerKey->offer.offerID));
+            PARSER_CHECK(parse_account_id(buffer, &ledgerKey->offer.sellerID))
+            PARSER_CHECK(buffer_read64(buffer, (uint64_t *) &ledgerKey->offer.offerID))
             return true;
         case DATA:
-            PARSER_CHECK(parse_account_id(buffer, &ledgerKey->data.accountID));
+            PARSER_CHECK(parse_account_id(buffer, &ledgerKey->data.accountID))
             PARSER_CHECK(parse_string_ptr(buffer,
                                           (const char **) &ledgerKey->data.dataName,
                                           (size_t *) &ledgerKey->data.dataNameSize,
-                                          DATA_VALUE_MAX_SIZE));
+                                          DATA_VALUE_MAX_SIZE))
             return true;
         case CLAIMABLE_BALANCE:
-            PARSER_CHECK(
-                parse_claimable_balance_id(buffer, &ledgerKey->claimableBalance.balanceId));
+            PARSER_CHECK(parse_claimable_balance_id(buffer, &ledgerKey->claimableBalance.balanceId))
             return true;
         case LIQUIDITY_POOL:
             PARSER_CHECK(buffer_read_bytes(buffer,
                                            ledgerKey->liquidityPool.liquidityPoolID,
-                                           LIQUIDITY_POOL_ID_SIZE));
+                                           LIQUIDITY_POOL_ID_SIZE))
             return true;
         default:
             return false;
@@ -792,11 +710,11 @@ static bool parse_revoke_sponsorship(buffer_t *buffer, RevokeSponsorshipOp *op) 
 
     switch (op->type) {
         case REVOKE_SPONSORSHIP_LEDGER_ENTRY:
-            PARSER_CHECK(parse_ledger_key(buffer, &op->ledgerKey));
+            PARSER_CHECK(parse_ledger_key(buffer, &op->ledgerKey))
             return true;
         case REVOKE_SPONSORSHIP_SIGNER:
-            PARSER_CHECK(parse_account_id(buffer, &op->signer.accountID));
-            PARSER_CHECK(parse_signer_key(buffer, &op->signer.signerKey));
+            PARSER_CHECK(parse_account_id(buffer, &op->signer.accountID))
+            PARSER_CHECK(parse_signer_key(buffer, &op->signer.signerKey))
             return true;
         default:
             return false;
@@ -804,39 +722,39 @@ static bool parse_revoke_sponsorship(buffer_t *buffer, RevokeSponsorshipOp *op) 
 }
 
 static bool parse_clawback(buffer_t *buffer, ClawbackOp *op) {
-    PARSER_CHECK(parse_asset(buffer, &op->asset));
-    PARSER_CHECK(parse_muxed_account(buffer, &op->from));
-    PARSER_CHECK(buffer_read64(buffer, (uint64_t *) &op->amount));
+    PARSER_CHECK(parse_asset(buffer, &op->asset))
+    PARSER_CHECK(parse_muxed_account(buffer, &op->from))
+    PARSER_CHECK(buffer_read64(buffer, (uint64_t *) &op->amount))
     return true;
 }
 
 static bool parse_clawback_claimable_balance(buffer_t *buffer, ClawbackClaimableBalanceOp *op) {
-    PARSER_CHECK(parse_claimable_balance_id(buffer, &op->balanceID));
+    PARSER_CHECK(parse_claimable_balance_id(buffer, &op->balanceID))
     return true;
 }
 
 static bool parse_set_trust_line_flags(buffer_t *buffer, SetTrustLineFlagsOp *op) {
-    PARSER_CHECK(parse_account_id(buffer, &op->trustor));
-    PARSER_CHECK(parse_asset(buffer, &op->asset));
-    PARSER_CHECK(buffer_read32(buffer, &op->clearFlags));
-    PARSER_CHECK(buffer_read32(buffer, &op->setFlags));
+    PARSER_CHECK(parse_account_id(buffer, &op->trustor))
+    PARSER_CHECK(parse_asset(buffer, &op->asset))
+    PARSER_CHECK(buffer_read32(buffer, &op->clearFlags))
+    PARSER_CHECK(buffer_read32(buffer, &op->setFlags))
     return true;
 }
 
 static bool parse_liquidity_pool_deposit(buffer_t *buffer, LiquidityPoolDepositOp *op) {
-    PARSER_CHECK(buffer_read_bytes(buffer, op->liquidityPoolID, LIQUIDITY_POOL_ID_SIZE));
-    PARSER_CHECK(buffer_read64(buffer, (uint64_t *) &op->maxAmountA));
-    PARSER_CHECK(buffer_read64(buffer, (uint64_t *) &op->maxAmountB));
-    PARSER_CHECK(parse_price(buffer, &op->minPrice));
-    PARSER_CHECK(parse_price(buffer, &op->maxPrice));
+    PARSER_CHECK(buffer_read_bytes(buffer, op->liquidityPoolID, LIQUIDITY_POOL_ID_SIZE))
+    PARSER_CHECK(buffer_read64(buffer, (uint64_t *) &op->maxAmountA))
+    PARSER_CHECK(buffer_read64(buffer, (uint64_t *) &op->maxAmountB))
+    PARSER_CHECK(parse_price(buffer, &op->minPrice))
+    PARSER_CHECK(parse_price(buffer, &op->maxPrice))
     return true;
 }
 
 static bool parse_liquidity_pool_withdraw(buffer_t *buffer, LiquidityPoolWithdrawOp *op) {
-    PARSER_CHECK(buffer_read_bytes(buffer, op->liquidityPoolID, LIQUIDITY_POOL_ID_SIZE));
-    PARSER_CHECK(buffer_read64(buffer, (uint64_t *) &op->amount));
-    PARSER_CHECK(buffer_read64(buffer, (uint64_t *) &op->minAmountA));
-    PARSER_CHECK(buffer_read64(buffer, (uint64_t *) &op->minAmountB));
+    PARSER_CHECK(buffer_read_bytes(buffer, op->liquidityPoolID, LIQUIDITY_POOL_ID_SIZE))
+    PARSER_CHECK(buffer_read64(buffer, (uint64_t *) &op->amount))
+    PARSER_CHECK(buffer_read64(buffer, (uint64_t *) &op->minAmountA))
+    PARSER_CHECK(buffer_read64(buffer, (uint64_t *) &op->minAmountB))
     return true;
 }
 
@@ -844,16 +762,12 @@ static bool parse_operation(buffer_t *buffer, Operation *opDetails) {
     explicit_bzero(opDetails, sizeof(Operation));
     uint32_t opType;
 
-    if (!parse_optional_type(buffer,
-                             (xdr_type_parser) parse_muxed_account,
-                             &opDetails->sourceAccount,
-                             &opDetails->sourceAccountPresent)) {
-        return false;
-    }
+    PARSER_CHECK(parse_optional_type(buffer,
+                                     (xdr_type_parser) parse_muxed_account,
+                                     &opDetails->sourceAccount,
+                                     &opDetails->sourceAccountPresent))
 
-    if (!buffer_read32(buffer, &opType)) {
-        return false;
-    }
+    PARSER_CHECK(buffer_read32(buffer, &opType))
     opDetails->type = opType;
     switch (opDetails->type) {
         case XDR_OPERATION_TYPE_CREATE_ACCOUNT: {
@@ -936,20 +850,20 @@ static bool parse_operation(buffer_t *buffer, Operation *opDetails) {
 
 static bool parse_tx_details(buffer_t *buffer, TransactionDetails *transaction) {
     // account used to run the (inner)transaction
-    PARSER_CHECK(parse_muxed_account(buffer, &transaction->sourceAccount));
+    PARSER_CHECK(parse_muxed_account(buffer, &transaction->sourceAccount))
 
     // the fee the sourceAccount will pay
-    PARSER_CHECK(buffer_read32(buffer, &transaction->fee));
+    PARSER_CHECK(buffer_read32(buffer, &transaction->fee))
 
     // sequence number to consume in the account
-    PARSER_CHECK(buffer_read64(buffer, (uint64_t *) &transaction->sequenceNumber));
+    PARSER_CHECK(buffer_read64(buffer, (uint64_t *) &transaction->sequenceNumber))
 
     // validity conditions
-    PARSER_CHECK(parse_preconditions(buffer, &transaction->cond));
+    PARSER_CHECK(parse_preconditions(buffer, &transaction->cond))
 
-    PARSER_CHECK(parse_memo(buffer, &transaction->memo));
+    PARSER_CHECK(parse_memo(buffer, &transaction->memo))
     uint32_t opCount;
-    PARSER_CHECK(buffer_read32(buffer, &opCount));
+    PARSER_CHECK(buffer_read32(buffer, &opCount))
     transaction->opCount = opCount;
     if (transaction->opCount > MAX_OPS) {
         return false;
@@ -960,8 +874,8 @@ static bool parse_tx_details(buffer_t *buffer, TransactionDetails *transaction) 
 
 static bool parse_fee_bump_tx_details(buffer_t *buffer,
                                       FeeBumpTransactionDetails *feeBumpTransaction) {
-    PARSER_CHECK(parse_muxed_account(buffer, &feeBumpTransaction->feeSource));
-    PARSER_CHECK(buffer_read64(buffer, (uint64_t *) &feeBumpTransaction->fee));
+    PARSER_CHECK(parse_muxed_account(buffer, &feeBumpTransaction->feeSource))
+    PARSER_CHECK(buffer_read64(buffer, (uint64_t *) &feeBumpTransaction->fee))
     return true;
 }
 
@@ -975,30 +889,28 @@ bool parse_tx_xdr(const uint8_t *data, size_t size, tx_ctx_t *txCtx) {
     if (offset == 0) {
         explicit_bzero(&txCtx->txDetails, sizeof(TransactionDetails));
         explicit_bzero(&txCtx->feeBumpTxDetails, sizeof(FeeBumpTransactionDetails));
-        PARSER_CHECK(parse_network(&buffer, &txCtx->network));
-        PARSER_CHECK(buffer_read32(&buffer, &envelopeType));
+        PARSER_CHECK(parse_network(&buffer, &txCtx->network))
+        PARSER_CHECK(buffer_read32(&buffer, &envelopeType))
         txCtx->envelopeType = envelopeType;
         switch (envelopeType) {
             case ENVELOPE_TYPE_TX:
-                PARSER_CHECK(parse_tx_details(&buffer, &txCtx->txDetails));
+                PARSER_CHECK(parse_tx_details(&buffer, &txCtx->txDetails))
                 break;
             case ENVELOPE_TYPE_TX_FEE_BUMP:
-                PARSER_CHECK(parse_fee_bump_tx_details(&buffer, &txCtx->feeBumpTxDetails));
+                PARSER_CHECK(parse_fee_bump_tx_details(&buffer, &txCtx->feeBumpTxDetails))
                 uint32_t innerEnvelopeType;
-                PARSER_CHECK(buffer_read32(&buffer, &innerEnvelopeType));
+                PARSER_CHECK(buffer_read32(&buffer, &innerEnvelopeType))
                 if (innerEnvelopeType != ENVELOPE_TYPE_TX) {
                     return false;
                 }
-                PARSER_CHECK(parse_tx_details(&buffer, &txCtx->txDetails));
+                PARSER_CHECK(parse_tx_details(&buffer, &txCtx->txDetails))
                 break;
             default:
                 return false;
         }
     }
 
-    if (!parse_operation(&buffer, &txCtx->txDetails.opDetails)) {
-        return false;
-    }
+    PARSER_CHECK(parse_operation(&buffer, &txCtx->txDetails.opDetails))
     offset = buffer.offset;
     txCtx->txDetails.opIdx += 1;
     txCtx->offset = offset;
