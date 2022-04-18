@@ -3,7 +3,7 @@
 #include "../app_mode.h"
 #include "../sw.h"
 #include "../crypto.h"
-#include "../ui/display.h"
+#include "../ui/tx_hash.h"
 
 int handler_sign_tx_hash(buffer_t *cdata) {
     PRINTF("handler_sign_tx_hash invoked\n");

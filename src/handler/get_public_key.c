@@ -30,7 +30,7 @@
 #include "../sw.h"
 #include "../crypto.h"
 #include "../common/buffer.h"
-#include "../ui/display.h"
+#include "../ui/address.h"
 #include "../helper/send_response.h"
 
 int handler_get_public_key(buffer_t *cdata, bool display) {

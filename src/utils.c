@@ -19,7 +19,6 @@ uint16_t crc16(const uint8_t *input_str, int num_bytes) {
 }
 
 bool encode_key(const uint8_t *in, uint8_t version_byte, char *out, uint8_t out_len) {
-    // ENCODED_ED25519_PUBLIC_KEY_LENGTH
     if (out_len < 56 + 1) {
         return false;
     }
@@ -38,8 +37,20 @@ bool encode_key(const uint8_t *in, uint8_t version_byte, char *out, uint8_t out_
     return true;
 }
 
-bool encode_ed25519_public_key(const uint8_t raw_public_key[static RAW_ED25519_PUBLIC_KEY_LENGTH],
+bool encode_ed25519_public_key(const uint8_t raw_public_key[static RAW_ED25519_PUBLIC_KEY_SIZE],
                                char *out,
                                size_t out_len) {
-    return encode_key(raw_public_key, 6 << 3, out, out_len);
-};
+    return encode_key(raw_public_key, VERSION_BYTE_ED25519_PUBLIC_KEY, out, out_len);
+}
+
+bool encode_hash_x_key(const uint8_t raw_hash_x[static RAW_HASH_X_KEY_SIZE],
+                       char *out,
+                       size_t out_len) {
+    return encode_key(raw_hash_x, VERSION_BYTE_HASH_X, out, out_len);
+}
+
+bool encode_pre_auth_x_key(const uint8_t raw_pre_auth_tx[static RAW_PRE_AUTH_TX_KEY_SIZE],
+                           char *out,
+                           size_t out_len) {
+    return encode_key(raw_pre_auth_tx, VERSION_BYTE_PRE_AUTH_TX_KEY, out, out_len);
+}
