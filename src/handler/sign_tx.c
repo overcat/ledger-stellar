@@ -39,11 +39,5 @@ int handler_sign_tx(buffer_t *cdata, bool is_first_chunk, bool more) {
     }
     PRINTF("tx parsed\n");
 
-    // TODO
-    if (crypto_sign_message() < 0) {
-        io_send_sw(SW_SIGNATURE_FAIL);
-    } else {
-        helper_send_response_sig();
-    }
-    return 0;
+    return ui_approve_tx_init();
 };
