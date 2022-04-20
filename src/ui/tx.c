@@ -182,7 +182,7 @@ static void format_time_bounds_max_time(tx_ctx_t *txCtx) {
     if (txCtx->txDetails.cond.timeBounds.maxTime == 0) {
         strcpy(detailValue, "[no restriction]");
     } else {
-        if (!print_time(txCtx->txDetails.cond.timeBounds.maxTime,
+        if (!print_time_(txCtx->txDetails.cond.timeBounds.maxTime,
                         detailValue,
                         DETAIL_VALUE_MAX_SIZE)) {
             THROW(0x6126);
@@ -196,7 +196,7 @@ static void format_time_bounds_min_time(tx_ctx_t *txCtx) {
     if (txCtx->txDetails.cond.timeBounds.minTime == 0) {
         strcpy(detailValue, "[no restriction]");
     } else {
-        if (!print_time(txCtx->txDetails.cond.timeBounds.minTime,
+        if (!print_time_(txCtx->txDetails.cond.timeBounds.minTime,
                         detailValue,
                         DETAIL_VALUE_MAX_SIZE)) {
             THROW(0x6126);
@@ -243,12 +243,12 @@ static void format_memo(tx_ctx_t *txCtx) {
         }
         case MEMO_HASH: {
             strcpy(detailCaption, "Memo Hash");
-            print_binary_summary(memo->hash, detailValue, HASH_SIZE);
+            print_binary__summary(memo->hash, detailValue, HASH_SIZE);
             break;
         }
         case MEMO_RETURN: {
             strcpy(detailCaption, "Memo Return");
-            print_binary_summary(memo->hash, detailValue, HASH_SIZE);
+            print_binary__summary(memo->hash, detailValue, HASH_SIZE);
             break;
         }
         default: {
@@ -1082,7 +1082,7 @@ static void format_create_claimable_balance(tx_ctx_t *txCtx) {
 
 static void format_claim_claimable_balance_balance_id(tx_ctx_t *txCtx) {
     strcpy(detailCaption, "Balance ID");
-    print_claimable_balance_id(&txCtx->txDetails.opDetails.claimClaimableBalanceOp.balanceID,
+    print_claimable_balance_id_(&txCtx->txDetails.opDetails.claimClaimableBalanceOp.balanceID,
                                detailValue);
     format_operation_source_prepare(txCtx);
 }
@@ -1130,7 +1130,7 @@ static void format_revoke_sponsorship_trust_line_asset(tx_ctx_t *txCtx) {
     if (txCtx->txDetails.opDetails.revokeSponsorshipOp.ledgerKey.trustLine.asset.type ==
         ASSET_TYPE_POOL_SHARE) {
         strcpy(detailCaption, "Liquidity Pool ID");
-        print_binary(txCtx->txDetails.opDetails.revokeSponsorshipOp.ledgerKey.trustLine.asset
+        print_binary_(txCtx->txDetails.opDetails.revokeSponsorshipOp.ledgerKey.trustLine.asset
                          .liquidityPoolID,
                      detailValue,
                      LIQUIDITY_POOL_ID_SIZE);
@@ -1195,7 +1195,7 @@ static void format_revoke_sponsorship_data_account(tx_ctx_t *txCtx) {
 
 static void format_revoke_sponsorship_claimable_balance(tx_ctx_t *txCtx) {
     strcpy(detailCaption, "Balance ID");
-    print_claimable_balance_id(
+    print_claimable_balance_id_(
         &txCtx->txDetails.opDetails.revokeSponsorshipOp.ledgerKey.claimableBalance.balanceId,
         detailValue);
     format_operation_source_prepare(txCtx);
@@ -1203,7 +1203,7 @@ static void format_revoke_sponsorship_claimable_balance(tx_ctx_t *txCtx) {
 
 static void format_revoke_sponsorship_liquidity_pool(tx_ctx_t *txCtx) {
     strcpy(detailCaption, "Liquidity Pool ID");
-    print_binary(
+    print_binary_(
         txCtx->txDetails.opDetails.revokeSponsorshipOp.ledgerKey.liquidityPool.liquidityPoolID,
         detailValue,
         LIQUIDITY_POOL_ID_SIZE);
@@ -1329,7 +1329,7 @@ static void format_clawback(tx_ctx_t *txCtx) {
 
 static void format_clawback_claimable_balance_balance_id(tx_ctx_t *txCtx) {
     strcpy(detailCaption, "Balance ID");
-    print_claimable_balance_id(&txCtx->txDetails.opDetails.clawbackClaimableBalanceOp.balanceID,
+    print_claimable_balance_id_(&txCtx->txDetails.opDetails.clawbackClaimableBalanceOp.balanceID,
                                detailValue);
     format_operation_source_prepare(txCtx);
 }
@@ -1427,7 +1427,7 @@ static void format_liquidity_pool_deposit_max_amount_a(tx_ctx_t *txCtx) {
 
 static void format_liquidity_pool_deposit_liquidity_pool_id(tx_ctx_t *txCtx) {
     strcpy(detailCaption, "Liquidity Pool ID");
-    print_binary(txCtx->txDetails.opDetails.liquidityPoolDepositOp.liquidityPoolID,
+    print_binary_(txCtx->txDetails.opDetails.liquidityPoolDepositOp.liquidityPoolID,
                  detailValue,
                  LIQUIDITY_POOL_ID_SIZE);
     push_to_formatter_stack(&format_liquidity_pool_deposit_max_amount_a);
@@ -1472,7 +1472,7 @@ static void format_liquidity_pool_withdraw_amount(tx_ctx_t *txCtx) {
 
 static void format_liquidity_pool_withdraw_liquidity_pool_id(tx_ctx_t *txCtx) {
     strcpy(detailCaption, "Liquidity Pool ID");
-    print_binary(txCtx->txDetails.opDetails.liquidityPoolWithdrawOp.liquidityPoolID,
+    print_binary_(txCtx->txDetails.opDetails.liquidityPoolWithdrawOp.liquidityPoolID,
                  detailValue,
                  LIQUIDITY_POOL_ID_SIZE);
     push_to_formatter_stack(&format_liquidity_pool_withdraw_amount);
@@ -1528,7 +1528,7 @@ void format_confirm_operation(tx_ctx_t *txCtx) {
 
 static void format_confirm_hash_detail(tx_ctx_t *txCtx) {
     strcpy(detailCaption, "Hash");
-    print_binary_summary(G_context.hash, detailValue, 32);
+    print_binary__summary(G_context.hash, detailValue, 32);
     push_to_formatter_stack(NULL);
 }
 

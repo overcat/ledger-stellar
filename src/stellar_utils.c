@@ -167,7 +167,7 @@ void print_summary(const char *in, char *out, uint8_t numCharsL, uint8_t numChar
     }
 }
 
-void print_binary(const uint8_t *in, char *out, uint8_t len) {
+void print_binary_(const uint8_t *in, char *out, uint8_t len) {
     out[0] = '0';
     out[1] = 'x';
     uint8_t i, j;
@@ -178,7 +178,7 @@ void print_binary(const uint8_t *in, char *out, uint8_t len) {
     out[j] = '\0';
 }
 
-void print_binary_summary(const uint8_t *in, char *out, uint8_t len) {
+void print_binary__summary(const uint8_t *in, char *out, uint8_t len) {
     out[0] = '0';
     out[1] = 'x';
     if (2 + len * 2 > 18) {
@@ -195,7 +195,7 @@ void print_binary_summary(const uint8_t *in, char *out, uint8_t len) {
         }
         out[j] = '\0';
     } else {
-        print_binary(in, out, len);
+        print_binary_(in, out, len);
         return;
     }
 }
@@ -210,7 +210,7 @@ void print_public_key(AccountID in, char *out, uint8_t numCharsL, uint8_t numCha
     }
 }
 
-void encode_muxed_account(const MuxedAccount *in, char *out) {
+void encode_muxed_account_(const MuxedAccount *in, char *out) {
     if (in->type == KEY_TYPE_ED25519) {
         encode_public_key(in->ed25519, out);
     } else {
@@ -234,10 +234,10 @@ void encode_muxed_account(const MuxedAccount *in, char *out) {
 void print_muxed_account(const MuxedAccount *in, char *out, uint8_t numCharsL, uint8_t numCharsR) {
     if (numCharsL > 0) {
         char buffer[70];
-        encode_muxed_account(in, buffer);
+        encode_muxed_account_(in, buffer);
         print_summary(buffer, out, numCharsL, numCharsR);
     } else {
-        encode_muxed_account(in, out);
+        encode_muxed_account_(in, out);
     }
 }
 
@@ -433,15 +433,15 @@ void print_native_asset_code(uint8_t network, char *out, size_t out_len) {
     }
 }
 
-void print_claimable_balance_id(const ClaimableBalanceID *claimableBalanceID, char *out) {
+void print_claimable_balance_id_(const ClaimableBalanceID *claimableBalanceID, char *out) {
     size_t data_len = 36;
     uint8_t data[data_len];
     memcpy(data, &claimableBalanceID->type, 4);
     memcpy(data + 4, claimableBalanceID->v0, 32);
-    print_binary(data, out, data_len);
+    print_binary_(data, out, data_len);
 }
 
-bool print_time(uint64_t timestamp_in_seconds, char *out, size_t out_len) {
+bool print_time_(uint64_t timestamp_in_seconds, char *out, size_t out_len) {
     if (timestamp_in_seconds > 253402300799) {
         // valid range 1970-01-01 00:00:00 - 9999-12-31 23:59:59
         return false;

@@ -63,7 +63,7 @@ target_link_libraries(test_bip32 PUBLIC cmocka gcov bip32 read)
 target_link_libraries(test_buffer PUBLIC cmocka gcov buffer bip32 varint write read)
 target_link_libraries(test_format PUBLIC cmocka gcov format)
 target_link_libraries(test_write PUBLIC cmocka gcov write)
-target_link_libraries(test_utils PUBLIC cmocka gcov utils base58 base32 )
+target_link_libraries(test_utils PUBLIC cmocka gcov utils base58 base32 format)
 
 
 add_test(test_base58 test_base58)
