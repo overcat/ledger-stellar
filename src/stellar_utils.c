@@ -153,7 +153,7 @@ void encode_hash_x_key_(const uint8_t *in, char *out) {
     encode_key_(in, out, 23 << 3);
 }
 
-void print_summary(const char *in, char *out, uint8_t numCharsL, uint8_t numCharsR) {
+void print_summary_(const char *in, char *out, uint8_t numCharsL, uint8_t numCharsR) {
     uint8_t outLength = numCharsL + numCharsR + 2;
     uint16_t inLength = strlen(in);
     if (inLength > outLength) {
@@ -204,7 +204,7 @@ void print_public_key(AccountID in, char *out, uint8_t numCharsL, uint8_t numCha
     if (numCharsL > 0) {
         char buffer[57];
         encode_public_key(in, buffer);
-        print_summary(buffer, out, numCharsL, numCharsR);
+        print_summary_(buffer, out, numCharsL, numCharsR);
     } else {
         encode_public_key(in, out);
     }
@@ -235,7 +235,7 @@ void print_muxed_account(const MuxedAccount *in, char *out, uint8_t numCharsL, u
     if (numCharsL > 0) {
         char buffer[70];
         encode_muxed_account_(in, buffer);
-        print_summary(buffer, out, numCharsL, numCharsR);
+        print_summary_(buffer, out, numCharsL, numCharsR);
     } else {
         encode_muxed_account_(in, out);
     }
@@ -322,18 +322,18 @@ int print_amount(uint64_t amount,
     return 0;
 }
 
-int print_int(int64_t l, char *out, size_t out_len) {
+int print_int_(int64_t l, char *out, size_t out_len) {
     if (out_len == 0) {
         return -1;
     }
     if (l < 0) {
         out[0] = '-';
-        return print_uint(-l, out + 1, out_len - 1);
+        return print_uint_(-l, out + 1, out_len - 1);
     }
-    return print_uint(l, out, out_len);
+    return print_uint_(l, out, out_len);
 }
 
-int print_uint(uint64_t l, char *out, size_t out_len) {
+int print_uint_(uint64_t l, char *out, size_t out_len) {
     char buffer[AMOUNT_MAX_SIZE];
     uint64_t dVal = l;
     size_t i, j;

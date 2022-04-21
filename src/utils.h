@@ -23,6 +23,11 @@ bool print_claimable_balance_id(const ClaimableBalanceID *claimable_balance_id,
                                 char *out,
                                 size_t out_len);
 
-bool print_binary(const uint8_t *in, size_t in_len, char *out, size_t out_len);
+bool print_binary(const uint8_t *in,
+                  size_t in_len,
+                  char *out,
+                  size_t out_len,
+                  uint8_t num_chars_l,
+                  uint8_t num_chars_r);
 
 bool print_time(uint64_t seconds, char *out, size_t out_len);

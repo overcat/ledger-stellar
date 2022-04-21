@@ -77,7 +77,7 @@ void test_print_binary() {
                                 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31};
     char hex[2 * sizeof(binary) + 1];
 
-    assert_true(print_binary(binary, sizeof(binary), hex, sizeof(hex)));
+    assert_true(print_binary(binary, sizeof(binary), hex, sizeof(hex), 0, 0));
     assert_string_equal(hex, "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f");
 }
 
@@ -110,6 +110,59 @@ void test_print_time() {
     assert_false(print_time(18446744073709551615, out, sizeof(out)));
 }
 
+void test_print_uint() {
+    char out[24];
+
+    assert_true(print_uint(0, out, sizeof(out)));
+    assert_string_equal(out, "0");
+
+    assert_true(print_uint(1230, out, sizeof(out)));
+    assert_string_equal(out, "1230");
+
+    // assert_true(print_uint(18446744073709551615, out, sizeof(out)));
+    // assert_string_equal(out, "18446744073709551615");
+
+    // output buffer too small
+    assert_false(print_uint(1230, out, 4));
+
+    // output buffer just big enough to store output data
+    assert_true(print_uint(9999, out, 5));
+    assert_string_equal(out, "9999");
+
+    // output buffer just big enough to store output data
+    assert_true(print_uint(9999, out, 5));
+    assert_string_equal(out, "9999");
+}
+
+void test_print_int() {
+    char out[24];
+
+    assert_true(print_int((int64_t) 0, out, sizeof(out)));
+    assert_string_equal(out, "0");
+
+    assert_true(print_int((int64_t) 1230, out, sizeof(out)));
+    assert_string_equal(out, "1230");
+
+    assert_true(print_int((int64_t) -1230, out, sizeof(out)));
+    assert_string_equal(out, "-1230");
+
+    assert_true(print_int((int64_t) 9223372036854775807, out, sizeof(out)));
+    assert_string_equal(out, "9223372036854775807");
+
+    assert_true(print_int((int64_t) -9223372036854775808, out, sizeof(out)));
+    assert_string_equal(out, "-9223372036854775808");
+
+    // output buffer too small
+    assert_false(print_int((int64_t) -1230, out, 5));
+    assert_false(print_int(1230, out, 4));
+
+    // output buffer just big enough to store output data
+    assert_true(print_int((int64_t) -9999, out, 6));
+    assert_string_equal(out, "-9999");
+    assert_true(print_int((int64_t) 9999, out, 5));
+    assert_string_equal(out, "9999");
+}
+
 int main() {
     const struct CMUnitTest tests[] = {cmocka_unit_test(test_encode_ed25519_public_key),
                                        cmocka_unit_test(test_encode_hash_x_key),
@@ -117,6 +170,8 @@ int main() {
                                        cmocka_unit_test(test_encode_muxed_account),
                                        cmocka_unit_test(test_print_binary),
                                        cmocka_unit_test(test_print_claimable_balance_id),
-                                       cmocka_unit_test(test_print_time)};
+                                       cmocka_unit_test(test_print_time),
+                                       cmocka_unit_test(test_print_uint),
+                                       cmocka_unit_test(test_print_int)};
     return cmocka_run_group_tests(tests, NULL, NULL);
 }

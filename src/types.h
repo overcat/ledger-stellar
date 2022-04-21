@@ -9,7 +9,7 @@
 #define ENCODED_ED25519_PRIVATE_KEY_LENGTH 57
 #define ENCODED_HASH_X_KEY_LENGTH          57
 #define ENCODED_PRE_AUTH_TX_KEY_LENGTH     57
-#define ENCODED_MUXED_ACCOUNT_KEY_LENGTH   69
+#define ENCODED_MUXED_ACCOUNT_KEY_LENGTH   70
 
 #define RAW_ED25519_PUBLIC_KEY_SIZE  32
 #define RAW_ED25519_PRIVATE_KEY_SIZE 32
@@ -81,6 +81,7 @@ typedef enum {
 
 /* max amount is max int64 scaled down: "922337203685.4775807" */
 #define AMOUNT_MAX_SIZE 21
+#define HASH_MAX_SIZE 36
 
 #define HASH_SIZE                 32
 #define LIQUIDITY_POOL_ID_SIZE    32

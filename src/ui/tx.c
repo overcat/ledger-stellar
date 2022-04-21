@@ -103,7 +103,7 @@ static void format_transaction_source(tx_ctx_t *txCtx) {
 
 static void format_min_seq_ledger_gap(tx_ctx_t *txCtx) {
     strcpy(detailCaption, "Min Seq Ledger Gap");
-    print_uint(txCtx->txDetails.cond.minSeqLedgerGap, detailValue, DETAIL_VALUE_MAX_SIZE);
+    print_uint_(txCtx->txDetails.cond.minSeqLedgerGap, detailValue, DETAIL_VALUE_MAX_SIZE);
     push_to_formatter_stack(&format_transaction_source);
 }
 
@@ -117,7 +117,7 @@ static void format_min_seq_ledger_gap_prepare(tx_ctx_t *txCtx) {
 
 static void format_min_seq_age(tx_ctx_t *txCtx) {
     strcpy(detailCaption, "Min Seq Age");
-    print_uint(txCtx->txDetails.cond.minSeqAge, detailValue, DETAIL_VALUE_MAX_SIZE);
+    print_uint_(txCtx->txDetails.cond.minSeqAge, detailValue, DETAIL_VALUE_MAX_SIZE);
     push_to_formatter_stack(&format_min_seq_ledger_gap_prepare);
 }
 
@@ -131,7 +131,7 @@ static void format_min_seq_age_prepare(tx_ctx_t *txCtx) {
 
 static void format_min_seq_num(tx_ctx_t *txCtx) {
     strcpy(detailCaption, "Min Seq Num");
-    print_uint(txCtx->txDetails.cond.minSeqNum, detailValue, DETAIL_VALUE_MAX_SIZE);
+    print_uint_(txCtx->txDetails.cond.minSeqNum, detailValue, DETAIL_VALUE_MAX_SIZE);
     push_to_formatter_stack(&format_min_seq_age_prepare);
 }
 
@@ -148,9 +148,9 @@ static void format_ledger_bounds_max_ledger(tx_ctx_t *txCtx) {
     if (txCtx->txDetails.cond.ledgerBounds.maxLedger == 0) {
         strcpy(detailValue, "[no restriction]");
     } else {
-        print_uint(txCtx->txDetails.cond.ledgerBounds.maxLedger,
-                   detailValue,
-                   DETAIL_VALUE_MAX_SIZE);
+        print_uint_(txCtx->txDetails.cond.ledgerBounds.maxLedger,
+                    detailValue,
+                    DETAIL_VALUE_MAX_SIZE);
     }
     push_to_formatter_stack(&format_min_seq_num_prepare);
 }
@@ -160,9 +160,9 @@ static void format_ledger_bounds_min_ledger(tx_ctx_t *txCtx) {
     if (txCtx->txDetails.cond.ledgerBounds.minLedger == 0) {
         strcpy(detailValue, "[no restriction]");
     } else {
-        print_uint(txCtx->txDetails.cond.ledgerBounds.minLedger,
-                   detailValue,
-                   DETAIL_VALUE_MAX_SIZE);
+        print_uint_(txCtx->txDetails.cond.ledgerBounds.minLedger,
+                    detailValue,
+                    DETAIL_VALUE_MAX_SIZE);
     }
     push_to_formatter_stack(&format_ledger_bounds_max_ledger);
 }
@@ -183,8 +183,8 @@ static void format_time_bounds_max_time(tx_ctx_t *txCtx) {
         strcpy(detailValue, "[no restriction]");
     } else {
         if (!print_time_(txCtx->txDetails.cond.timeBounds.maxTime,
-                        detailValue,
-                        DETAIL_VALUE_MAX_SIZE)) {
+                         detailValue,
+                         DETAIL_VALUE_MAX_SIZE)) {
             THROW(0x6126);
         };
     }
@@ -197,8 +197,8 @@ static void format_time_bounds_min_time(tx_ctx_t *txCtx) {
         strcpy(detailValue, "[no restriction]");
     } else {
         if (!print_time_(txCtx->txDetails.cond.timeBounds.minTime,
-                        detailValue,
-                        DETAIL_VALUE_MAX_SIZE)) {
+                         detailValue,
+                         DETAIL_VALUE_MAX_SIZE)) {
             THROW(0x6126);
         };
     }
@@ -217,7 +217,7 @@ static void format_time_bounds(tx_ctx_t *txCtx) {
 
 static void format_sequence(tx_ctx_t *txCtx) {
     strcpy(detailCaption, "Sequence Num");
-    print_uint(txCtx->txDetails.sequenceNumber, detailValue, DETAIL_VALUE_MAX_SIZE);
+    print_uint_(txCtx->txDetails.sequenceNumber, detailValue, DETAIL_VALUE_MAX_SIZE);
     push_to_formatter_stack(&format_time_bounds);
 }
 
@@ -233,7 +233,7 @@ static void format_memo(tx_ctx_t *txCtx) {
     switch (memo->type) {
         case MEMO_ID: {
             strcpy(detailCaption, "Memo ID");
-            print_uint(memo->id, detailValue, DETAIL_VALUE_MAX_SIZE);
+            print_uint_(memo->id, detailValue, DETAIL_VALUE_MAX_SIZE);
             break;
         }
         case MEMO_TEXT: {
@@ -304,7 +304,9 @@ static void format_operation_source_prepare(tx_ctx_t *txCtx) {
 
 static void format_bump_sequence_bump_to(tx_ctx_t *txCtx) {
     strcpy(detailCaption, "Bump To");
-    print_int(txCtx->txDetails.opDetails.bumpSequenceOp.bumpTo, detailValue, DETAIL_VALUE_MAX_SIZE);
+    print_int_(txCtx->txDetails.opDetails.bumpSequenceOp.bumpTo,
+               detailValue,
+               DETAIL_VALUE_MAX_SIZE);
     format_operation_source_prepare(txCtx);
 }
 
@@ -351,7 +353,7 @@ static void format_manage_data_value(tx_ctx_t *txCtx) {
     base64_encode(txCtx->txDetails.opDetails.manageDataOp.dataValue,
                   txCtx->txDetails.opDetails.manageDataOp.dataValueSize,
                   tmp);
-    print_summary(tmp, detailValue, 12, 12);
+    print_summary_(tmp, detailValue, 12, 12);
     format_operation_source_prepare(txCtx);
 }
 
@@ -368,7 +370,7 @@ static void format_manage_data_detail(tx_ctx_t *txCtx) {
            txCtx->txDetails.opDetails.manageDataOp.dataName,
            txCtx->txDetails.opDetails.manageDataOp.dataNameSize);
     tmp[txCtx->txDetails.opDetails.manageDataOp.dataNameSize] = '\0';
-    print_summary(tmp, detailValue, 12, 12);
+    print_summary_(tmp, detailValue, 12, 12);
 }
 
 static void format_manage_data(tx_ctx_t *txCtx) {
@@ -412,9 +414,9 @@ static void format_allow_trust(tx_ctx_t *txCtx) {
 
 static void format_set_option_signer_weight(tx_ctx_t *txCtx) {
     strcpy(detailCaption, "Weight");
-    print_uint(txCtx->txDetails.opDetails.setOptionsOp.signer.weight,
-               detailValue,
-               DETAIL_VALUE_MAX_SIZE);
+    print_uint_(txCtx->txDetails.opDetails.setOptionsOp.signer.weight,
+                detailValue,
+                DETAIL_VALUE_MAX_SIZE);
     format_operation_source_prepare(txCtx);
 }
 
@@ -430,14 +432,14 @@ static void format_set_option_signer_detail(tx_ctx_t *txCtx) {
         case SIGNER_KEY_TYPE_HASH_X: {
             char tmp[57];
             encode_hash_x_key_(key->data, tmp);
-            print_summary(tmp, detailValue, 12, 12);
+            print_summary_(tmp, detailValue, 12, 12);
             break;
         }
 
         case SIGNER_KEY_TYPE_PRE_AUTH_TX: {
             char tmp[57];
             encode_pre_auth_key(key->data, tmp);
-            print_summary(tmp, detailValue, 12, 12);
+            print_summary_(tmp, detailValue, 12, 12);
             break;
         }
         default:
@@ -503,9 +505,9 @@ static void format_set_option_home_domain_prepare(tx_ctx_t *txCtx) {
 
 static void format_set_option_high_threshold(tx_ctx_t *txCtx) {
     strcpy(detailCaption, "High Threshold");
-    print_uint(txCtx->txDetails.opDetails.setOptionsOp.highThreshold,
-               detailValue,
-               DETAIL_VALUE_MAX_SIZE);
+    print_uint_(txCtx->txDetails.opDetails.setOptionsOp.highThreshold,
+                detailValue,
+                DETAIL_VALUE_MAX_SIZE);
     format_set_option_home_domain_prepare(txCtx);
 }
 
@@ -519,9 +521,9 @@ static void format_set_option_high_threshold_prepare(tx_ctx_t *txCtx) {
 
 static void format_set_option_medium_threshold(tx_ctx_t *txCtx) {
     strcpy(detailCaption, "Medium Threshold");
-    print_uint(txCtx->txDetails.opDetails.setOptionsOp.mediumThreshold,
-               detailValue,
-               DETAIL_VALUE_MAX_SIZE);
+    print_uint_(txCtx->txDetails.opDetails.setOptionsOp.mediumThreshold,
+                detailValue,
+                DETAIL_VALUE_MAX_SIZE);
     format_set_option_high_threshold_prepare(txCtx);
 }
 
@@ -535,9 +537,9 @@ static void format_set_option_medium_threshold_prepare(tx_ctx_t *txCtx) {
 
 static void format_set_option_low_threshold(tx_ctx_t *txCtx) {
     strcpy(detailCaption, "Low Threshold");
-    print_uint(txCtx->txDetails.opDetails.setOptionsOp.lowThreshold,
-               detailValue,
-               DETAIL_VALUE_MAX_SIZE);
+    print_uint_(txCtx->txDetails.opDetails.setOptionsOp.lowThreshold,
+                detailValue,
+                DETAIL_VALUE_MAX_SIZE);
     format_set_option_medium_threshold_prepare(txCtx);
 }
 
@@ -551,9 +553,9 @@ static void format_set_option_low_threshold_prepare(tx_ctx_t *txCtx) {
 
 static void format_set_option_master_weight(tx_ctx_t *txCtx) {
     strcpy(detailCaption, "Master Weight");
-    print_uint(txCtx->txDetails.opDetails.setOptionsOp.masterWeight,
-               detailValue,
-               DETAIL_VALUE_MAX_SIZE);
+    print_uint_(txCtx->txDetails.opDetails.setOptionsOp.masterWeight,
+                detailValue,
+                DETAIL_VALUE_MAX_SIZE);
     format_set_option_low_threshold_prepare(txCtx);
 }
 
@@ -785,16 +787,16 @@ static void format_manage_sell_offer_buy(tx_ctx_t *txCtx) {
 static void format_manage_sell_offer_detail(tx_ctx_t *txCtx) {
     if (!txCtx->txDetails.opDetails.manageSellOfferOp.amount) {
         strcpy(detailCaption, "Remove Offer");
-        print_uint(txCtx->txDetails.opDetails.manageSellOfferOp.offerID,
-                   detailValue,
-                   DETAIL_VALUE_MAX_SIZE);
+        print_uint_(txCtx->txDetails.opDetails.manageSellOfferOp.offerID,
+                    detailValue,
+                    DETAIL_VALUE_MAX_SIZE);
         format_operation_source_prepare(txCtx);
     } else {
         if (txCtx->txDetails.opDetails.manageSellOfferOp.offerID) {
             strcpy(detailCaption, "Change Offer");
-            print_uint(txCtx->txDetails.opDetails.manageSellOfferOp.offerID,
-                       detailValue,
-                       DETAIL_VALUE_MAX_SIZE);
+            print_uint_(txCtx->txDetails.opDetails.manageSellOfferOp.offerID,
+                        detailValue,
+                        DETAIL_VALUE_MAX_SIZE);
         } else {
             strcpy(detailCaption, "Create Offer");
             strcpy(detailValue, "Type Active");
@@ -844,12 +846,12 @@ static void format_manage_buy_offer_detail(tx_ctx_t *txCtx) {
 
     if (op->buyAmount == 0) {
         strcpy(detailCaption, "Remove Offer");
-        print_uint(op->offerID, detailValue, DETAIL_VALUE_MAX_SIZE);
+        print_uint_(op->offerID, detailValue, DETAIL_VALUE_MAX_SIZE);
         format_operation_source_prepare(txCtx);  // TODO
     } else {
         if (op->offerID) {
             strcpy(detailCaption, "Change Offer");
-            print_uint(op->offerID, detailValue, DETAIL_VALUE_MAX_SIZE);
+            print_uint_(op->offerID, detailValue, DETAIL_VALUE_MAX_SIZE);
         } else {
             strcpy(detailCaption, "Create Offer");
             strcpy(detailValue, "Type Active");
@@ -1083,7 +1085,7 @@ static void format_create_claimable_balance(tx_ctx_t *txCtx) {
 static void format_claim_claimable_balance_balance_id(tx_ctx_t *txCtx) {
     strcpy(detailCaption, "Balance ID");
     print_claimable_balance_id_(&txCtx->txDetails.opDetails.claimClaimableBalanceOp.balanceID,
-                               detailValue);
+                                detailValue);
     format_operation_source_prepare(txCtx);
 }
 
@@ -1131,9 +1133,9 @@ static void format_revoke_sponsorship_trust_line_asset(tx_ctx_t *txCtx) {
         ASSET_TYPE_POOL_SHARE) {
         strcpy(detailCaption, "Liquidity Pool ID");
         print_binary_(txCtx->txDetails.opDetails.revokeSponsorshipOp.ledgerKey.trustLine.asset
-                         .liquidityPoolID,
-                     detailValue,
-                     LIQUIDITY_POOL_ID_SIZE);
+                          .liquidityPoolID,
+                      detailValue,
+                      LIQUIDITY_POOL_ID_SIZE);
     } else {
         strcpy(detailCaption, "Asset");
         print_asset_t(
@@ -1155,9 +1157,9 @@ static void format_revoke_sponsorship_trust_line_account(tx_ctx_t *txCtx) {
 }
 static void format_revoke_sponsorship_offer_offer_id(tx_ctx_t *txCtx) {
     strcpy(detailCaption, "Offer ID");
-    print_uint(txCtx->txDetails.opDetails.revokeSponsorshipOp.ledgerKey.offer.offerID,
-               detailValue,
-               DETAIL_VALUE_MAX_SIZE);
+    print_uint_(txCtx->txDetails.opDetails.revokeSponsorshipOp.ledgerKey.offer.offerID,
+                detailValue,
+                DETAIL_VALUE_MAX_SIZE);
 
     format_operation_source_prepare(txCtx);
 }
@@ -1222,14 +1224,14 @@ static void format_revoke_sponsorship_claimable_signer_signer_key_detail(tx_ctx_
         case SIGNER_KEY_TYPE_HASH_X: {
             char tmp[57];
             encode_hash_x_key_(key->data, tmp);
-            print_summary(tmp, detailValue, 12, 12);
+            print_summary_(tmp, detailValue, 12, 12);
             break;
         }
 
         case SIGNER_KEY_TYPE_PRE_AUTH_TX: {
             char tmp[57];
             encode_pre_auth_key(key->data, tmp);
-            print_summary(tmp, detailValue, 12, 12);
+            print_summary_(tmp, detailValue, 12, 12);
             break;
         }
         default:
@@ -1330,7 +1332,7 @@ static void format_clawback(tx_ctx_t *txCtx) {
 static void format_clawback_claimable_balance_balance_id(tx_ctx_t *txCtx) {
     strcpy(detailCaption, "Balance ID");
     print_claimable_balance_id_(&txCtx->txDetails.opDetails.clawbackClaimableBalanceOp.balanceID,
-                               detailValue);
+                                detailValue);
     format_operation_source_prepare(txCtx);
 }
 
@@ -1428,8 +1430,8 @@ static void format_liquidity_pool_deposit_max_amount_a(tx_ctx_t *txCtx) {
 static void format_liquidity_pool_deposit_liquidity_pool_id(tx_ctx_t *txCtx) {
     strcpy(detailCaption, "Liquidity Pool ID");
     print_binary_(txCtx->txDetails.opDetails.liquidityPoolDepositOp.liquidityPoolID,
-                 detailValue,
-                 LIQUIDITY_POOL_ID_SIZE);
+                  detailValue,
+                  LIQUIDITY_POOL_ID_SIZE);
     push_to_formatter_stack(&format_liquidity_pool_deposit_max_amount_a);
 }
 
@@ -1473,8 +1475,8 @@ static void format_liquidity_pool_withdraw_amount(tx_ctx_t *txCtx) {
 static void format_liquidity_pool_withdraw_liquidity_pool_id(tx_ctx_t *txCtx) {
     strcpy(detailCaption, "Liquidity Pool ID");
     print_binary_(txCtx->txDetails.opDetails.liquidityPoolWithdrawOp.liquidityPoolID,
-                 detailValue,
-                 LIQUIDITY_POOL_ID_SIZE);
+                  detailValue,
+                  LIQUIDITY_POOL_ID_SIZE);
     push_to_formatter_stack(&format_liquidity_pool_withdraw_amount);
 }
 
@@ -1515,10 +1517,10 @@ void format_confirm_operation(tx_ctx_t *txCtx) {
         size_t len;
         strcpy(opCaption, "Operation ");
         len = strlen(opCaption);
-        print_uint(txCtx->txDetails.opIdx, opCaption + len, OPERATION_CAPTION_MAX_SIZE - len);
+        print_uint_(txCtx->txDetails.opIdx, opCaption + len, OPERATION_CAPTION_MAX_SIZE - len);
         strlcat(opCaption, " of ", sizeof(opCaption));
         len = strlen(opCaption);
-        print_uint(txCtx->txDetails.opCount, opCaption + len, OPERATION_CAPTION_MAX_SIZE - len);
+        print_uint_(txCtx->txDetails.opCount, opCaption + len, OPERATION_CAPTION_MAX_SIZE - len);
         push_to_formatter_stack(
             ((format_function_t) PIC(formatters[txCtx->txDetails.opDetails.type])));
     } else {
