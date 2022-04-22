@@ -10,6 +10,38 @@
 
 #define MUXED_ACCOUNT_MED_25519_SIZE 43
 
+static const char base64Alphabet[] =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+static int base64ModTable[] = {0, 2, 1};
+
+bool base64_encode(const uint8_t *data, size_t in_len, char *out, size_t out_len) {
+    size_t encoded_len = 4 * ((in_len + 2) / 3);
+    if (encoded_len > out_len) {
+        return false;
+    }
+
+    for (int i = 0, j = 0; i < in_len;) {
+        uint32_t octet_a = i < in_len ? data[i++] : 0;
+        uint32_t octet_b = i < in_len ? data[i++] : 0;
+        uint32_t octet_c = i < in_len ? data[i++] : 0;
+
+        uint32_t triple = (octet_a << 0x10) + (octet_b << 0x08) + octet_c;
+
+        out[j++] = base64Alphabet[(triple >> 3 * 6) & 0x3F];
+        out[j++] = base64Alphabet[(triple >> 2 * 6) & 0x3F];
+        out[j++] = base64Alphabet[(triple >> 1 * 6) & 0x3F];
+        out[j++] = base64Alphabet[(triple >> 0 * 6) & 0x3F];
+    }
+
+    int i;
+    for (i = 0; i < base64ModTable[in_len % 3]; i++) {
+        out[encoded_len - 1 - i] = '=';
+    }
+
+    out[out_len] = '\0';
+    return true;
+}
+
 uint16_t crc16(const uint8_t *input_str, int num_bytes) {
     int crc;
     crc = 0;

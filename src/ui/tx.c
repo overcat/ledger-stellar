@@ -342,12 +342,13 @@ static void format_account_merge(tx_ctx_t *txCtx) {
 }
 
 static void format_manage_data_value(tx_ctx_t *txCtx) {
+    // TODO: if printable?
     strcpy(detailCaption, "Data Value");
     char tmp[89];
-    // FIXME
-    // base64_encode(txCtx->txDetails.opDetails.manageDataOp.dataValue,
-    //               txCtx->txDetails.opDetails.manageDataOp.dataValueSize,
-    //               tmp);
+    base64_encode(txCtx->txDetails.opDetails.manageDataOp.dataValue,
+                  txCtx->txDetails.opDetails.manageDataOp.dataValueSize,
+                  tmp,
+                  sizeof(tmp));
     print_summary(tmp, detailValue, DETAIL_VALUE_MAX_SIZE, 12, 12);
     format_operation_source_prepare(txCtx);
 }
