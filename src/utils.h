@@ -65,7 +65,7 @@ bool print_summary(const char *in,
                    size_t out_len,
                    uint8_t num_chars_l,
                    uint8_t num_chars_r);
-                   
+
 bool print_uint(uint64_t num, char *out, size_t out_len);
 
 bool print_int(int64_t num, char *out, size_t out_len);
