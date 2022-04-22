@@ -19,7 +19,7 @@
 #include "os.h"
 #include "cx.h"
 
-#include "./ui/menu.h"
+#include "./ui/ui.h"
 #include "globals.h"
 #include "sw.h"
 #include "types.h"

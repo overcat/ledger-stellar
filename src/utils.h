@@ -5,6 +5,8 @@
 #include <stdbool.h>  // bool
 #include "types.h"
 
+#define MEMCLEAR(dest) explicit_bzero(&dest, sizeof(dest));
+
 bool encode_ed25519_public_key(const uint8_t raw_public_key[static RAW_ED25519_PUBLIC_KEY_SIZE],
                                char *out,
                                size_t out_len);

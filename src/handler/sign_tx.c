@@ -6,6 +6,8 @@
 #include "send_response.h"
 #include "crypto.h"
 #include "common/format.h"
+#include "../ui/ui.h"
+
 int handler_sign_tx(buffer_t *cdata, bool is_first_chunk, bool more) {
     if (is_first_chunk) {
         explicit_bzero(&G_context, sizeof(G_context));

@@ -2,7 +2,7 @@
 #include "ux.h"
 #include "glyphs.h"
 
-#include "menu.h"
+#include "ui.h"
 #include "globals.h"
 #include "app_mode.h"
 

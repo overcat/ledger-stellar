@@ -5,7 +5,7 @@
 #include "ux.h"
 #include "glyphs.h"
 
-#include "address.h"
+#include "ui.h"
 #include "../globals.h"
 #include "../sw.h"
 #include "../utils.h"

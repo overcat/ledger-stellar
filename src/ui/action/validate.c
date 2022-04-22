@@ -18,7 +18,7 @@
 #include <stdbool.h>  // bool
 
 #include "validate.h"
-#include "../menu.h"
+#include "../ui.h"
 #include "../../sw.h"
 #include "../../io.h"
 #include "../../crypto.h"
