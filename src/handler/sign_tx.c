@@ -25,7 +25,7 @@ int handler_sign_tx(buffer_t *cdata, bool is_first_chunk, bool more) {
         if (G_context.req_type != CONFIRM_TRANSACTION) {
             return io_send_sw(SW_BAD_STATE);
         }
-        memcpy(G_context.tx_info.raw, cdata->ptr, cdata->size);
+        memcpy(G_context.tx_info.raw + G_context.tx_info.rawLength, cdata->ptr, cdata->size);
         G_context.tx_info.rawLength += cdata->size;
     }
 
