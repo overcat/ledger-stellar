@@ -152,3 +152,6 @@ dep/%.d: %.c Makefile.genericwallet
 
 listvariants:
 	@echo VARIANTS COIN stellar
+
+unit_test:
+	cmake -Bunit_tests/build -Hunit_tests/ && make -C unit_tests/build/ && make -C unit_tests/build test
