@@ -31,3 +31,41 @@ bool print_binary(const uint8_t *in,
                   uint8_t num_chars_r);
 
 bool print_time(uint64_t seconds, char *out, size_t out_len);
+
+bool print_asset(const Asset *asset, uint8_t network_id, char *out, size_t out_len);
+
+void print_flags(uint32_t flags, char *out, size_t out_len);
+
+void print_trust_line_flags(uint32_t flags, char *out, size_t out_len);
+
+bool print_amount(uint64_t amount,
+                  const Asset *asset,
+                  uint8_t network_id,
+                  char *out,
+                  size_t out_len);
+
+bool print_account_id(const AccountID account_id,
+                      char *out,
+                      size_t out_len,
+                      uint8_t num_chars_l,
+                      uint8_t num_chars_r);
+
+bool encode_pre_auth_x_key(const uint8_t raw_pre_auth_tx[static RAW_PRE_AUTH_TX_KEY_SIZE],
+                           char *out,
+                           size_t out_len);
+
+bool print_muxed_account(const MuxedAccount *muxed_account,
+                         char *out,
+                         size_t out_len,
+                         uint8_t num_chars_l,
+                         uint8_t num_chars_r);
+
+bool print_summary(const char *in,
+                   char *out,
+                   size_t out_len,
+                   uint8_t num_chars_l,
+                   uint8_t num_chars_r);
+                   
+bool print_uint(uint64_t num, char *out, size_t out_len);
+
+bool print_int(int64_t num, char *out, size_t out_len);

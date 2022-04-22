@@ -80,8 +80,9 @@ typedef enum {
 #define MAX_BIP32_LEN 10
 
 /* max amount is max int64 scaled down: "922337203685.4775807" */
+// TODO: "18446744073709551615"
 #define AMOUNT_MAX_SIZE 21
-#define HASH_MAX_SIZE 36
+#define HASH_MAX_SIZE   36
 
 #define HASH_SIZE                 32
 #define LIQUIDITY_POOL_ID_SIZE    32

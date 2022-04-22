@@ -119,8 +119,8 @@ void test_print_uint() {
     assert_true(print_uint(1230, out, sizeof(out)));
     assert_string_equal(out, "1230");
 
-    // assert_true(print_uint(18446744073709551615, out, sizeof(out)));
-    // assert_string_equal(out, "18446744073709551615");
+    assert_true(print_uint((uint64_t) 18446744073709551615, out, sizeof(out)));
+    assert_string_equal(out, "18446744073709551615");
 
     // output buffer too small
     assert_false(print_uint(1230, out, 4));
@@ -163,6 +163,34 @@ void test_print_int() {
     assert_string_equal(out, "9999");
 }
 
+void test_print_asset() {
+    Asset assert_native = {.type = ASSET_TYPE_NATIVE};
+    char out[24];
+    assert_true(print_asset(&assert_native, 0, out, sizeof(out)));
+    assert_string_equal(out, "XLM");
+    // testnet asset
+    assert_true(print_asset(&assert_native, 1, out, sizeof(out)));
+    assert_string_equal(out, "XLM");
+    // private network asset
+    assert_true(print_asset(&assert_native, 2, out, sizeof(out)));
+    assert_string_equal(out, "native");
+
+    const uint8_t ed25519[] = {
+        0x3f, 0x0c, 0x34, 0xbf, 0x93, 0xad, 0x0d, 0x99, 0x71, 0xd0, 0x4c,
+        0xcc, 0x90, 0xf7, 0x05, 0x51, 0x1c, 0x83, 0x8a, 0xad, 0x97, 0x34,
+        0xa4, 0xa2, 0xfb, 0x0d, 0x7a, 0x03, 0xfc, 0x7f, 0xe8, 0x9a,
+    };
+    Asset assert_alphanum4 = {.type = ASSET_TYPE_CREDIT_ALPHANUM4,
+                              .alphaNum4 = {.assetCode = "CAT", .issuer = ed25519}};
+    assert_true(print_asset(&assert_alphanum4, 0, out, sizeof(out)));
+    assert_string_equal(out, "CAT@GA7..VSGZ");
+
+    Asset assert_alphanum12 = {.type = ASSET_TYPE_CREDIT_ALPHANUM12,
+                               .alphaNum12 = {.assetCode = "BANANANANANA", .issuer = ed25519}};
+    assert_true(print_asset(&assert_alphanum12, 0, out, sizeof(out)));
+    assert_string_equal(out, "BANANANANANA@GA7..VSGZ");
+}
+
 int main() {
     const struct CMUnitTest tests[] = {cmocka_unit_test(test_encode_ed25519_public_key),
                                        cmocka_unit_test(test_encode_hash_x_key),
@@ -172,6 +200,7 @@ int main() {
                                        cmocka_unit_test(test_print_claimable_balance_id),
                                        cmocka_unit_test(test_print_time),
                                        cmocka_unit_test(test_print_uint),
-                                       cmocka_unit_test(test_print_int)};
+                                       cmocka_unit_test(test_print_int),
+                                       cmocka_unit_test(test_print_asset)};
     return cmocka_run_group_tests(tests, NULL, NULL);
 }

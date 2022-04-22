@@ -240,3 +240,144 @@ bool print_time(uint64_t seconds, char *out, size_t out_len) {
     strlcpy(out, time_str, out_len);
     return true;
 }
+
+bool print_asset_name(const Asset *asset, uint8_t network_id, char *out, size_t out_len) {
+    switch (asset->type) {
+        case ASSET_TYPE_NATIVE:
+            if (network_id == NETWORK_TYPE_UNKNOWN) {
+                strlcpy(out, "native", out_len);
+            } else {
+                strlcpy(out, "XLM", out_len);
+            }
+            return true;
+        case ASSET_TYPE_CREDIT_ALPHANUM4:
+            for (int i = 0; i < 4; i++) {
+                out[i] = asset->alphaNum4.assetCode[i];
+                if (out[i] == 0) {
+                    break;
+                }
+            }
+            out[4] = 0;
+            return true;
+        case ASSET_TYPE_CREDIT_ALPHANUM12:
+            for (int i = 0; i < 12; i++) {
+                out[i] = asset->alphaNum12.assetCode[i];
+                if (out[i] == 0) {
+                    break;
+                }
+            }
+            out[12] = 0;
+            return true;
+        default:
+            return false;
+    }
+}
+
+bool print_asset(const Asset *asset, uint8_t network_id, char *out, size_t out_len) {
+    char asset_code[12 + 1];
+    char asset_issuer[3 + 2 + 4 + 1];
+    print_asset_name(asset, network_id, asset_code, sizeof(asset_code));
+
+    switch (asset->type) {
+        case ASSET_TYPE_CREDIT_ALPHANUM4:
+            print_account_id(asset->alphaNum4.issuer, asset_issuer, sizeof(asset_issuer), 3, 4);
+            break;
+        case ASSET_TYPE_CREDIT_ALPHANUM12:
+            print_account_id(asset->alphaNum12.issuer, asset_issuer, sizeof(asset_issuer), 3, 4);
+            break;
+        default:
+            break;
+    }
+    strlcpy(out, asset_code, out_len);
+    if (asset->type != ASSET_TYPE_NATIVE) {
+        strlcat(out, "@", out_len);
+        strlcat(out, asset_issuer, out_len);
+    }
+    return true;
+}
+
+static void print_flag(char *flag, char *out, size_t out_len) {
+    if (out[0]) {
+        strlcat(out, ", ", out_len);
+    }
+    strlcat(out, flag, out_len);
+}
+
+void print_flags(uint32_t flags, char *out, size_t out_len) {
+    if (flags & 0x01u) {
+        print_flag("Auth required", out, out_len);
+    }
+    if (flags & 0x02u) {
+        print_flag("Auth revocable", out, out_len);
+    }
+    if (flags & 0x04u) {
+        print_flag("Auth immutable", out, out_len);
+    }
+}
+
+void print_trust_line_flags(uint32_t flags, char *out, size_t out_len) {
+    if (flags & AUTHORIZED_FLAG) {
+        print_flag("AUTHORIZED", out, out_len);
+    }
+    if (flags & AUTHORIZED_TO_MAINTAIN_LIABILITIES_FLAG) {
+        print_flag("AUTHORIZED_TO_MAINTAIN_LIABILITIES", out, out_len);
+    }
+    if (flags & TRUSTLINE_CLAWBACK_ENABLED_FLAG) {
+        print_flag("TRUSTLINE_CLAWBACK_ENABLED", out, out_len);
+    }
+}
+
+bool print_amount(uint64_t amount,
+                  const Asset *asset,
+                  uint8_t network_id,
+                  char *out,
+                  size_t out_len) {
+    char buffer[AMOUNT_MAX_SIZE] = {0};
+    uint64_t dVal = amount;
+    int i;
+
+    for (i = 0; dVal > 0 || i < 9; i++) {
+        if (dVal > 0) {
+            buffer[i] = (dVal % 10) + '0';
+            dVal /= 10;
+        } else {
+            buffer[i] = '0';
+        }
+        if (i == 6) {  // stroops to xlm: 1 xlm = 10000000 stroops
+            i += 1;
+            buffer[i] = '.';
+        }
+        if (i >= AMOUNT_MAX_SIZE) {
+            return false;
+        }
+    }
+
+    // reverse order
+    for (int j = 0; j < i / 2; j++) {
+        char c = buffer[j];
+        buffer[j] = buffer[i - j - 1];
+        buffer[i - j - 1] = c;
+    }
+
+    // strip trailing 0s
+    i -= 1;
+    while (buffer[i] == '0') {
+        buffer[i] = 0;
+        i -= 1;
+    }
+    // strip trailing .
+    if (buffer[i] == '.') buffer[i] = 0;
+    strlcpy(out, buffer, out_len);
+
+    char assetInfo[23];  // BANANANANANA@GBD..KHK4, 12 + 1 + 3 + 2 + 4 = 22
+
+    if (asset) {
+        // qualify amount
+        if (!print_asset(asset, network_id, assetInfo, 23)) {
+            return false;
+        };
+        strlcat(out, " ", out_len);
+        strlcat(out, assetInfo, out_len);
+    }
+    return true;
+}
