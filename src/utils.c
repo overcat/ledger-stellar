@@ -20,7 +20,7 @@ bool base64_encode(const uint8_t *data, size_t in_len, char *out, size_t out_len
         return false;
     }
 
-    for (int i = 0, j = 0; i < in_len;) {
+    for (unsigned int i = 0, j = 0; i < in_len;) {
         uint32_t octet_a = i < in_len ? data[i++] : 0;
         uint32_t octet_b = i < in_len ? data[i++] : 0;
         uint32_t octet_c = i < in_len ? data[i++] : 0;
@@ -127,8 +127,10 @@ bool print_summary(const char *in,
                    size_t out_len,
                    uint8_t num_chars_l,
                    uint8_t num_chars_r) {
-    // TODO: check length
     uint8_t result_len = num_chars_l + num_chars_r + 2;
+    if (out_len < result_len + 1) {
+        return false;
+    }
     uint16_t in_len = strlen(in);
     if (in_len > result_len) {
         memcpy(out, in, num_chars_l);

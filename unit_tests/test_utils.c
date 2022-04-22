@@ -191,6 +191,25 @@ void test_print_asset() {
     assert_string_equal(out, "BANANANANANA@GA7..VSGZ");
 }
 
+void test_print_summary() {
+    char *data1 = "abcdefghijklmnopqrstuvwxyz";
+    size_t data1_len = 26;
+    char out1[10];
+    assert_true(print_summary(data1, out1, sizeof(out1), 3, 4));
+    assert_string_equal(out1, "abc..wxyz");
+
+    char *data2 = "abcdef";
+    size_t data2_len = 6;
+    char out2[11];
+    assert_true(print_summary(data2, out2, sizeof(out2), 4, 4));
+    assert_string_equal(out2, "abcdef");
+
+    char *data3 = "abcdefghijklmnopqrstuvwxyz";
+    size_t data3_len = 26;
+    char out3[10];
+    assert_false(print_summary(data3, out3, sizeof(out3), 4, 4));
+}
+
 int main() {
     const struct CMUnitTest tests[] = {cmocka_unit_test(test_encode_ed25519_public_key),
                                        cmocka_unit_test(test_encode_hash_x_key),
@@ -201,6 +220,7 @@ int main() {
                                        cmocka_unit_test(test_print_time),
                                        cmocka_unit_test(test_print_uint),
                                        cmocka_unit_test(test_print_int),
-                                       cmocka_unit_test(test_print_asset)};
+                                       cmocka_unit_test(test_print_asset),
+                                       cmocka_unit_test(test_print_summary)};
     return cmocka_run_group_tests(tests, NULL, NULL);
 }
