@@ -15,20 +15,14 @@
  *  limitations under the License.
  *****************************************************************************/
 
-#include <stdint.h>
 #include <stdbool.h>
 
 #include "dispatcher.h"
 #include "../constants.h"
 #include "../globals.h"
-#include "../types.h"
-#include "../io.h"
 #include "../sw.h"
-#include "../common/buffer.h"
-#include "../handler/get_app_configuration.h"
-#include "../handler/get_public_key.h"
-#include "../handler/sign_transaction_hash.h"
-#include "../handler/sign_transaction.h"
+#include "../handler/handler.h"
+
 
 int apdu_dispatcher(const command_t *cmd) {
     if (cmd->cla != CLA) {

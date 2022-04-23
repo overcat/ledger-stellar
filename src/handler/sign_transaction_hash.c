@@ -1,4 +1,4 @@
-#include "sign_transaction_hash.h"
+#include "handler.h"
 #include "../globals.h"
 #include "../app_mode.h"
 #include "../sw.h"

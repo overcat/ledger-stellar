@@ -20,7 +20,7 @@
 #include <stddef.h>   // size_t
 #include <string.h>   // memset, explicit_bzero
 
-#include "get_public_key.h"
+#include "handler.h"
 #include "../globals.h"
 #include "../types.h"
 #include "../io.h"

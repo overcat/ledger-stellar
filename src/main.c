@@ -31,6 +31,7 @@ ux_state_t G_ux;
 bolos_ux_params_t G_ux_params;
 io_state_e G_io_state;
 global_ctx_t G_context;
+swap_values_t G_swap_values;
 
 /**
  * Handle APDU command received and send back APDU response using handlers.

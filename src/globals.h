@@ -36,3 +36,5 @@ extern io_state_e G_io_state;
  * Global context for user requests.
  */
 extern global_ctx_t G_context;
+
+extern swap_values_t G_swap_values;
