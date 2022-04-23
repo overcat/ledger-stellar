@@ -1,5 +1,13 @@
 #pragma once
 
+//const SW_OK = 0x9000;
+//const SW_CANCEL = 0x6985;
+//const SW_UNKNOWN_STELLAR_OP = 0x6c24;
+//const SW_NOT_ALLOWED = 0x6c66; // hash model not enable
+//const SW_UNSUPPORTED = 0x6d00; // unknown ins
+//const SW_KEEP_ALIVE = 0x6e02;
+//const TX_MAX_SIZE = 1540;
+
 /**
  * Status word for success.
  */
@@ -11,8 +19,12 @@
 /**
  * Status word for incorrect P1 or P2.
  */
-// TODO: 0x6B00?
-#define SW_WRONG_P1P2 0x6A86
+#define SW_WRONG_P1P2 0x6B00
+
+/**
+ * Unknown stellar operation
+ */
+#define SW_UNKNOWN_OP 0x6C24
 /**
  * Status word for either wrong Lc or lenght of APDU command less than 5.
  */
@@ -21,6 +33,7 @@
  * Status word for unknown command with this INS.
  */
 #define SW_INS_NOT_SUPPORTED 0x6D00
+
 /**
  * Status word for instruction class is different than CLA.
  */
@@ -29,10 +42,7 @@
  * Status word for wrong reponse length (buffer too small or too big).
  */
 #define SW_WRONG_RESPONSE_LENGTH 0xB000
-/**
- * Status word for fail to display BIP32 path.
- */
-#define SW_DISPLAY_BIP32_PATH_FAIL 0xB001
+
 /**
  * Status word for fail to display address.
  */

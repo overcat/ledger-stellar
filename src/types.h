@@ -61,6 +61,7 @@ typedef enum {
 typedef struct {
     tx_ctx_t tx_info;
     uint8_t hash[HASH_SIZE];
+    // TODO: MAX_BIP32_PATH = 3
     uint32_t bip32_path[MAX_BIP32_PATH];  /// BIP32 path
     uint8_t raw_public_key[32];
     uint8_t signature[64];

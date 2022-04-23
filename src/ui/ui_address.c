@@ -39,10 +39,9 @@ UX_STEP_CB(ux_display_reject_step,
 
 // FLOW to display address and BIP32 path:
 // #1 screen: eye icon + "Confirm Address"
-// #2 screen: display BIP32 Path
-// #3 screen: display address
-// #4 screen: approve button
-// #5 screen: reject button
+// #2 screen: display address
+// #3 screen: approve button
+// #4 screen: reject button
 UX_FLOW(ux_display_pubkey_flow,
         &ux_display_confirm_addr_step,
         &ux_display_address_step,
