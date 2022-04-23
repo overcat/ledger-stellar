@@ -3,6 +3,7 @@
 #include "../globals.h"
 #include "../common/format.h"
 #include "../utils.h"
+#include "../types.h"
 #include "tx_parser.h"
 #include "transaction_formatter.h"
 
