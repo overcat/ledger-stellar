@@ -5,4 +5,4 @@ bin/
 debug/
 dep/
 obj/
-unit_tests/build/
+unit-tests/build/

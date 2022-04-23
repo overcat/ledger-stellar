@@ -21,6 +21,11 @@ jobs:
       - name: Clone
         uses: actions/checkout@v2
 
+      - name: Install dependancies
+        run: |
+          apt-get update -y
+          apt-get install libbsd-dev -y
+
       - name: Build
         run: |
           make DEBUG=1
@@ -41,6 +46,11 @@ jobs:
     steps:
       - name: Clone
         uses: actions/checkout@v2
+
+      - name: Install dependancies
+        run: |
+          apt-get update -y
+          apt-get install libbsd-dev -y
 
       - name: Build
         run: |
@@ -63,6 +73,11 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Install dependancies
+        run: |
+          apt-get update -y
+          apt-get install libbsd-dev -y
+
       - name: Build with Clang Static Analyzer
         run: |
           make clean
@@ -83,6 +98,11 @@ jobs:
     steps:
       - name: Clone
         uses: actions/checkout@v2
+
+      - name: Install dependancies
+        run: |
+          apt-get update -y
+          apt-get install libbsd-dev -y
 
       - name: Build unit tests
         run: |

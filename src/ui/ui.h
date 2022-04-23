@@ -9,7 +9,6 @@
  */
 typedef void (*action_validate_cb)(bool);
 
-
 /**
  * Display address on the device and ask confirmation to export.
  *

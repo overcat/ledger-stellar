@@ -2,7 +2,6 @@
 
 #include <stdbool.h>  // bool
 
-
 /*
  * the formatter prints the details and defines the order of the details
  * by setting the next formatter to be called
