@@ -1,4 +1,4 @@
-#include "sign_tx_hash.h"
+#include "sign_transaction_hash.h"
 #include "../globals.h"
 #include "../app_mode.h"
 #include "../sw.h"

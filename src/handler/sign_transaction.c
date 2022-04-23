@@ -1,4 +1,4 @@
-#include "sign_tx.h"
+#include "sign_transaction.h"
 #include "../globals.h"
 #include "sw.h"
 #include "transaction/transaction_parser.h"

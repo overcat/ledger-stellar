@@ -27,8 +27,8 @@
 #include "../common/buffer.h"
 #include "../handler/get_app_configuration.h"
 #include "../handler/get_public_key.h"
-#include "../handler/sign_tx_hash.h"
-#include "../handler/sign_tx.h"
+#include "../handler/sign_transaction_hash.h"
+#include "../handler/sign_transaction.h"
 
 int apdu_dispatcher(const command_t *cmd) {
     if (cmd->cla != CLA) {
