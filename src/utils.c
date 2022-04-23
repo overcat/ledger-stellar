@@ -140,6 +140,7 @@ bool print_summary(const char *in,
         out[result_len] = '\0';
     } else {
         memcpy(out, in, in_len);
+        out[in_len] = '\0';
     }
     return true;
 }

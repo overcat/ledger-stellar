@@ -21,11 +21,6 @@ jobs:
       - name: Clone
         uses: actions/checkout@v2
 
-      - name: Install dependancies
-        run: |
-          apt-get update -y
-          apt-get install libbsd-dev -y
-
       - name: Build
         run: |
           make DEBUG=1
@@ -46,11 +41,6 @@ jobs:
     steps:
       - name: Clone
         uses: actions/checkout@v2
-
-      - name: Install dependancies
-        run: |
-          apt-get update -y
-          apt-get install libbsd-dev -y
 
       - name: Build
         run: |
@@ -73,11 +63,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Install dependancies
-        run: |
-          apt-get update -y
-          apt-get install libbsd-dev -y
-
       - name: Build with Clang Static Analyzer
         run: |
           make clean
@@ -93,16 +78,11 @@ jobs:
     runs-on: ubuntu-latest
 
     container:
-      image: ghcr.io/overcat/ledger-devcontainer:latest
+      image: ghcr.io/ledgerhq/ledger-app-builder/ledger-app-builder:latest
 
     steps:
       - name: Clone
         uses: actions/checkout@v2
-
-      - name: Install dependancies
-        run: |
-          apt-get update -y
-          apt-get install libbsd-dev -y
 
       - name: Build unit tests
         run: |
