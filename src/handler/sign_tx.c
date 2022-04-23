@@ -1,7 +1,7 @@
 #include "sign_tx.h"
 #include "../globals.h"
 #include "sw.h"
-#include "../parse.h"
+#include "../tx_parser.h"
 #include "send_response.h"
 #include "crypto.h"
 #include "common/format.h"
