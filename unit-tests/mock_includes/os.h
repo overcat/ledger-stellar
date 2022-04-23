@@ -38,12 +38,12 @@
 #define MIN(x, y)      ((x) < (y) ? (x) : (y))
 #define MAX(x, y)      ((x) > (y) ? (x) : (y))
 #define IS_POW2(x)     (((x) & ((x) -1)) == 0)
-#define UPPER_ALIGN(adr, align, type)                                                              \
-    (type)(                                                                                        \
-        (type)((type)(adr) + (type)((type)((type) MAX((type)(align), (type) 1UL)) - (type) 1UL)) & \
-        (type)(~(type)((type)((type) MAX(((type) align), (type) 1UL)) - (type) 1UL)))
+#define UPPER_ALIGN(adr, align, type)                                                       \
+    (type)((type) ((type) (adr) +                                                           \
+                   (type) ((type) ((type) MAX((type) (align), (type) 1UL)) - (type) 1UL)) & \
+           (type) (~(type) ((type) ((type) MAX(((type) align), (type) 1UL)) - (type) 1UL)))
 #define LOWER_ALIGN(adr, align, type) \
-    ((type)(adr) & (type)((type) ~(type)(((type) MAX((type)(align), (type) 1UL)) - (type) 1UL)))
+    ((type) (adr) & (type) ((type) ~(type) (((type) MAX((type) (align), (type) 1UL)) - (type) 1UL)))
 #define U4BE_ENCODE(buf, off, value)               \
     {                                              \
         (buf)[(off) + 0] = ((value) >> 24) & 0xFF; \
