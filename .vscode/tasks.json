@@ -76,6 +76,18 @@
             "problemMatcher": []
         },
         {
+            "label": "run unit tests",
+            "type": "shell",
+            "command": "make unit_tests",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": [
+                "$gcc"
+            ]
+        },
+        {
             "label": "kill Speculos",
             "type": "shell",
             "command": "pkill -f speculos",

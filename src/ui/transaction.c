@@ -5,8 +5,8 @@
 #include "action/validate.h"
 #include "../common/format.h"
 #include "../utils.h"
-#include "tx_parser.h"
-#include "transaction_formatter.h"
+#include "transaction/transaction_parser.h"
+#include "transaction/transaction_formatter.h"
 
 static action_validate_cb g_validate_callback;
 

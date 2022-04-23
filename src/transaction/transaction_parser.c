@@ -2,7 +2,7 @@
 #include <string.h>
 #include "types.h"
 #include "common/buffer.h"
-#include "tx_parser.h"
+#include "transaction_parser.h"
 
 #define PARSER_CHECK(x)         \
     {                           \

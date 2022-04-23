@@ -59,8 +59,8 @@ add_library(write SHARED ../src/common/write.c)
 add_library(format SHARED ../src/common/format.c)
 add_library(varint SHARED ../src/common/varint.c)
 add_library(utils SHARED ../src/utils.c)
-add_library(tx_parser SHARED ../src/tx_parser.c)
-add_library(tx_formatter SHARED ../src/ui/transaction_formatter.c)
+add_library(tx_parser SHARED ../src/transaction/transaction_parser.c)
+add_library(tx_formatter SHARED ../src/transaction/transaction_formatter.c)
 
 
 target_link_libraries(test_base58 PUBLIC cmocka gcov base58)

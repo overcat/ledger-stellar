@@ -7,7 +7,7 @@
 #include <string.h>
 #include <cmocka.h>
 
-#include "tx_parser.h"
+#include "transaction/transaction_parser.h"
 
 static const char *testcases[] = {
     "../testcases/feeBumpTxFeeSourceEqualSigner.raw",

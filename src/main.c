@@ -23,7 +23,7 @@
 #include "globals.h"
 #include "sw.h"
 #include "types.h"
-#include "apdu/parser.h"
+#include "apdu/apdu_parser.h"
 #include "apdu/dispatcher.h"
 
 uint8_t G_io_seproxyhal_spi_buffer[IO_SEPROXYHAL_BUFFER_SIZE_B];
