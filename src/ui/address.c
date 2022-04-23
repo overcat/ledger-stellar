@@ -1,10 +1,6 @@
 #include <stdbool.h>  // bool
 #include <string.h>   // memset
 
-#include "os.h"
-#include "ux.h"
-#include "glyphs.h"
-
 #include "ui.h"
 #include "../globals.h"
 #include "../sw.h"

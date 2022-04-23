@@ -1,6 +1,5 @@
 #include <stdbool.h>  // bool
 #include <string.h>   // memset
-#include "os.h"
 #include "ui.h"
 #include "../globals.h"
 #include "action/validate.h"

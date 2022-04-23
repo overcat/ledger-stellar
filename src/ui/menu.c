@@ -1,7 +1,3 @@
-#include "os.h"
-#include "ux.h"
-#include "glyphs.h"
-
 #include "ui.h"
 #include "globals.h"
 #include "app_mode.h"
