@@ -8,7 +8,7 @@
 #include "../common/buffer.h"
 
 /**
- * Handler for GET_PUBLIC_KEY command. If successfully parse BIP32 path,
+ * Handler for INS_GET_PUBLIC_KEY command. If successfully parse BIP32 path,
  * derive public key/chain code and send APDU response.
  *
  * @see G_context.bip32_path, G_context.raw_public_key and

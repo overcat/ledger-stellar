@@ -7,6 +7,7 @@
 #include "../utils.h"
 #include "transaction/transaction_parser.h"
 #include "transaction/transaction_formatter.h"
+#include "sw.h"
 
 static action_validate_cb g_validate_callback;
 
@@ -138,6 +139,11 @@ void display_next_state(bool is_upper_border) {
 
 
 int ui_approve_tx_init(void) {
+    if (G_context.req_type != CONFIRM_TRANSACTION || G_context.state != STATE_PARSED) {
+        G_context.state = STATE_NONE;
+        return io_send_sw(SW_BAD_STATE);
+    }
+
     G_context.tx_info.offset = 0;
     formatter_index = 0;
     explicit_bzero(formatter_stack, sizeof(formatter_stack));

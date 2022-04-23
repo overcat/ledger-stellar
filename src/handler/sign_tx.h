@@ -6,7 +6,7 @@
 #include "../common/buffer.h"
 
 /**
- * Handler for SIGN_TX command. If successfully parse BIP32 path
+ * Handler for INS_SIGN_TX command. If successfully parse BIP32 path
  * and transaction, sign transaction and send APDU response.
  *
  * @see G_context.bip32_path, G_context.tx_info.raw_transaction,
