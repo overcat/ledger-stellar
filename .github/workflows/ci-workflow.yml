@@ -93,7 +93,7 @@ jobs:
     runs-on: ubuntu-latest
 
     container:
-      image: ghcr.io/ledgerhq/ledger-app-builder/ledger-app-builder:latest
+      image: ghcr.io/overcat/ledger-devcontainer:latest
 
     steps:
       - name: Clone
