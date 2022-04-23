@@ -71,7 +71,7 @@ target_link_libraries(test_format PUBLIC cmocka gcov format)
 target_link_libraries(test_write PUBLIC cmocka gcov write)
 target_link_libraries(test_utils PUBLIC cmocka gcov utils base58 base32 format bsd)
 target_link_libraries(test_tx_parser PUBLIC cmocka gcov tx_parser buffer bip32 varint write read)
-target_link_libraries(test_tx_formatter PUBLIC cmocka gcov tx_parser buffer bip32 varint write read)
+target_link_libraries(test_tx_formatter PUBLIC cmocka gcov tx_parser buffer bip32 varint write read tx_formatter utils bsd base32 format)
 
 
 add_test(test_base58 test_base58)
