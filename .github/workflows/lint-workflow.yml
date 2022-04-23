@@ -21,6 +21,6 @@ jobs:
       - name: Lint
         uses: DoozyX/clang-format-lint-action@v0.13
         with:
-          source: 'src unit_tests'
+          source: 'src unit-tests'
           extensions: 'h,c'
           clangFormatVersion: 12

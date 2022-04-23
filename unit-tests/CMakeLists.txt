@@ -5,7 +5,7 @@ if(${CMAKE_VERSION} VERSION_LESS 3.10)
 endif()
 
 # project information
-project(unit_tests
+project(unit-tests
         VERSION 0.1
 	      DESCRIPTION "Unit tests for Ledger Nano application"
         LANGUAGES C)
