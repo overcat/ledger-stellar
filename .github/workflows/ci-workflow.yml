@@ -86,8 +86,7 @@ jobs:
 
       - name: Build unit tests
         run: |
-          cd unit_tests/
-          cmake -Bbuild -H. && make -C build && make -C build test
+          make unit_tests
 
       - name: Generate code coverage
         run: |
