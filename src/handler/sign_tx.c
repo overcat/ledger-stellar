@@ -2,7 +2,6 @@
 #include "../globals.h"
 #include "sw.h"
 #include "../parse.h"
-#include "cx.h"
 #include "send_response.h"
 #include "crypto.h"
 #include "common/format.h"

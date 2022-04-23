@@ -1,6 +1,3 @@
-#include "os.h"
-#include "ux.h"
-
 #include "app_mode.h"
 
 typedef struct {
