@@ -5,9 +5,23 @@
 
 #include "common/bip32.h"
 
-#define ENCODED_ED25519_PUBLIC_KEY_LENGTH 57
-#define RAW_ED25519_PUBLIC_KEY_LENGTH     32
-#define RAW_ED25519_PRIVATE_KEY_LENGTH    32
+#define ENCODED_ED25519_PUBLIC_KEY_LENGTH  57
+#define ENCODED_ED25519_PRIVATE_KEY_LENGTH 57
+#define ENCODED_HASH_X_KEY_LENGTH          57
+#define ENCODED_PRE_AUTH_TX_KEY_LENGTH     57
+#define ENCODED_MUXED_ACCOUNT_KEY_LENGTH   70
+
+#define RAW_ED25519_PUBLIC_KEY_SIZE  32
+#define RAW_ED25519_PRIVATE_KEY_SIZE 32
+#define RAW_HASH_X_KEY_SIZE          32
+#define RAW_PRE_AUTH_TX_KEY_SIZE     32
+#define RAW_MUXED_ACCOUNT_KEY_SIZE   40
+
+#define VERSION_BYTE_ED25519_PUBLIC_KEY  6 << 3
+#define VERSION_BYTE_ED25519_SECRET_SEED 18 << 3
+#define VERSION_BYTE_PRE_AUTH_TX_KEY     19 << 3
+#define VERSION_BYTE_HASH_X              23 << 3
+#define VERSION_BYTE_MUXED_ACCOUNT       12 << 3
 
 /**
  * Enumeration for the status of IO.
@@ -66,7 +80,9 @@ typedef enum {
 #define MAX_BIP32_LEN 10
 
 /* max amount is max int64 scaled down: "922337203685.4775807" */
+// TODO: "18446744073709551615"
 #define AMOUNT_MAX_SIZE 21
+#define HASH_MAX_SIZE   36
 
 #define HASH_SIZE                 32
 #define LIQUIDITY_POOL_ID_SIZE    32
@@ -157,7 +173,7 @@ typedef enum {
  */
 #define DETAIL_VALUE_MAX_SIZE 89
 
-static const char *NETWORK_NAMES[3] = {"Public", "Test", "Unknown"};
+static const char *NETWORK_NAMES[3] = {"Public", "Testnet", "Unknown"};
 
 // ------------------------------------------------------------------------- //
 //                           TYPE DEFINITIONS                                //

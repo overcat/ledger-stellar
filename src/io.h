@@ -2,6 +2,7 @@
 
 #include <stdint.h>
 
+#include "os.h"
 #include "ux.h"
 #include "os_io_seproxyhal.h"
 

@@ -20,9 +20,6 @@
 #include <stddef.h>   // size_t
 #include <string.h>   // memset, explicit_bzero
 
-#include "os.h"
-#include "cx.h"
-
 #include "get_public_key.h"
 #include "../globals.h"
 #include "../types.h"
@@ -30,7 +27,7 @@
 #include "../sw.h"
 #include "../crypto.h"
 #include "../common/buffer.h"
-#include "../ui/display.h"
+#include "../ui/ui.h"
 #include "../helper/send_response.h"
 
 int handler_get_public_key(buffer_t *cdata, bool display) {

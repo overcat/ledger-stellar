@@ -16,10 +16,6 @@
  *****************************************************************************/
 
 #include <stdint.h>
-
-#include "os.h"
-#include "ux.h"
-
 #include "io.h"
 #include "globals.h"
 #include "sw.h"

@@ -1,11 +1,12 @@
 #include "sign_tx.h"
 #include "../globals.h"
 #include "sw.h"
-#include "../parse.h"
-#include "cx.h"
+#include "../tx_parser.h"
 #include "send_response.h"
 #include "crypto.h"
 #include "common/format.h"
+#include "../ui/ui.h"
+
 int handler_sign_tx(buffer_t *cdata, bool is_first_chunk, bool more) {
     if (is_first_chunk) {
         explicit_bzero(&G_context, sizeof(G_context));
@@ -25,7 +26,7 @@ int handler_sign_tx(buffer_t *cdata, bool is_first_chunk, bool more) {
         if (G_context.req_type != CONFIRM_TRANSACTION) {
             return io_send_sw(SW_BAD_STATE);
         }
-        memcpy(G_context.tx_info.raw, cdata->ptr, cdata->size);
+        memcpy(G_context.tx_info.raw + G_context.tx_info.rawLength, cdata->ptr, cdata->size);
         G_context.tx_info.rawLength += cdata->size;
     }
 
@@ -39,11 +40,5 @@ int handler_sign_tx(buffer_t *cdata, bool is_first_chunk, bool more) {
     }
     PRINTF("tx parsed\n");
 
-    // TODO
-    if (crypto_sign_message() < 0) {
-        io_send_sw(SW_SIGNATURE_FAIL);
-    } else {
-        helper_send_response_sig();
-    }
-    return 0;
+    return ui_approve_tx_init();
 };
