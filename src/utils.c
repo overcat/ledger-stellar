@@ -4,7 +4,7 @@
 #include "common/format.h"
 #include <stdlib.h>
 #include <stdint.h>
-#include <bsd/string.h>
+#include <string.h>
 #include <stdio.h>
 #include <time.h>
 
