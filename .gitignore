@@ -6,3 +6,6 @@ debug/
 dep/
 obj/
 unit-tests/build/
+tests_zemu/node_modules/
+tests_zemu/snapshots-tmp/
+tests_zemu/elfs/stellar_*.elf
