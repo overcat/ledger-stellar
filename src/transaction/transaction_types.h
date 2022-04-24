@@ -4,7 +4,6 @@
 #include <stdint.h>  // uint*_t
 #include <stdbool.h>
 
-
 #define ENCODED_ED25519_PUBLIC_KEY_LENGTH  57
 #define ENCODED_ED25519_PRIVATE_KEY_LENGTH 57
 #define ENCODED_HASH_X_KEY_LENGTH          57
