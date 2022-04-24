@@ -7,5 +7,5 @@ module.exports = {
   transformIgnorePatterns: ['^.+\\.js$'],
   // globalSetup: "<rootDir>/tests/globalsetup.ts",
   // Stop immediatly when a test fail
-  bail: true,
+  bail: false,
 };
