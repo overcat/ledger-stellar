@@ -23,7 +23,6 @@
 #include "../sw.h"
 #include "../handler/handler.h"
 
-
 int apdu_dispatcher(const command_t *cmd) {
     if (cmd->cla != CLA) {
         return io_send_sw(SW_CLA_NOT_SUPPORTED);
