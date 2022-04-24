@@ -10,7 +10,7 @@ on:
     types: [ created ]
 
 jobs:
-  job_nanoS_build_debug:
+  job_nanos_build_debug:
     name: Build debug app for NanoS
     runs-on: ubuntu-latest
 
@@ -28,10 +28,10 @@ jobs:
       - name: Upload app binary
         uses: actions/upload-artifact@v2
         with:
-          name: stellar-app-nanoS-debug
+          name: stellar-app-nanos-debug
           path: bin
 
-  job_nanoX_build_debug:
+  job_nanox_build_debug:
     name: Build debug app for NanoX
     runs-on: ubuntu-latest
 
@@ -49,7 +49,28 @@ jobs:
       - name: Upload app binary
         uses: actions/upload-artifact@v2
         with:
-          name: stellar-app-nanoX-debug
+          name: stellar-app-nanox-debug
+          path: bin
+
+  job_nanosp_build_debug:
+    name: Build debug app for NanoSP
+    runs-on: ubuntu-latest
+
+    container:
+      image: ghcr.io/ledgerhq/ledger-app-builder/ledger-app-builder:latest
+
+    steps:
+      - name: Clone
+        uses: actions/checkout@v2
+
+      - name: Build
+        run: |
+          make DEBUG=1 BOLOS_SDK=$NANOSP_SDK
+
+      - name: Upload app binary
+        uses: actions/upload-artifact@v2
+        with:
+          name: stellar-app-nanosp-debug
           path: bin
 
   job_scan_build:
@@ -111,3 +132,47 @@ jobs:
           fail_ci_if_error: true
           verbose: true
 
+  building_for_e2e_tests:
+    name: Building binaries for E2E tests
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/ledgerhq/ledger-app-builder/ledger-app-builder:latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Build testing binaries
+        run: cd tests_zemu && ./build_local_test_elfs.sh
+
+      - name: Upload app binaries
+        uses: actions/upload-artifact@v2
+        with:
+          name: e2e_elfs
+          path: ./tests_zemu/elfs/
+
+  jobs-e2e-tests:
+    name: E2E tests
+    needs: [building_for_e2e_tests]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install node
+        uses: actions/setup-node@v2
+        with:
+          node-version: "16"
+
+      - name: Build/Install build js deps
+        run: cd tests_zemu && npm install
+
+      - name: Download app binaries
+        uses: actions/download-artifact@v2
+        with:
+          path: tmp/
+
+      - name: Gather elfs
+        run: cp `find tmp/e2e_elfs/ -name "*.elf"` tests_zemu/elfs/
+
+      - name: Run zemu tests
+        run: cd tests_zemu && npm run test
