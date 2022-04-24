@@ -15,8 +15,8 @@ const defaultOptions = {
   startText: "is ready",
 };
 
-test.each(models)(`can start and stop container`, async function (m) {
-  const sim = new Zemu(m.path);
+test.each(models)("can start and stop container ($name)", async (m) => {
+  let sim = new Zemu(m.path);
   try {
     await sim.start({ ...defaultOptions, model: m.name });
   } finally {
@@ -24,8 +24,8 @@ test.each(models)(`can start and stop container`, async function (m) {
   }
 });
 
-test.each(models)("main menu", async function (m) {
-  const sim = new Zemu(m.path);
+test.each(models)("main menu ($name)",  async (m) => {
+  let sim = new Zemu(m.path);
   try {
     await sim.start({ ...defaultOptions, model: m.name });
     await sim.navigateAndCompareSnapshots(
