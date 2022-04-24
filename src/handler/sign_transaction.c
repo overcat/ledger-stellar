@@ -1,7 +1,7 @@
-#include "sign_tx.h"
+#include "handler.h"
 #include "../globals.h"
 #include "sw.h"
-#include "../tx_parser.h"
+#include "transaction/transaction_parser.h"
 #include "send_response.h"
 #include "crypto.h"
 #include "common/format.h"
@@ -38,6 +38,8 @@ int handler_sign_tx(buffer_t *cdata, bool is_first_chunk, bool more) {
     if (!parse_tx_xdr(G_context.tx_info.raw, G_context.tx_info.rawLength, &G_context.tx_info)) {
         THROW(0x6800);
     }
+
+    G_context.state = STATE_PARSED;
     PRINTF("tx parsed\n");
 
     return ui_approve_tx_init();

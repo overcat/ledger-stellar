@@ -154,4 +154,4 @@ listvariants:
 	@echo VARIANTS COIN stellar
 
 unit_tests:
-	cmake -Bunit-tests/build -Hunit-tests/ && make -C unit-tests/build/ && make -C unit-tests/build test
+	rm -rf unit-tests/build && cmake -Bunit-tests/build -Hunit-tests/ && make -C unit-tests/build/ && make -C unit-tests/build test

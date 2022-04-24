@@ -25,7 +25,7 @@ UX_STEP_NOCB(ux_tx_hash_signing_warning_step,
              pbb,
              {
                  &C_icon_warning,
-                 "Blind",
+                 "Hash",
                  "Signing",
              });
 // Step with title/text for address
@@ -58,14 +58,14 @@ UX_STEP_CB(ux_tx_hash_display_reject_step,
                &C_icon_crossmark,
                "Reject",
            });
-// FLOW to display blind signing
-// #1 screen: eye icon + "Review transaction"
-// #1 screen: warning icon + "Blind signing"
+// FLOW to display hash signing
+// #1 screen: eye icon + "Review Transaction"
+// #1 screen: warning icon + "Hash Signing"
 // #2 screen: display address
 // #3 screen: display hash
 // #4 screen: approve button
 // #5 screen: reject button
-UX_FLOW(ux_tx_blind_signing_flow,
+UX_FLOW(ux_tx_hash_signing_flow,
         &ux_tx_hash_signing_review_step,
         &ux_tx_hash_signing_warning_step,
         &ux_tx_hash_display_address_step,
@@ -73,7 +73,7 @@ UX_FLOW(ux_tx_blind_signing_flow,
         &ux_tx_hash_display_approve_step,
         &ux_tx_hash_display_reject_step);
 
-int ui_tx_blind_signing() {
+int ui_tx_hash_signing() {
     if (G_context.req_type != CONFIRM_TRANSACTION_HASH || G_context.state != STATE_NONE) {
         G_context.state = STATE_NONE;
         return io_send_sw(SW_BAD_STATE);
@@ -89,6 +89,6 @@ int ui_tx_blind_signing() {
         return io_send_sw(SW_DISPLAY_TRANSACTION_HASH_FAIL);
     }
     g_validate_callback = &ui_action_validate_transaction;
-    ux_flow_init(0, ux_tx_blind_signing_flow, NULL);
+    ux_flow_init(0, ux_tx_hash_signing_flow, NULL);
     return 0;
 }

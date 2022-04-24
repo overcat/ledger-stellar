@@ -28,6 +28,6 @@ void ui_menu_main();
  * @return 0 if success, negative integer otherwise.
  *
  */
-int ui_tx_blind_signing();
+int ui_tx_hash_signing();
 
 int ui_approve_tx_init();
