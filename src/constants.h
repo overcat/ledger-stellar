@@ -5,12 +5,10 @@
  */
 #define CLA 0xE0
 
-
 /**
  * Maximum length of MAJOR_VERSION || MINOR_VERSION || PATCH_VERSION.
  */
 #define APPVERSION_LEN 3
-
 
 /**
  * Maximum transaction length (bytes).
@@ -21,4 +19,3 @@
  * signature length (bytes).
  */
 #define SIGNATURE_SIZE 64
-

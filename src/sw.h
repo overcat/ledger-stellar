@@ -1,12 +1,12 @@
 #pragma once
 
-//const SW_OK = 0x9000;
-//const SW_CANCEL = 0x6985;
-//const SW_UNKNOWN_STELLAR_OP = 0x6c24;
-//const SW_NOT_ALLOWED = 0x6c66; // hash model not enable
-//const SW_UNSUPPORTED = 0x6d00; // unknown ins
-//const SW_KEEP_ALIVE = 0x6e02;
-//const TX_MAX_SIZE = 1540;
+// const SW_OK = 0x9000;
+// const SW_CANCEL = 0x6985;
+// const SW_UNKNOWN_STELLAR_OP = 0x6c24;
+// const SW_NOT_ALLOWED = 0x6c66; // hash model not enable
+// const SW_UNSUPPORTED = 0x6d00; // unknown ins
+// const SW_KEEP_ALIVE = 0x6e02;
+// const TX_MAX_SIZE = 1540;
 
 /**
  * Status word for success.

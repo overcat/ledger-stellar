@@ -31,7 +31,6 @@ int handler_get_app_configuration(void);
  */
 int handler_get_public_key(buffer_t *cdata, bool display);
 
-
 /**
  * Handler for INS_SIGN_TX command. If successfully parse BIP32 path
  * and transaction, sign transaction and send APDU response.

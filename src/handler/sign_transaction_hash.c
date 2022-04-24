@@ -36,5 +36,5 @@ int handler_sign_tx_hash(buffer_t *cdata) {
 
     memcpy(G_context.hash, cdata->ptr + cdata->offset, 32);
 
-    return ui_tx_blind_signing();
+    return ui_tx_hash_signing();
 };

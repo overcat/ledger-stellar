@@ -22,7 +22,7 @@ typedef enum {
     INS_GET_PUBLIC_KEY = 0x02,         /// public key of corresponding BIP32 path
     INS_SIGN_TX = 0x04,                /// sign transaction with BIP32 path
     INS_GET_APP_CONFIGURATION = 0x06,  /// app configuration of the application
-    INS_SIGN_TX_HASH = 0x08,       /// sign transaction in hash mode
+    INS_SIGN_TX_HASH = 0x08,           /// sign transaction in hash mode
 } command_e;
 
 /**
@@ -65,9 +65,9 @@ typedef struct {
     uint32_t bip32_path[MAX_BIP32_PATH];  /// BIP32 path
     uint8_t raw_public_key[32];
     uint8_t signature[64];
-    state_e state;  /// state of the context
-    request_type_e req_type;              /// user request
-    uint8_t bip32_path_len;               /// length of BIP32 path
+    state_e state;            /// state of the context
+    request_type_e req_type;  /// user request
+    uint8_t bip32_path_len;   /// length of BIP32 path
 } global_ctx_t;
 
 typedef struct {

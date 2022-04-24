@@ -4,7 +4,7 @@
 
 void ui_idle(void);
 void display_settings(const ux_flow_step_t* const start_step);
-void switch_settings_blind_signing();
+void switch_settings_hash_signing();
 
 static char g_hash_signing[12] = {0};
 
@@ -14,7 +14,7 @@ static char g_hash_signing[12] = {0};
 #if defined(TARGET_NANOS)
 UX_STEP_CB(ux_settings_hash_signing_step,
            bnnn_paging,
-           switch_settings_blind_signing(),
+           switch_settings_hash_signing(),
            {
                .title = "Hash signing",
                .text = g_hash_signing,
@@ -22,7 +22,7 @@ UX_STEP_CB(ux_settings_hash_signing_step,
 #else
 UX_STEP_CB(ux_settings_hash_signing_step,
            bnnn,
-           switch_settings_blind_signing(),
+           switch_settings_hash_signing(),
            {
                "Hash signing",
                "Enable transaction",
@@ -76,7 +76,7 @@ void display_settings(const ux_flow_step_t* const start_step) {
     ux_flow_init(0, ux_settings_flow, start_step);
 }
 
-void switch_settings_blind_signing() {
+void switch_settings_hash_signing() {
     app_mode_reverse_hash_signing_enabled();
     display_settings(&ux_settings_hash_signing_step);
 }
