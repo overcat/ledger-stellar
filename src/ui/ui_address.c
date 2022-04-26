@@ -52,7 +52,9 @@ int ui_display_address() {
     }
 
     memset(G_ui_detail_value, 0, sizeof(G_ui_detail_value));
-    if (!encode_ed25519_public_key(G_context.raw_public_key, G_ui_detail_value, sizeof(G_ui_detail_value))) {
+    if (!encode_ed25519_public_key(G_context.raw_public_key,
+                                   G_ui_detail_value,
+                                   sizeof(G_ui_detail_value))) {
         return io_send_sw(SW_DISPLAY_ADDRESS_FAIL);
     }
     g_validate_callback = &ui_action_validate_pubkey;

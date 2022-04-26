@@ -8,7 +8,6 @@
 #include "action/validate.h"
 #include "../common/format.h"
 
-
 static void display_next_state(bool is_upper_border);
 
 // Step with icon and text
