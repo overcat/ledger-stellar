@@ -39,7 +39,8 @@ extern global_ctx_t G_context;
 
 extern swap_values_t G_swap_values;
 
-extern char detailCaption[DETAIL_CAPTION_MAX_SIZE];
-extern char detailValue[DETAIL_VALUE_MAX_SIZE];
-
-extern volatile uint8_t current_state;  // Dynamic screen?
+extern char G_ui_detail_caption[DETAIL_CAPTION_MAX_SIZE];
+extern char G_ui_detail_value[DETAIL_VALUE_MAX_SIZE];
+extern volatile uint8_t G_ui_current_state;  // Dynamic screen?
+extern uint8_t G_ui_current_data_index;
+extern action_validate_cb g_validate_callback;

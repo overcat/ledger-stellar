@@ -7,6 +7,11 @@
 #include "transaction/transaction_types.h"
 
 /**
+ * Callback to reuse action with approve/reject in step FLOW.
+ */
+typedef void (*action_validate_cb)(bool);
+
+/**
  * Enumeration for the status of IO.
  */
 typedef enum {

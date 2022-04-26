@@ -15,7 +15,7 @@ UX_STEP_CB(ux_settings_hash_signing_step,
            switch_settings_hash_signing(),
            {
                .title = "Hash signing",
-               .text = detailValue,
+               .text = G_ui_detail_value,
            });
 #else
 UX_STEP_CB(ux_settings_hash_signing_step,
@@ -25,7 +25,7 @@ UX_STEP_CB(ux_settings_hash_signing_step,
                "Hash signing",
                "Enable transaction",
                "hash signing",
-               detailValue,
+               G_ui_detail_value,
            });
 #endif
 UX_STEP_CB(ux_settings_exit_step,
@@ -70,7 +70,7 @@ void ui_idle(void) {
 }
 
 void display_settings(const ux_flow_step_t* const start_step) {
-    strlcpy(detailValue,
+    strlcpy(G_ui_detail_value,
             (app_mode_hash_signing_enabled() ? "Enabled" : "NOT Enabled"),
             DETAIL_VALUE_MAX_SIZE);
     ux_flow_init(0, ux_settings_flow, start_step);

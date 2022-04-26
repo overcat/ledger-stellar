@@ -14,14 +14,14 @@ typedef void (*format_function_t)(tx_ctx_t *txCtx);
 /* the current formatter */
 extern format_function_t formatter_stack[MAX_FORMATTERS_PER_OPERATION];
 extern int8_t formatter_index;
-extern uint8_t current_data_index;
 
 /* the current details printed by the formatter */
-extern char opCaption[OPERATION_CAPTION_MAX_SIZE];
+extern char op_caption[OPERATION_CAPTION_MAX_SIZE];
 
 #ifdef TEST
-extern char detailCaption[DETAIL_CAPTION_MAX_SIZE];
-extern char detailValue[DETAIL_VALUE_MAX_SIZE];
+extern uint8_t G_ui_current_data_index;
+extern char G_ui_detail_caption[DETAIL_CAPTION_MAX_SIZE];
+extern char G_ui_detail_value[DETAIL_VALUE_MAX_SIZE];
 #endif  // TEST
 
 void set_state_data(bool forward);

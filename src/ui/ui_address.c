@@ -8,8 +8,6 @@
 #include "action/validate.h"
 #include "../common/format.h"
 
-static action_validate_cb g_validate_callback;
-
 // Step with icon and text
 UX_STEP_NOCB(ux_display_confirm_addr_step, pnn, {&C_icon_eye, "Confirm", "Address"});
 // Step with title/text for address
@@ -17,7 +15,7 @@ UX_STEP_NOCB(ux_display_address_step,
              bnnn_paging,
              {
                  .title = "Address",
-                 .text = detailValue,
+                 .text = G_ui_detail_value,
              });
 // Step with approve button
 UX_STEP_CB(ux_display_approve_step,
@@ -53,8 +51,8 @@ int ui_display_address() {
         return io_send_sw(SW_BAD_STATE);
     }
 
-    memset(detailValue, 0, sizeof(detailValue));
-    if (!encode_ed25519_public_key(G_context.raw_public_key, detailValue, sizeof(detailValue))) {
+    memset(G_ui_detail_value, 0, sizeof(G_ui_detail_value));
+    if (!encode_ed25519_public_key(G_context.raw_public_key, G_ui_detail_value, sizeof(G_ui_detail_value))) {
         return io_send_sw(SW_DISPLAY_ADDRESS_FAIL);
     }
     g_validate_callback = &ui_action_validate_pubkey;
