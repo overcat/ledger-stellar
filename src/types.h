@@ -9,7 +9,7 @@
 /**
  * Callback to reuse action with approve/reject in step FLOW.
  */
-typedef void (*action_validate_cb)(bool);
+typedef void (*ui_action_validate_cb)(bool);
 
 /**
  * Enumeration for the status of IO.

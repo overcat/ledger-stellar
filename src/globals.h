@@ -43,4 +43,4 @@ extern char G_ui_detail_caption[DETAIL_CAPTION_MAX_SIZE];
 extern char G_ui_detail_value[DETAIL_VALUE_MAX_SIZE];
 extern volatile uint8_t G_ui_current_state;  // Dynamic screen?
 extern uint8_t G_ui_current_data_index;
-extern action_validate_cb g_validate_callback;
+extern ui_action_validate_cb G_ui_validate_callback;

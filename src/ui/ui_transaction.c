@@ -47,7 +47,7 @@ UX_STEP_INIT(
 UX_STEP_CB(
     ux_confirm_tx_finalize_step,
     pnn,
-    g_validate_callback(true),
+    G_ui_validate_callback(true),
     {
       &C_icon_validate_14,
       "Finalize",
@@ -57,7 +57,7 @@ UX_STEP_CB(
 UX_STEP_CB(
     ux_reject_tx_flow_step,
     pb,
-    g_validate_callback(false),
+    G_ui_validate_callback(false),
     {
       &C_icon_crossmark,
       "Cancel",
@@ -147,7 +147,7 @@ int ui_approve_tx_init(void) {
     num_data = G_context.tx_info.txDetails.opCount;
     G_ui_current_data_index = 0;
     G_ui_current_state = OUT_OF_BORDERS;
-    g_validate_callback = &ui_action_validate_transaction;
+    G_ui_validate_callback = &ui_action_validate_transaction;
     ux_flow_init(0, ux_confirm_flow, NULL);
     return 0;
 }

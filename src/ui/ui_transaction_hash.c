@@ -50,7 +50,7 @@ UX_STEP_INIT(ux_tx_init_lower_border, NULL, NULL, { display_next_state(false); }
 // Step with approve button
 UX_STEP_CB(ux_tx_hash_display_approve_step,
            pb,
-           (*g_validate_callback)(true),
+           (*G_ui_validate_callback)(true),
            {
                &C_icon_validate_14,
                "Approve",
@@ -58,7 +58,7 @@ UX_STEP_CB(ux_tx_hash_display_approve_step,
 // Step with reject button
 UX_STEP_CB(ux_tx_hash_display_reject_step,
            pb,
-           (*g_validate_callback)(false),
+           (*G_ui_validate_callback)(false),
            {
                &C_icon_crossmark,
                "Reject",
@@ -200,7 +200,7 @@ int ui_approve_tx_hash_init() {
     // if (!format_hex(G_context.hash, 32, g_hash, sizeof(g_hash))) {
     //     return io_send_sw(SW_DISPLAY_TRANSACTION_HASH_FAIL);
     // }
-    g_validate_callback = &ui_action_validate_transaction;
+    G_ui_validate_callback = &ui_action_validate_transaction;
     ux_flow_init(0, ux_tx_hash_signing_flow, NULL);
     return 0;
 }

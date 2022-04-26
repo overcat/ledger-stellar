@@ -20,7 +20,7 @@ UX_STEP_NOCB(ux_display_address_step,
 // Step with approve button
 UX_STEP_CB(ux_display_approve_step,
            pb,
-           (*g_validate_callback)(true),
+           (*G_ui_validate_callback)(true),
            {
                &C_icon_validate_14,
                "Approve",
@@ -28,7 +28,7 @@ UX_STEP_CB(ux_display_approve_step,
 // Step with reject button
 UX_STEP_CB(ux_display_reject_step,
            pb,
-           (*g_validate_callback)(false),
+           (*G_ui_validate_callback)(false),
            {
                &C_icon_crossmark,
                "Reject",
@@ -57,7 +57,7 @@ int ui_display_address() {
                                    sizeof(G_ui_detail_value))) {
         return io_send_sw(SW_DISPLAY_ADDRESS_FAIL);
     }
-    g_validate_callback = &ui_action_validate_pubkey;
+    G_ui_validate_callback = &ui_action_validate_pubkey;
     ux_flow_init(0, ux_display_pubkey_flow, NULL);
     return 0;
 }
