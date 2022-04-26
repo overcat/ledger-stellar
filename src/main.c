@@ -36,11 +36,10 @@ char detailCaption[DETAIL_CAPTION_MAX_SIZE];
 char detailValue[DETAIL_VALUE_MAX_SIZE];
 volatile uint8_t current_state;
 
-    /**
-     * Handle APDU command received and send back APDU response using handlers.
-     */
-    void
-    app_main() {
+/**
+ * Handle APDU command received and send back APDU response using handlers.
+ */
+void app_main() {
     // Length of APDU command received in G_io_apdu_buffer
     int input_len = 0;
     // Structured APDU command
