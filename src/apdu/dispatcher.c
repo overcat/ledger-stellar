@@ -18,7 +18,6 @@
 #include <stdbool.h>
 
 #include "dispatcher.h"
-#include "../constants.h"
 #include "../globals.h"
 #include "../sw.h"
 #include "../handler/handler.h"

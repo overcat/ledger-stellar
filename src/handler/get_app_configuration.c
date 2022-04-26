@@ -24,7 +24,6 @@
 #include <assert.h>  // _Static_assert
 
 #include "../globals.h"
-#include "../constants.h"
 #include "../io.h"
 #include "../sw.h"
 #include "../types.h"
