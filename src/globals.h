@@ -41,3 +41,7 @@ extern swap_values_t G_swap_values;
 
 extern char detailCaption[DETAIL_CAPTION_MAX_SIZE];
 extern char detailValue[DETAIL_VALUE_MAX_SIZE];
+
+extern volatile uint8_t current_state;  // Dynamic screen?
+#define INSIDE_BORDERS 0
+#define OUT_OF_BORDERS 1

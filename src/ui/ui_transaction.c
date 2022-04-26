@@ -11,12 +11,9 @@
 
 static action_validate_cb g_validate_callback;
 
-#define INSIDE_BORDERS 0
-#define OUT_OF_BORDERS 1
-uint8_t num_data;
-volatile uint8_t current_state;  // Dynamic screen?
+static uint8_t num_data;
 
-void display_next_state(bool is_upper_border);
+static void display_next_state(bool is_upper_border);
 // clang-format off
 UX_STEP_NOCB(
     ux_confirm_tx_init_flow_step,
@@ -80,7 +77,7 @@ UX_FLOW(ux_confirm_flow,
 );
 
 
-void display_next_state(bool is_upper_border) {
+static void display_next_state(bool is_upper_border) {
     PRINTF(
         "display_next_state invoked. is_upper_border = %d, current_state = %d, formatter_index = "
         "%d, current_data_index = %d\n",
@@ -143,7 +140,7 @@ int ui_approve_tx_init(void) {
         G_context.state = STATE_NONE;
         return io_send_sw(SW_BAD_STATE);
     }
-
+    current_state = 0;
     G_context.tx_info.offset = 0;
     formatter_index = 0;
     explicit_bzero(formatter_stack, sizeof(formatter_stack));
