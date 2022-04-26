@@ -32,6 +32,9 @@ io_state_e G_io_state;
 global_ctx_t G_context;
 swap_values_t G_swap_values;
 
+char detailCaption[DETAIL_CAPTION_MAX_SIZE];
+char detailValue[DETAIL_VALUE_MAX_SIZE];
+
 /**
  * Handle APDU command received and send back APDU response using handlers.
  */

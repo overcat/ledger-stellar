@@ -38,3 +38,6 @@ extern io_state_e G_io_state;
 extern global_ctx_t G_context;
 
 extern swap_values_t G_swap_values;
+
+extern char detailCaption[DETAIL_CAPTION_MAX_SIZE];
+extern char detailValue[DETAIL_VALUE_MAX_SIZE];

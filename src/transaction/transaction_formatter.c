@@ -8,8 +8,6 @@
 #include "transaction_formatter.h"
 
 char opCaption[OPERATION_CAPTION_MAX_SIZE];
-char detailCaption[DETAIL_CAPTION_MAX_SIZE];
-char detailValue[DETAIL_VALUE_MAX_SIZE];
 
 format_function_t formatter_stack[MAX_FORMATTERS_PER_OPERATION];
 int8_t formatter_index;
