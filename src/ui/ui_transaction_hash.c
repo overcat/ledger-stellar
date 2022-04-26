@@ -186,7 +186,7 @@ static void display_next_state(bool is_upper_delimiter) {
     }
 }
 
-int ui_tx_hash_signing() {
+int ui_approve_tx_hash_init() {
     if (G_context.req_type != CONFIRM_TRANSACTION_HASH || G_context.state != STATE_NONE) {
         G_context.state = STATE_NONE;
         return io_send_sw(SW_BAD_STATE);
