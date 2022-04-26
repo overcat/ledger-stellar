@@ -32,6 +32,12 @@ io_state_e G_io_state;
 global_ctx_t G_context;
 swap_values_t G_swap_values;
 
+char G_ui_detail_caption[DETAIL_CAPTION_MAX_SIZE];
+char G_ui_detail_value[DETAIL_VALUE_MAX_SIZE];
+volatile uint8_t G_ui_current_state;
+uint8_t G_ui_current_data_index;
+action_validate_cb g_validate_callback;
+
 /**
  * Handle APDU command received and send back APDU response using handlers.
  */

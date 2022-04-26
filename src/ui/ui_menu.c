@@ -6,8 +6,6 @@ void ui_idle(void);
 void display_settings(const ux_flow_step_t* const start_step);
 void switch_settings_hash_signing();
 
-static char g_hash_signing[12] = {0};
-
 // FLOW for the settings menu:
 // #1 screen: enable hash signing
 // #2 screen: quit
@@ -17,7 +15,7 @@ UX_STEP_CB(ux_settings_hash_signing_step,
            switch_settings_hash_signing(),
            {
                .title = "Hash signing",
-               .text = g_hash_signing,
+               .text = G_ui_detail_value,
            });
 #else
 UX_STEP_CB(ux_settings_hash_signing_step,
@@ -27,7 +25,7 @@ UX_STEP_CB(ux_settings_hash_signing_step,
                "Hash signing",
                "Enable transaction",
                "hash signing",
-               g_hash_signing,
+               G_ui_detail_value,
            });
 #endif
 UX_STEP_CB(ux_settings_exit_step,
@@ -72,7 +70,9 @@ void ui_idle(void) {
 }
 
 void display_settings(const ux_flow_step_t* const start_step) {
-    strlcpy(g_hash_signing, (app_mode_hash_signing_enabled() ? "Enabled" : "NOT Enabled"), 12);
+    strlcpy(G_ui_detail_value,
+            (app_mode_hash_signing_enabled() ? "Enabled" : "NOT Enabled"),
+            DETAIL_VALUE_MAX_SIZE);
     ux_flow_init(0, ux_settings_flow, start_step);
 }
 

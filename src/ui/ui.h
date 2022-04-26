@@ -4,10 +4,9 @@
 #include "os.h"
 #include "ux.h"
 #include "glyphs.h"
-/**
- * Callback to reuse action with approve/reject in step FLOW.
- */
-typedef void (*action_validate_cb)(bool);
+
+#define INSIDE_BORDERS 0
+#define OUT_OF_BORDERS 1
 
 /**
  * Display address on the device and ask confirmation to export.
@@ -28,6 +27,6 @@ void ui_menu_main();
  * @return 0 if success, negative integer otherwise.
  *
  */
-int ui_tx_hash_signing();
+int ui_approve_tx_hash_init();
 
 int ui_approve_tx_init();
