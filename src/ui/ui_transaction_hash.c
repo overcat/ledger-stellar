@@ -25,6 +25,7 @@ UX_STEP_NOCB(ux_tx_hash_signing_warning_step,
                  "Hash",
                  "Signing",
              });
+// what we're doing here is a little more complicated due to the need to reduce memory usage
 UX_STEP_INIT(ux_tx_init_upper_border, NULL, NULL, { display_next_state(true); });
 UX_STEP_NOCB(ux_tx_variable_display,
              bnnn_paging,
@@ -190,16 +191,6 @@ int ui_approve_tx_hash_init() {
     }
     G_ui_current_state = OUT_OF_BORDERS;
     G_ui_current_data_index = 0;
-
-    // memset(g_address, 0, sizeof(g_address));
-    // if (!encode_ed25519_public_key(G_context.raw_public_key, g_address, sizeof(g_address))) {
-    //     return io_send_sw(SW_DISPLAY_ADDRESS_FAIL);
-    // }
-
-    // memset(g_hash, 0, sizeof(g_hash));
-    // if (!format_hex(G_context.hash, 32, g_hash, sizeof(g_hash))) {
-    //     return io_send_sw(SW_DISPLAY_TRANSACTION_HASH_FAIL);
-    // }
     G_ui_validate_callback = &ui_action_validate_transaction;
     ux_flow_init(0, ux_tx_hash_signing_flow, NULL);
     return 0;

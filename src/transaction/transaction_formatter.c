@@ -8,6 +8,7 @@
 #include "transaction_formatter.h"
 
 char op_caption[OPERATION_CAPTION_MAX_SIZE];
+#define MEMCLEAR(dest) explicit_bzero(&dest, sizeof(dest));
 
 #ifdef TEST
 uint8_t G_ui_current_data_index;

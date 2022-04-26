@@ -14,7 +14,9 @@
 /**
  * Maximum length of MAJOR_VERSION || MINOR_VERSION || PATCH_VERSION.
  */
-#define APPVERSION_LEN 3
+#define APP_VERSION_LEN 3
+
+#define APP_CONFIGURATION_SIZE 1
 
 /**
  * Maximum transaction length (bytes).

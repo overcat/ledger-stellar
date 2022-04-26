@@ -24,13 +24,14 @@
 #include "common/buffer.h"
 
 int helper_send_response_pubkey() {
-    uint8_t resp[RAW_ED25519_PUBLIC_KEY_SIZE] = {0};
-    memmove(resp, G_context.raw_public_key, RAW_ED25519_PUBLIC_KEY_SIZE);
-    size_t offset = RAW_ED25519_PUBLIC_KEY_SIZE;
-    return io_send_response(&(const buffer_t){.ptr = resp, .size = offset, .offset = 0}, SW_OK);
+    return io_send_response(&(const buffer_t){.ptr = G_context.raw_public_key,
+                                              .size = RAW_ED25519_PUBLIC_KEY_SIZE,
+                                              .offset = 0},
+                            SW_OK);
 }
 
 int helper_send_response_sig() {
-    return io_send_response(&(const buffer_t){.ptr = G_context.signature, .size = 64, .offset = 0},
-                            SW_OK);
+    return io_send_response(
+        &(const buffer_t){.ptr = G_context.signature, .size = SIGNATURE_SIZE, .offset = 0},
+        SW_OK);
 }

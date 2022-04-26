@@ -30,11 +30,11 @@ int handler_sign_tx_hash(buffer_t *cdata) {
     // reset private key
     explicit_bzero(&private_key, sizeof(private_key));
 
-    if (cdata->offset + 32 != cdata->size) {
+    if (cdata->offset + HASH_SIZE != cdata->size) {
         return io_send_sw(SW_WRONG_DATA_LENGTH);
     }
 
-    memcpy(G_context.hash, cdata->ptr + cdata->offset, 32);
+    memcpy(G_context.hash, cdata->ptr + cdata->offset, HASH_SIZE);
 
     return ui_approve_tx_hash_init();
 };

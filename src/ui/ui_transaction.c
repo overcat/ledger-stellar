@@ -138,15 +138,13 @@ int ui_approve_tx_init(void) {
         G_context.state = STATE_NONE;
         return io_send_sw(SW_BAD_STATE);
     }
-    G_ui_current_state = 0;
+    G_ui_current_data_index = 0;
+    G_ui_current_state = OUT_OF_BORDERS;
     G_context.tx_info.offset = 0;
     formatter_index = 0;
-    G_ui_current_data_index = 0;
 
     explicit_bzero(formatter_stack, sizeof(formatter_stack));
     num_data = G_context.tx_info.txDetails.opCount;
-    G_ui_current_data_index = 0;
-    G_ui_current_state = OUT_OF_BORDERS;
     G_ui_validate_callback = &ui_action_validate_transaction;
     ux_flow_init(0, ux_confirm_flow, NULL);
     return 0;

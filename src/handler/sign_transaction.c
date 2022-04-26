@@ -30,13 +30,17 @@ int handler_sign_tx(buffer_t *cdata, bool is_first_chunk, bool more) {
         G_context.tx_info.rawLength += cdata->size;
     }
 
+    if (G_context.tx_info.rawLength > MAX_RAW_TX) {
+        return io_send_sw(SW_BAD_STATE);  // TODO: code
+    }
+
     if (more) {
         return io_send_sw(SW_OK);
     }
     cx_hash_sha256(G_context.tx_info.raw, G_context.tx_info.rawLength, G_context.hash, HASH_SIZE);
 
     if (!parse_tx_xdr(G_context.tx_info.raw, G_context.tx_info.rawLength, &G_context.tx_info)) {
-        THROW(0x6800);
+        THROW(0x6800);  // TODO
     }
 
     G_context.state = STATE_PARSED;
