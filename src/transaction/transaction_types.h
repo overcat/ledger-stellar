@@ -4,6 +4,10 @@
 #include <stdint.h>  // uint*_t
 #include <stdbool.h>
 
+// ------------------------------------------------------------------------- //
+//                       TRANSACTION PARSING CONSTANTS                       //
+// ------------------------------------------------------------------------- //
+
 #define ENCODED_ED25519_PUBLIC_KEY_LENGTH  57
 #define ENCODED_ED25519_PRIVATE_KEY_LENGTH 57
 #define ENCODED_HASH_X_KEY_LENGTH          57
@@ -22,27 +26,24 @@
 #define VERSION_BYTE_HASH_X              23 << 3
 #define VERSION_BYTE_MUXED_ACCOUNT       12 << 3
 
-/* Max transaction size */
-#define MAX_RAW_TX 1120
+#define ASSET_CODE_MAX_LENGTH        13
+#define CLAIMANTS_MAX_LENGTH         10
+#define PATH_PAYMENT_MAX_PATH_LENGTH 5
+
 /* For sure not more than 35 operations will fit in that */
 #define MAX_OPS 35
-/* Although SEP-0005 only allows 3 bip32 path elements we support more */
-#define MAX_BIP32_LEN 10
 
 /* max amount is max int64 scaled down: "922337203685.4775807" */
-// TODO: "18446744073709551615"
-#define AMOUNT_MAX_SIZE 21
-#define HASH_MAX_SIZE   36
+#define AMOUNT_MAX_LENGTH 21
 
-#define HASH_SIZE                 32
-#define LIQUIDITY_POOL_ID_SIZE    32
-#define ED25519_PUBLIC_KEY_LEN    32
-#define ED25519_PUBLIC_STRKEY_LEN 56
-#define MUXED_ACCOUNT_STRKEY_LEN  69
+#define HASH_SIZE              32
+#define LIQUIDITY_POOL_ID_SIZE 32
 
-// ------------------------------------------------------------------------- //
-//                       TRANSACTION PARSING CONSTANTS                       //
-// ------------------------------------------------------------------------- //
+#define PUBLIC_KEY_TYPE_ED25519 0
+#define MEMO_TEXT_MAX_SIZE      28
+#define DATA_NAME_MAX_SIZE      64
+#define DATA_VALUE_MAX_SIZE     64
+#define HOME_DOMAIN_MAX_SIZE    32
 
 typedef enum {
     ASSET_TYPE_NATIVE = 0,
@@ -64,9 +65,11 @@ typedef enum {
     ENVELOPE_TYPE_TX_FEE_BUMP = 5,
 } EnvelopeType;
 
+// TODO: enum
 #define NETWORK_TYPE_PUBLIC  0
 #define NETWORK_TYPE_TEST    1
 #define NETWORK_TYPE_UNKNOWN 2
+static const char *NETWORK_NAMES[3] = {"Public", "Testnet", "Unknown"};
 
 typedef enum {
     XDR_OPERATION_TYPE_CREATE_ACCOUNT = 0,
@@ -94,36 +97,6 @@ typedef enum {
     XDR_OPERATION_TYPE_LIQUIDITY_POOL_DEPOSIT = 22,
     XDR_OPERATION_TYPE_LIQUIDITY_POOL_WITHDRAW = 23,
 } xdr_operation_type_e;
-
-#define PUBLIC_KEY_TYPE_ED25519 0
-#define MEMO_TEXT_MAX_SIZE      28
-#define DATA_NAME_MAX_SIZE      64
-#define DATA_VALUE_MAX_SIZE     64
-#define HOME_DOMAIN_MAX_SIZE    32
-
-// ------------------------------------------------------------------------- //
-//                             DISPLAY CONSTANTS                             //
-// ------------------------------------------------------------------------- //
-
-/*
- * Longest string will be "Operation ii of nn"
- */
-#define OPERATION_CAPTION_MAX_SIZE 20
-
-/*
- * Captions don't scroll so there is no use in having more capacity than can fit on screen at once.
- */
-#define DETAIL_CAPTION_MAX_SIZE 20
-
-/*
- * DETAIL_VALUE_MAX_SIZE value of 89 is due to the maximum length of managed data value which can be
- * 64 bytes long. Managed data values are displayed as base64 encoded strings, which are
- * 4*((len+2)/3) characters long. (An additional slot is required for the end-of-string character of
- * course)
- */
-#define DETAIL_VALUE_MAX_SIZE 89
-
-static const char *NETWORK_NAMES[3] = {"Public", "Testnet", "Unknown"};
 
 // ------------------------------------------------------------------------- //
 //                           TYPE DEFINITIONS                                //
@@ -248,7 +221,7 @@ typedef struct {
     int64_t destAmount;        // amount they end up with
     Asset sendAsset;           // asset we pay with
     Asset destAsset;           // what they end up with
-    Asset path[5];             // additional hops it must go through to get there
+    Asset path[PATH_PAYMENT_MAX_PATH_LENGTH];  // additional hops it must go through to get there
     uint8_t pathLen;
 } PathPaymentStrictReceiveOp;
 
@@ -281,15 +254,15 @@ typedef struct {
 } ManageBuyOfferOp;
 
 typedef struct {
-    MuxedAccount destination;  // recipient of the payment
-    int64_t sendAmount;        // amount of sendAsset to send (excluding fees)
-                               // The operation will fail if can't be met
-    int64_t destMin;           // the minimum amount of dest asset to
-                               // be received
-                               // The operation will fail if it can't be met
-    Asset sendAsset;           // asset we pay with
-    Asset destAsset;           // what they end up with
-    Asset path[5];             // additional hops it must go through to get there
+    MuxedAccount destination;                  // recipient of the payment
+    int64_t sendAmount;                        // amount of sendAsset to send (excluding fees)
+                                               // The operation will fail if can't be met
+    int64_t destMin;                           // the minimum amount of dest asset to
+                                               // be received
+                                               // The operation will fail if it can't be met
+    Asset sendAsset;                           // asset we pay with
+    Asset destAsset;                           // what they end up with
+    Asset path[PATH_PAYMENT_MAX_PATH_LENGTH];  // additional hops it must go through to get there
     uint8_t pathLen;
 } PathPaymentStrictSendOp;
 
@@ -301,7 +274,7 @@ typedef struct {
 
 typedef struct {
     AccountID trustor;
-    char assetCode[13];
+    char assetCode[ASSET_CODE_MAX_LENGTH];
     // One of 0, AUTHORIZED_FLAG, or AUTHORIZED_TO_MAINTAIN_LIABILITIES_FLAG.
     uint32_t authorize;
 } AllowTrustOp;
@@ -376,7 +349,7 @@ typedef struct {
     Asset asset;
     int64_t amount;
     uint8_t claimantLen;
-    Claimant claimants[10];
+    Claimant claimants[CLAIMANTS_MAX_LENGTH];
 } CreateClaimableBalanceOp;
 
 typedef enum {
@@ -385,7 +358,7 @@ typedef enum {
 
 typedef struct {
     ClaimableBalanceIDType type;
-    uint8_t v0[32];
+    uint8_t v0[HASH_SIZE];
 } ClaimableBalanceID;
 
 typedef struct {
@@ -564,13 +537,3 @@ typedef struct {
     MuxedAccount feeSource;
     int64_t fee;
 } FeeBumpTransactionDetails;
-
-typedef struct {
-    uint8_t raw[MAX_RAW_TX];
-    uint32_t rawLength;
-    uint16_t offset;
-    uint8_t network;
-    EnvelopeType envelopeType;
-    FeeBumpTransactionDetails feeBumpTxDetails;
-    TransactionDetails txDetails;
-} tx_ctx_t;

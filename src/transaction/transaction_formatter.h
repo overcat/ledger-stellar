@@ -3,6 +3,11 @@
 #include <stdbool.h>  // bool
 
 /*
+ * Longest string will be "Operation ii of nn"
+ */
+#define OPERATION_CAPTION_MAX_SIZE 20
+
+/*
  * the formatter prints the details and defines the order of the details
  * by setting the next formatter to be called
  */

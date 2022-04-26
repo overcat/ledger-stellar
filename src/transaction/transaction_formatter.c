@@ -38,7 +38,7 @@ static void format_transaction_source(tx_ctx_t *txCtx) {
         txCtx->txDetails.sourceAccount.type == KEY_TYPE_ED25519 &&
         memcmp(txCtx->txDetails.sourceAccount.ed25519,
                G_context.raw_public_key,
-               ED25519_PUBLIC_KEY_LEN) == 0) {
+               RAW_ED25519_PUBLIC_KEY_SIZE) == 0) {
         print_muxed_account(&txCtx->txDetails.sourceAccount,
                             G_ui_detail_value,
                             DETAIL_VALUE_MAX_SIZE,
@@ -237,10 +237,10 @@ static void format_operation_source(tx_ctx_t *txCtx) {
         txCtx->txDetails.opDetails.sourceAccount.type == KEY_TYPE_ED25519 &&
         memcmp(txCtx->txDetails.sourceAccount.ed25519,
                G_context.raw_public_key,
-               ED25519_PUBLIC_KEY_LEN) == 0 &&
+               RAW_ED25519_PUBLIC_KEY_SIZE) == 0 &&
         memcmp(txCtx->txDetails.opDetails.sourceAccount.ed25519,
                G_context.raw_public_key,
-               ED25519_PUBLIC_KEY_LEN) == 0) {
+               RAW_ED25519_PUBLIC_KEY_SIZE) == 0) {
         print_muxed_account(&txCtx->txDetails.opDetails.sourceAccount,
                             G_ui_detail_value,
                             DETAIL_VALUE_MAX_SIZE,
@@ -1564,7 +1564,7 @@ static void format_fee_bump_transaction_source(tx_ctx_t *txCtx) {
         txCtx->feeBumpTxDetails.feeSource.type == KEY_TYPE_ED25519 &&
         memcmp(txCtx->feeBumpTxDetails.feeSource.ed25519,
                G_context.raw_public_key,
-               ED25519_PUBLIC_KEY_LEN) == 0) {
+               RAW_ED25519_PUBLIC_KEY_SIZE) == 0) {
         print_muxed_account(&txCtx->feeBumpTxDetails.feeSource,
                             G_ui_detail_value,
                             DETAIL_VALUE_MAX_SIZE,

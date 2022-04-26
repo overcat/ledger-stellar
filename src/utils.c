@@ -9,6 +9,7 @@
 #include <time.h>
 
 #define MUXED_ACCOUNT_MED_25519_SIZE 43
+#define HASH_MAX_SIZE                36
 
 static const char base64Alphabet[] =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
@@ -204,7 +205,7 @@ bool print_claimable_balance_id(const ClaimableBalanceID *claimable_balance_id,
 }
 
 bool print_uint(uint64_t num, char *out, size_t out_len) {
-    char buffer[AMOUNT_MAX_SIZE];
+    char buffer[AMOUNT_MAX_LENGTH];
     uint64_t d_val = num;
     size_t i, j;
 
@@ -216,9 +217,9 @@ bool print_uint(uint64_t num, char *out, size_t out_len) {
         return true;
     }
 
-    memset(buffer, 0, AMOUNT_MAX_SIZE);
+    memset(buffer, 0, AMOUNT_MAX_LENGTH);
     for (i = 0; d_val > 0; i++) {
-        if (i >= AMOUNT_MAX_SIZE) {
+        if (i >= AMOUNT_MAX_LENGTH) {
             return false;
         }
         buffer[i] = (d_val % 10) + '0';
@@ -367,7 +368,7 @@ bool print_amount(uint64_t amount,
                   uint8_t network_id,
                   char *out,
                   size_t out_len) {
-    char buffer[AMOUNT_MAX_SIZE] = {0};
+    char buffer[AMOUNT_MAX_LENGTH] = {0};
     uint64_t dVal = amount;
     int i;
 
@@ -382,7 +383,7 @@ bool print_amount(uint64_t amount,
             i += 1;
             buffer[i] = '.';
         }
-        if (i >= AMOUNT_MAX_SIZE) {
+        if (i >= AMOUNT_MAX_LENGTH) {
             return false;
         }
     }

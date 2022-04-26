@@ -5,6 +5,7 @@
 
 #include "common/bip32.h"
 #include "transaction/transaction_types.h"
+#include "constants.h"
 
 /**
  * Callback to reuse action with approve/reject in step FLOW.
@@ -61,6 +62,20 @@ typedef enum {
 } state_e;
 
 /**
+ * Structure for transaction context.
+ *
+ */
+typedef struct {
+    uint8_t raw[MAX_RAW_TX];
+    uint32_t rawLength;
+    uint16_t offset;
+    uint8_t network;
+    EnvelopeType envelopeType;
+    FeeBumpTransactionDetails feeBumpTxDetails;
+    TransactionDetails txDetails;
+} tx_ctx_t;
+
+/**
  * Structure for global context.
  */
 typedef struct {
@@ -78,6 +93,6 @@ typedef struct {
 typedef struct {
     uint64_t amount;
     uint64_t fees;
-    char destination[ED25519_PUBLIC_STRKEY_LEN + 1];  // ed25519 address only
+    char destination[ENCODED_ED25519_PUBLIC_KEY_LENGTH];  // ed25519 address only
     char memo[20];
 } swap_values_t;
