@@ -4,6 +4,9 @@
 #include "os.h"
 #include "ux.h"
 #include "glyphs.h"
+
+#define INSIDE_BORDERS 0
+#define OUT_OF_BORDERS 1
 /**
  * Callback to reuse action with approve/reject in step FLOW.
  */
