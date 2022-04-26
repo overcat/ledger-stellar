@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdbool.h>  // bool
+
 /*
  * the formatter prints the details and defines the order of the details
  * by setting the next formatter to be called
@@ -17,5 +18,10 @@ extern uint8_t current_data_index;
 
 /* the current details printed by the formatter */
 extern char opCaption[OPERATION_CAPTION_MAX_SIZE];
+
+#ifdef TEST
+extern char detailCaption[DETAIL_CAPTION_MAX_SIZE];
+extern char detailValue[DETAIL_VALUE_MAX_SIZE];
+#endif  // TEST
 
 void set_state_data(bool forward);

@@ -9,6 +9,11 @@
 
 char opCaption[OPERATION_CAPTION_MAX_SIZE];
 
+#ifdef TEST
+char detailCaption[DETAIL_CAPTION_MAX_SIZE];
+char detailValue[DETAIL_VALUE_MAX_SIZE];
+#endif  // TEST
+
 format_function_t formatter_stack[MAX_FORMATTERS_PER_OPERATION];
 int8_t formatter_index;
 
