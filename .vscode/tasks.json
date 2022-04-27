@@ -78,7 +78,7 @@
         {
             "label": "run unit tests",
             "type": "shell",
-            "command": "make unit_tests",
+            "command": "make tests-unit",
             "group": {
                 "kind": "build",
                 "isDefault": true

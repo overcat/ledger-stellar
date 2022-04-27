@@ -1,6 +1,6 @@
 /*****************************************************************************
  *   Ledger Stellar App.
- *   (c) 2020 Ledger SAS.
+ *   (c) 2022 Ledger SAS.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,8 +20,31 @@
 #include <stdbool.h>  // bool
 
 #include "apdu_parser.h"
-#include "../types.h"
-#include "../offsets.h"
+
+/**
+ * Offset of instruction class.
+ */
+#define OFFSET_CLA 0
+/**
+ * Offset of instruction code.
+ */
+#define OFFSET_INS 1
+/**
+ * Offset of instruction parameter 1.
+ */
+#define OFFSET_P1 2
+/**
+ * Offset of instruction parameter 2.
+ */
+#define OFFSET_P2 3
+/**
+ * Offset of command data length.
+ */
+#define OFFSET_LC 4
+/**
+ * Offset of command data.
+ */
+#define OFFSET_CDATA 5
 
 bool apdu_parser(command_t *cmd, uint8_t *buf, size_t buf_len) {
     // Check minimum length and Lc field of APDU command

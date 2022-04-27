@@ -1,6 +1,6 @@
 /*****************************************************************************
  *   Ledger Stellar App.
- *   (c) 2020 Ledger SAS.
+ *   (c) 2022 Ledger SAS.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@
 #include "../crypto.h"
 #include "../common/buffer.h"
 #include "../ui/ui.h"
-#include "../helper/send_response.h"
+#include "send_response.h"
 
 int handler_get_public_key(buffer_t *cdata, bool display) {
     PRINTF("handler_get_public_key invoked\n");
@@ -56,5 +56,5 @@ int handler_get_public_key(buffer_t *cdata, bool display) {
         return ui_display_address();
     }
 
-    return helper_send_response_pubkey();
+    return send_response_pubkey();
 }

@@ -1,6 +1,6 @@
 /*****************************************************************************
  *   Ledger Stellar App.
- *   (c) 2020 Ledger SAS.
+ *   (c) 2022 Ledger SAS.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,11 +23,11 @@
 #include "../../io.h"
 #include "../../crypto.h"
 #include "../../globals.h"
-#include "../../helper/send_response.h"
+#include "send_response.h"
 
 void ui_action_validate_pubkey(bool choice) {
     if (choice) {
-        helper_send_response_pubkey();
+        send_response_pubkey();
     } else {
         io_send_sw(SW_DENY);
     }
@@ -43,7 +43,7 @@ void ui_action_validate_transaction(bool choice) {
             G_context.state = STATE_NONE;
             io_send_sw(SW_SIGNATURE_FAIL);
         } else {
-            helper_send_response_sig();
+            send_response_sig();
         }
     } else {
         G_context.state = STATE_NONE;

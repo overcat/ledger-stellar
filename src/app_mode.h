@@ -7,4 +7,4 @@
 
 bool app_mode_hash_signing_enabled();
 
-void app_mode_reverse_hash_signing_enabled();
+void app_mode_change_hash_signing_setting();

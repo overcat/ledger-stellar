@@ -2,7 +2,7 @@
 
 #include "io.h"
 
-#include "../common/macros.h"
+#include "common/macros.h"
 
 /**
  * Helper to send APDU response with public key and chain code.
@@ -12,7 +12,7 @@
  * @return zero or positive integer if success, -1 otherwise.
  *
  */
-int helper_send_response_pubkey(void);
+int send_response_pubkey(void);
 
 /**
  * Helper to send APDU response with signature and v (parity of
@@ -23,4 +23,4 @@ int helper_send_response_pubkey(void);
  * @return zero or positive integer if success, -1 otherwise.
  *
  */
-int helper_send_response_sig(void);
+int send_response_sig(void);
