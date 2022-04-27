@@ -33,7 +33,7 @@
 int handler_get_app_configuration() {
     PRINTF("handler_get_app_configuration invoked\n");
 
-    _Static_assert(APP_VERSION_LEN == 3, "Length of (MAJOR || MINOR || PATCH) must be 3!");
+    _Static_assert(APP_VERSION_SIZE == 3, "Length of (MAJOR || MINOR || PATCH) must be 3!");
     _Static_assert(MAJOR_VERSION >= 0 && MAJOR_VERSION <= UINT8_MAX,
                    "MAJOR version must be between 0 and 255!");
     _Static_assert(MINOR_VERSION >= 0 && MINOR_VERSION <= UINT8_MAX,
@@ -43,12 +43,12 @@ int handler_get_app_configuration() {
 
     return io_send_response(
         &(const buffer_t){.ptr =
-                              (uint8_t[APP_CONFIGURATION_SIZE + APP_VERSION_LEN]){
+                              (uint8_t[APP_CONFIGURATION_SIZE + APP_VERSION_SIZE]){
                                   (uint8_t) app_mode_hash_signing_enabled(),
                                   (uint8_t) MAJOR_VERSION,
                                   (uint8_t) MINOR_VERSION,
                                   (uint8_t) PATCH_VERSION},
-                          .size = APP_CONFIGURATION_SIZE + APP_VERSION_LEN,
+                          .size = APP_CONFIGURATION_SIZE + APP_VERSION_SIZE,
                           .offset = 0},
         SW_OK);
 }

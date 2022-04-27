@@ -91,16 +91,16 @@ static bool get_next_data(char *caption, char *value, bool forward) {
     }
     switch (G_ui_current_data_index) {
         case 1:
-            strlcpy(caption, "Address", DETAIL_CAPTION_MAX_SIZE);
+            strlcpy(caption, "Address", DETAIL_CAPTION_MAX_LENGTH);
             if (!encode_ed25519_public_key(G_context.raw_public_key,
                                            value,
-                                           DETAIL_VALUE_MAX_SIZE)) {
+                                           DETAIL_VALUE_MAX_LENGTH)) {
                 return io_send_sw(SW_DISPLAY_ADDRESS_FAIL);
             }
             break;
         case 2:
-            strlcpy(caption, "Hash", DETAIL_CAPTION_MAX_SIZE);
-            if (!format_hex(G_context.hash, 32, value, DETAIL_VALUE_MAX_SIZE)) {
+            strlcpy(caption, "Hash", DETAIL_CAPTION_MAX_LENGTH);
+            if (!format_hex(G_context.hash, 32, value, DETAIL_VALUE_MAX_LENGTH)) {
                 return io_send_sw(SW_DISPLAY_TRANSACTION_HASH_FAIL);
             }
             break;

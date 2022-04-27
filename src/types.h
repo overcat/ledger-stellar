@@ -14,27 +14,27 @@
 /**
  * Maximum length of MAJOR_VERSION || MINOR_VERSION || PATCH_VERSION.
  */
-#define APP_VERSION_LEN 3
+#define APP_VERSION_SIZE 3
 
 #define APP_CONFIGURATION_SIZE 1
 
 /*
  * Captions don't scroll so there is no use in having more capacity than can fit on screen at once.
  */
-#define DETAIL_CAPTION_MAX_SIZE 20
+#define DETAIL_CAPTION_MAX_LENGTH 20
 
 /*
- * DETAIL_VALUE_MAX_SIZE value of 89 is due to the maximum length of managed data value which can be
- * 64 bytes long. Managed data values are displayed as base64 encoded strings, which are
+ * DETAIL_VALUE_MAX_LENGTH value of 89 is due to the maximum length of managed data value which can
+ * be 64 bytes long. Managed data values are displayed as base64 encoded strings, which are
  * 4*((len+2)/3) characters long. (An additional slot is required for the end-of-string character of
  * course)
  */
-#define DETAIL_VALUE_MAX_SIZE 89
+#define DETAIL_VALUE_MAX_LENGTH 89
 
 /**
  * Maximum transaction length (bytes).
  */
-#define MAX_RAW_TX 1120
+#define RAW_TX_MAX_SIZE 1120
 
 /**
  * signature length (bytes).
@@ -100,7 +100,7 @@ typedef enum {
  *
  */
 typedef struct {
-    uint8_t raw[MAX_RAW_TX];
+    uint8_t raw[RAW_TX_MAX_SIZE];
     uint32_t rawLength;
     uint16_t offset;
     uint8_t network;
@@ -113,15 +113,14 @@ typedef struct {
  * Structure for global context.
  */
 typedef struct {
-    tx_ctx_t tx_info;
-    uint8_t hash[HASH_SIZE];
-    // TODO: MAX_BIP32_PATH = 3
-    uint32_t bip32_path[MAX_BIP32_PATH];  // BIP32 path
-    uint8_t raw_public_key[RAW_ED25519_PUBLIC_KEY_SIZE];
-    uint8_t signature[SIGNATURE_SIZE];
-    state_e state;            // state of the context
-    request_type_e req_type;  // user request
-    uint8_t bip32_path_len;   // length of BIP32 path
+    tx_ctx_t tx_info;                                     // tx
+    uint8_t hash[HASH_SIZE];                              // tx hash
+    uint32_t bip32_path[MAX_BIP32_PATH];                  // BIP32 path
+    uint8_t raw_public_key[RAW_ED25519_PUBLIC_KEY_SIZE];  // BIP32 path public key
+    uint8_t signature[SIGNATURE_SIZE];                    // tx signature
+    state_e state;                                        // state of the context
+    request_type_e req_type;                              // user request
+    uint8_t bip32_path_len;                               // length of BIP32 path
 } global_ctx_t;
 
 typedef struct {

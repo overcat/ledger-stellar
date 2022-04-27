@@ -89,7 +89,7 @@ void ui_idle(void) {
 void display_settings(const ux_flow_step_t* const start_step) {
     strlcpy(G_ui_detail_value,
             (app_mode_hash_signing_enabled() ? "Enabled" : "NOT Enabled"),
-            DETAIL_VALUE_MAX_SIZE);
+            DETAIL_VALUE_MAX_LENGTH);
     ux_flow_init(0, ux_settings_flow, start_step);
 }
 

@@ -109,7 +109,7 @@ static void load_transaction_data(const char *filename, tx_ctx_t *txCtx) {
     FILE *f = fopen(filename, "rb");
     assert_non_null(f);
 
-    txCtx->rawLength = fread(txCtx->raw, 1, MAX_RAW_TX, f);
+    txCtx->rawLength = fread(txCtx->raw, 1, RAW_TX_MAX_SIZE, f);
     assert_int_not_equal(txCtx->rawLength, 0);
     fclose(f);
 }
