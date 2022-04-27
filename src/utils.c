@@ -25,7 +25,7 @@
 #include <time.h>
 
 #define MUXED_ACCOUNT_MED_25519_SIZE 43
-#define HASH_MAX_SIZE                36
+#define BINARY_MAX_SIZE              36
 
 static const char base64Alphabet[] =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
@@ -169,7 +169,7 @@ bool print_binary(const uint8_t *in,
                   uint8_t num_chars_l,
                   uint8_t num_chars_r) {
     if (num_chars_l > 0) {
-        char buffer[HASH_MAX_SIZE * 2 + 1];  // FIXME
+        char buffer[BINARY_MAX_SIZE * 2 + 1];  // FIXME
         if (!format_hex(in, in_len, buffer, sizeof(buffer))) {
             return false;
         }

@@ -8,17 +8,17 @@
  * Enumeration for endianness.
  */
 typedef enum {
-    BE,  /// Big Endian
-    LE   /// Little Endian
+    BE,  // Big Endian
+    LE   // Little Endian
 } endianness_t;
 
 /**
  * Struct for buffer with size and offset.
  */
 typedef struct {
-    const uint8_t *ptr;  /// Pointer to byte buffer
-    size_t size;         /// Size of byte buffer
-    size_t offset;       /// Offset in byte buffer
+    const uint8_t *ptr;  // Pointer to byte buffer
+    size_t size;         // Size of byte buffer
+    size_t offset;       // Offset in byte buffer
 } buffer_t;
 
 /**

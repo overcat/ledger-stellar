@@ -25,7 +25,7 @@
 #include "action/validate.h"
 #include "../common/format.h"
 
-static void display_next_state(bool is_upper_border);
+static void display_next_state(bool is_upper_delimiter);
 
 // Step with icon and text
 UX_STEP_NOCB(ux_tx_hash_signing_review_step,
@@ -51,20 +51,6 @@ UX_STEP_NOCB(ux_tx_variable_display,
                  .text = G_ui_detail_value,
              });
 UX_STEP_INIT(ux_tx_init_lower_border, NULL, NULL, { display_next_state(false); });
-// // Step with title/text for address
-// UX_STEP_NOCB(ux_tx_hash_display_address_step,
-//              bnnn_paging,
-//              {
-//                  .title = "Address",
-//                  .text = g_address,
-//              });
-// // Step with approve button
-// UX_STEP_NOCB(ux_tx_hash_display_hash_step,
-//              bnnn_paging,
-//              {
-//                  .title = "Hash",
-//                  .text = g_hash,
-//              });
 // Step with approve button
 UX_STEP_CB(ux_tx_hash_display_approve_step,
            pb,

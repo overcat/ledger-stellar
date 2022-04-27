@@ -18,16 +18,6 @@
 
 #define APP_CONFIGURATION_SIZE 1
 
-/**
- * Maximum transaction length (bytes).
- */
-#define MAX_TRANSACTION_LEN 510
-
-/**
- * signature length (bytes).
- */
-#define SIGNATURE_SIZE 64
-
 /*
  * Captions don't scroll so there is no use in having more capacity than can fit on screen at once.
  */
@@ -41,8 +31,15 @@
  */
 #define DETAIL_VALUE_MAX_SIZE 89
 
-/* Max transaction size */
+/**
+ * Maximum transaction length (bytes).
+ */
 #define MAX_RAW_TX 1120
+
+/**
+ * signature length (bytes).
+ */
+#define SIGNATURE_SIZE 64
 
 /**
  * Callback to reuse action with approve/reject in step FLOW.
@@ -53,49 +50,49 @@ typedef void (*ui_action_validate_cb)(bool);
  * Enumeration for the status of IO.
  */
 typedef enum {
-    READY,     /// ready for new event
-    RECEIVED,  /// data received
-    WAITING    /// waiting
+    READY,     // ready for new event
+    RECEIVED,  // data received
+    WAITING    // waiting
 } io_state_e;
 
 /**
  * Enumeration with expected INS of APDU commands.
  */
 typedef enum {
-    INS_GET_PUBLIC_KEY = 0x02,         /// public key of corresponding BIP32 path
-    INS_SIGN_TX = 0x04,                /// sign transaction with BIP32 path
-    INS_GET_APP_CONFIGURATION = 0x06,  /// app configuration of the application
-    INS_SIGN_TX_HASH = 0x08,           /// sign transaction in hash mode
+    INS_GET_PUBLIC_KEY = 0x02,         // public key of corresponding BIP32 path
+    INS_SIGN_TX = 0x04,                // sign transaction with BIP32 path
+    INS_GET_APP_CONFIGURATION = 0x06,  // app configuration of the application
+    INS_SIGN_TX_HASH = 0x08,           // sign transaction in hash mode
 } command_e;
 
 /**
  * Structure with fields of APDU command.
  */
 typedef struct {
-    uint8_t cla;    /// Instruction class
-    command_e ins;  /// Instruction code
-    uint8_t p1;     /// Instruction parameter 1
-    uint8_t p2;     /// Instruction parameter 2
-    uint8_t lc;     /// Lenght of command data
-    uint8_t *data;  /// Command data
+    uint8_t cla;    // Instruction class
+    command_e ins;  // Instruction code
+    uint8_t p1;     // Instruction parameter 1
+    uint8_t p2;     // Instruction parameter 2
+    uint8_t lc;     // Lenght of command data
+    uint8_t *data;  // Command data
 } command_t;
 
 /**
  * Enumeration with user request type.
  */
 typedef enum {
-    CONFIRM_ADDRESS,          /// confirm address derived from public key
-    CONFIRM_TRANSACTION,      /// confirm transaction information
-    CONFIRM_TRANSACTION_HASH  /// confirm transaction hash information
+    CONFIRM_ADDRESS,          // confirm address derived from public key
+    CONFIRM_TRANSACTION,      // confirm transaction information
+    CONFIRM_TRANSACTION_HASH  // confirm transaction hash information
 } request_type_e;
 
 /**
  * Enumeration with parsing state.
  */
 typedef enum {
-    STATE_NONE,     /// No state
-    STATE_PARSED,   /// Transaction data parsed
-    STATE_APPROVED  /// Transaction data approved
+    STATE_NONE,     // No state
+    STATE_PARSED,   // Transaction data parsed
+    STATE_APPROVED  // Transaction data approved
 } state_e;
 
 /**
@@ -119,12 +116,12 @@ typedef struct {
     tx_ctx_t tx_info;
     uint8_t hash[HASH_SIZE];
     // TODO: MAX_BIP32_PATH = 3
-    uint32_t bip32_path[MAX_BIP32_PATH];  /// BIP32 path
-    uint8_t raw_public_key[32];
-    uint8_t signature[64];
-    state_e state;            /// state of the context
-    request_type_e req_type;  /// user request
-    uint8_t bip32_path_len;   /// length of BIP32 path
+    uint32_t bip32_path[MAX_BIP32_PATH];  // BIP32 path
+    uint8_t raw_public_key[RAW_ED25519_PUBLIC_KEY_SIZE];
+    uint8_t signature[SIGNATURE_SIZE];
+    state_e state;            // state of the context
+    request_type_e req_type;  // user request
+    uint8_t bip32_path_len;   // length of BIP32 path
 } global_ctx_t;
 
 typedef struct {

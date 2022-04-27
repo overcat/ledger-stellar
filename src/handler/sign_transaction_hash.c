@@ -25,7 +25,7 @@
 int handler_sign_tx_hash(buffer_t *cdata) {
     PRINTF("handler_sign_tx_hash invoked\n");
     if (!app_mode_hash_signing_enabled()) {
-        return io_send_sw(SW_TX_HASH_MODE_NOT_ENABLED);
+        return io_send_sw(SW_TX_HASH_SIGNING_MODE_NOT_ENABLED);
     }
     explicit_bzero(&G_context, sizeof(G_context));
     G_context.req_type = CONFIRM_TRANSACTION_HASH;

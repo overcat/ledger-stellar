@@ -25,6 +25,7 @@
  * Unknown stellar operation
  */
 #define SW_UNKNOWN_OP 0x6C24
+
 /**
  * Status word for either wrong Lc or lenght of APDU command less than 5.
  */
@@ -77,6 +78,11 @@
 #define SW_SIGNATURE_FAIL 0xB008
 
 /**
- * HASH MODE NOT ENABLED
+ * Status word for fail of transaction formatting.
  */
-#define SW_TX_HASH_MODE_NOT_ENABLED 0x6C66
+#define SW_TX_FORMATTING_FAIL 0x6125
+
+/**
+ * Status word for hash signing model not enabled.
+ */
+#define SW_TX_HASH_SIGNING_MODE_NOT_ENABLED 0x6C66

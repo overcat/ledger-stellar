@@ -24,15 +24,13 @@
 #include "transaction/transaction_parser.h"
 #include "transaction_formatter.h"
 
-char op_caption[OPERATION_CAPTION_MAX_SIZE];
-#define MEMCLEAR(dest) explicit_bzero(&dest, sizeof(dest));
-
 #ifdef TEST
 uint8_t G_ui_current_data_index;
 char G_ui_detail_caption[DETAIL_CAPTION_MAX_SIZE];
 char G_ui_detail_value[DETAIL_VALUE_MAX_SIZE];
 #endif  // TEST
 
+char op_caption[OPERATION_CAPTION_MAX_SIZE];
 format_function_t formatter_stack[MAX_FORMATTERS_PER_OPERATION];
 int8_t formatter_index;
 
@@ -1661,7 +1659,7 @@ format_function_t get_formatter(tx_ctx_t *txCtx, bool forward) {
 
 void ui_approve_tx_next_screen(tx_ctx_t *txCtx) {
     if (!formatter_stack[formatter_index]) {
-        MEMCLEAR(formatter_stack);
+        explicit_bzero(formatter_stack, sizeof(formatter_stack));
         formatter_index = 0;
         G_ui_current_data_index++;
         formatter_stack[0] = get_formatter(txCtx, true);
@@ -1670,7 +1668,7 @@ void ui_approve_tx_next_screen(tx_ctx_t *txCtx) {
 
 void ui_approve_tx_prev_screen(tx_ctx_t *txCtx) {
     if (formatter_index == -1) {
-        MEMCLEAR(formatter_stack);
+        explicit_bzero(formatter_stack, sizeof(formatter_stack));
         formatter_index = 0;
         G_ui_current_data_index--;
         formatter_stack[0] = get_formatter(txCtx, false);
@@ -1687,9 +1685,9 @@ void set_state_data(bool forward) {
 
     // Apply last formatter to fill the screen's buffer
     if (formatter_stack[formatter_index]) {
-        MEMCLEAR(G_ui_detail_caption);
-        MEMCLEAR(G_ui_detail_value);
-        MEMCLEAR(op_caption);
+        explicit_bzero(G_ui_detail_caption, sizeof(G_ui_detail_caption));
+        explicit_bzero(G_ui_detail_value, sizeof(G_ui_detail_value));
+        explicit_bzero(op_caption, sizeof(op_caption));
         formatter_stack[formatter_index](&G_context.tx_info);
 
         if (op_caption[0] != '\0') {

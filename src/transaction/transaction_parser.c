@@ -867,7 +867,7 @@ static bool parse_operation(buffer_t *buffer, Operation *opDetails) {
         case XDR_OPERATION_TYPE_LIQUIDITY_POOL_WITHDRAW:
             return parse_liquidity_pool_withdraw(buffer, &opDetails->liquidityPoolWithdrawOp);
         default:
-            return false;  // Unknown operation
+            return false;  // Unknown operation TODO: throw unknown op error?
     }
 }
 

@@ -43,12 +43,12 @@ int handler_get_app_configuration() {
 
     return io_send_response(
         &(const buffer_t){.ptr =
-                              (uint8_t[APP_VERSION_LEN + APP_CONFIGURATION_SIZE]){
+                              (uint8_t[APP_CONFIGURATION_SIZE + APP_VERSION_LEN]){
                                   (uint8_t) app_mode_hash_signing_enabled(),
                                   (uint8_t) MAJOR_VERSION,
                                   (uint8_t) MINOR_VERSION,
                                   (uint8_t) PATCH_VERSION},
-                          .size = APP_VERSION_LEN + APP_CONFIGURATION_SIZE,
+                          .size = APP_CONFIGURATION_SIZE + APP_VERSION_LEN,
                           .offset = 0},
         SW_OK);
 }

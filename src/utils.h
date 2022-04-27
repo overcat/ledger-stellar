@@ -44,15 +44,11 @@ bool print_amount(uint64_t amount,
                   char *out,
                   size_t out_len);
 
-bool print_account_id(const AccountID account_id,
+bool print_account_id(AccountID account_id,
                       char *out,
                       size_t out_len,
                       uint8_t num_chars_l,
                       uint8_t num_chars_r);
-
-bool encode_pre_auth_x_key(const uint8_t raw_pre_auth_tx[static RAW_PRE_AUTH_TX_KEY_SIZE],
-                           char *out,
-                           size_t out_len);
 
 bool print_muxed_account(const MuxedAccount *muxed_account,
                          char *out,
