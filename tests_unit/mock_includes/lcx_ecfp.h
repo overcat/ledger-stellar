@@ -18,6 +18,7 @@
 
 #ifndef LCX_ECFP_H
 #define LCX_ECFP_H
+#include "lcx_hash.h"
 
 /**
  *
@@ -585,6 +586,6 @@ CXCALL int cx_ecfp_generate_pair2(
     cx_ecfp_public_key_t *pubkey PLENGTH(scc__cx_scc_struct_size_ecfp_pubkey_from_curve__curve),
     cx_ecfp_private_key_t *privkey PLENGTH(scc__cx_scc_struct_size_ecfp_privkey_from_curve__curve),
     int keepprivate,
-    cx_md_t hashID);
+    enum cx_md_e hashID);
 
 #endif

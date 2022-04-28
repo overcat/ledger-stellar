@@ -19,9 +19,9 @@ int handle_check_address(const check_address_parameters_t* params) {
     uint32_t bip32_path[MAX_BIP32_PATH];
     uint8_t bip32_path_length = *params->address_parameters;
     if (!bip32_path_read(params->address_parameters + 1,
-                         bip32_path_length,
+                         params->address_parameters_length - 1,
                          bip32_path,
-                         MAX_BIP32_PATH)) {
+                         bip32_path_length)) {
         PRINTF("Invalid path\n");
         return 0;
     }

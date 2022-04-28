@@ -32,11 +32,14 @@ void test_check_address(void **state) {
     uint32_t bip32_path_parsed[MAX_BIP32_PATH];
     uint8_t *bip32_path_ptr = params.address_parameters;
     uint8_t bip32_path_length = *(bip32_path_ptr++);
-    assert_true(
-        bip32_path_read(bip32_path_ptr, bip32_path_length, bip32_path_parsed, MAX_BIP32_PATH));
+    assert_int_equal(bip32_path_length, 3);
+    assert_true(bip32_path_read(bip32_path_ptr,
+                                params.address_parameters_length - 1,
+                                bip32_path_parsed,
+                                bip32_path_length));
 
     char address[57];
-    encode_public_key(public_key.W, address);
+    assert_true(encode_ed25519_public_key(public_key.W, address, sizeof(address)));
 
     assert_string_equal(address, params.address_to_check);
 }
@@ -53,12 +56,11 @@ void test_get_printable_amount(void **state) {
     Asset asset = {.type = ASSET_TYPE_NATIVE};
     assert_true(swap_str_to_u64(params.amount, params.amount_length, &amount));
     assert_int_equal(amount, 1234);
-    assert_int_equal(print_amount(amount,
-                                  &asset,
-                                  NETWORK_TYPE_PUBLIC,
-                                  params.printable_amount,
-                                  sizeof(params.printable_amount)),
-                     0);
+    assert_true(print_amount(amount,
+                             &asset,
+                             NETWORK_TYPE_PUBLIC,
+                             params.printable_amount,
+                             sizeof(params.printable_amount)));
     assert_string_equal(params.printable_amount, "0.0001234 XLM");
 }
 
