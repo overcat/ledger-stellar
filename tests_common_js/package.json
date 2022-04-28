@@ -1,5 +1,5 @@
 {
-  "name": "tests_common_js",
+  "name": "tests-common",
   "version": "1.0.0",
   "description": "Ledger Stellar App Test Common JavaScript",
   "main": "dist/index.js",
