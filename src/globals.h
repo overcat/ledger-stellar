@@ -38,6 +38,7 @@ extern io_state_e G_io_state;
 extern global_ctx_t G_context;
 
 extern swap_values_t G_swap_values;
+extern bool called_from_swap;
 
 extern char G_ui_detail_caption[DETAIL_CAPTION_MAX_LENGTH];
 extern char G_ui_detail_value[DETAIL_VALUE_MAX_LENGTH];

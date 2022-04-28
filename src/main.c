@@ -24,6 +24,7 @@
 #include "types.h"
 #include "apdu/apdu_parser.h"
 #include "apdu/dispatcher.h"
+#include "swap/swap_lib_calls.h"
 
 uint8_t G_io_seproxyhal_spi_buffer[IO_SEPROXYHAL_BUFFER_SIZE_B];
 ux_state_t G_ux;
@@ -31,6 +32,7 @@ bolos_ux_params_t G_ux_params;
 io_state_e G_io_state;
 global_ctx_t G_context;
 swap_values_t G_swap_values;
+bool called_from_swap;
 
 // We define these variables as global variables to reduce memory usage.
 char G_ui_detail_caption[DETAIL_CAPTION_MAX_LENGTH];
@@ -155,15 +157,69 @@ void standalone_app_main() {
     app_exit();
 }
 
+static void library_main_helper(struct libargs_s *args) {
+    check_api_level(CX_COMPAT_APILEVEL);
+    PRINTF("Inside library \n");
+    switch (args->command) {
+        case CHECK_ADDRESS:
+            // ensure result is zero if an exception is thrown
+            args->check_address->result = 0;
+            args->check_address->result = handle_check_address(args->check_address);
+            break;
+        case SIGN_TRANSACTION:
+            if (copy_transaction_parameters(args->create_transaction)) {
+                // never returns
+                handle_swap_sign_transaction();
+            }
+            break;
+        case GET_PRINTABLE_AMOUNT:
+            handle_get_printable_amount(args->get_printable_amount);
+            break;
+        default:
+            break;
+    }
+}
+
+void library_main(struct libargs_s *args) {
+    bool end = false;
+    /* This loop ensures that library_main_helper and os_lib_end are called
+     * within a try context, even if an exception is thrown */
+    while (1) {
+        BEGIN_TRY {
+            TRY {
+                if (!end) {
+                    library_main_helper(args);
+                }
+                os_lib_end();
+            }
+            FINALLY {
+                end = true;
+            }
+        }
+        END_TRY;
+    }
+}
+
 /**
  * Main loop to setup USB, Bluetooth, UI and launch ui_menu_main().
  */
-__attribute__((section(".boot"))) int main(int argc) {
+__attribute__((section(".boot"))) int main(int arg0) {
     // exit critical section
     __asm volatile("cpsie i");
     // ensure exception will work as planned
     os_boot();
-    // called from dashboard as standalone Stellar App
-    standalone_app_main();
+    if (arg0 == 0) {
+        // called from dashboard as standalone Stellar App
+        standalone_app_main();
+    } else {
+        // Called as library from another app
+        libargs_t *args = (libargs_t *) arg0;
+        if (args->id == 0x100) {
+            library_main(args);
+        } else {
+            app_exit();
+        }
+    }
+
     return 0;
 }

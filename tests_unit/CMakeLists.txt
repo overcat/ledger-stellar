@@ -48,6 +48,7 @@ add_executable(test_write test_write.c)
 add_executable(test_utils test_utils.c)
 add_executable(test_tx_parser test_tx_parser.c)
 add_executable(test_tx_formatter test_tx_formatter.c)
+add_executable(test_swap test_swap.c)
 
 
 add_library(base58 SHARED ../src/common/base58.c)
@@ -61,6 +62,7 @@ add_library(varint SHARED ../src/common/varint.c)
 add_library(utils SHARED ../src/utils.c)
 add_library(tx_parser SHARED ../src/transaction/transaction_parser.c)
 add_library(tx_formatter SHARED ../src/transaction/transaction_formatter.c)
+add_library(swap SHARED ../src/swap/swap_lib_calls.c)
 
 
 target_link_libraries(test_base58 PUBLIC cmocka gcov base58)
@@ -72,7 +74,7 @@ target_link_libraries(test_write PUBLIC cmocka gcov write)
 target_link_libraries(test_utils PUBLIC cmocka gcov utils base58 base32 format bsd)
 target_link_libraries(test_tx_parser PUBLIC cmocka gcov tx_parser buffer bip32 varint write read)
 target_link_libraries(test_tx_formatter PUBLIC cmocka gcov tx_parser buffer bip32 varint write read tx_formatter utils bsd base32 format)
-
+target_link_libraries(test_swap PUBLIC cmocka gcov swap tx_parser buffer bip32 varint write read)
 
 add_test(test_base58 test_base58)
 # add_test(test_base32 test_base32)
@@ -83,3 +85,4 @@ add_test(test_write test_write)
 add_test(test_utils test_utils)
 add_test(test_tx_parser test_tx_parser)
 add_test(test_tx_formatter test_tx_formatter)
+add_test(test_swap test_swap)
