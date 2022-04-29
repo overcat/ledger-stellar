@@ -47,9 +47,9 @@
 
 #include "lcx_hash.h"
 
-#include "lcx_ripemd160.h"
+// #include "lcx_ripemd160.h"
 
-#include "lcx_sha256.h"
+// #include "lcx_sha256.h"
 // #include "lcx_sha3.h"
 // #include "lcx_sha512.h"
 
