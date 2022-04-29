@@ -154,3 +154,6 @@ listvariants:
 
 tests-unit:
 	rm -rf tests_unit/build && cmake -Btests_unit/build -Htests_unit/ && make -C tests_unit/build/ && make -C tests_unit/build test
+
+tests-zemu:
+	cd tests_zemu && rm -rf elfs/stellar_nano*.elf && ./build_local_test_elfs.sh && npm run test
