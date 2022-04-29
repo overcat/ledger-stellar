@@ -23,6 +23,7 @@
 #include "crypto.h"
 #include "common/format.h"
 #include "../ui/ui.h"
+#include "../swap/swap_lib_calls.h"
 
 int handler_sign_tx(buffer_t *cdata, bool is_first_chunk, bool more) {
     if (is_first_chunk) {
@@ -67,6 +68,10 @@ int handler_sign_tx(buffer_t *cdata, bool is_first_chunk, bool more) {
 
     G_context.state = STATE_PARSED;
     PRINTF("tx parsed\n");
+    if (called_from_swap) {
+        swap_check();
+        os_sched_exit(0);
+    }
 
     return ui_approve_tx_init();
 };

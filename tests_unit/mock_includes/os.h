@@ -825,7 +825,7 @@ void os_longjmp(unsigned int exception) {
 /* -                          CRYPTO FUNCTIONS                           - */
 /* ----------------------------------------------------------------------- */
 #include "cx.h"
-
+#include "lcx_ecfp.h"
 /**
  BOLOS RAM LAYOUT
                 msp                          psp                   psp
