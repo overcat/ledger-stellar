@@ -1,5 +1,5 @@
 # https://github.com/LedgerHQ/app-exchange/blob/develop/.github/workflows/ci-workflow.yml
-name: Swap Function CI
+name: Swap function test
 
 on:
   push:
@@ -22,7 +22,7 @@ jobs:
       - name: Clone
         uses: actions/checkout@v2
         with:
-          repository: 'https://github.com/LedgerHQ/app-exchange'
+          repository: 'LedgerHQ/app-exchange'
           ref: 'e004004e01cbd381c0757de01a4497ed77e809f6'
 
       - name: Build
@@ -47,7 +47,7 @@ jobs:
       - name: Clone
         uses: actions/checkout@v2
         with:
-          repository: 'https://github.com/LedgerHQ/app-exchange'
+          repository: 'LedgerHQ/app-exchange'
           ref: 'e004004e01cbd381c0757de01a4497ed77e809f6'
 
       - name: Build
@@ -72,7 +72,7 @@ jobs:
       - name: Clone
         uses: actions/checkout@v2
         with:
-          repository: 'https://github.com/LedgerHQ/app-exchange'
+          repository: 'LedgerHQ/app-exchange'
           ref: 'e004004e01cbd381c0757de01a4497ed77e809f6'
 
       - name: Build
