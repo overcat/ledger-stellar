@@ -36,7 +36,7 @@ jobs:
       - name: Upload app binary
         uses: actions/upload-artifact@v2
         with:
-          name: exchange
+          name: exchange_elfs
           path: ./exchange_nano*.elf
           if-no-files-found: error
 
@@ -55,7 +55,7 @@ jobs:
       - name: Upload app binaries
         uses: actions/upload-artifact@v2
         with:
-          name: e2e_elfs
+          name: stellar_elfs
           path: ./tests_zemu/elfs/
 
   jobs-e2e-tests:
@@ -85,25 +85,23 @@ jobs:
       - name: Install JS dependencies
         run: cd test && yarn install
 
-      - name: Create tmp folder for artifacts
-        run: mkdir test/elfs/tmp
-
       - name: Download app binaries
         uses: actions/download-artifact@v2
         with:
-          name: exchange
-          path: test/elfs/tmp
+          name: exchange_elfs
+          path: tmp/
 
       - name: Download stellar app binaries
         uses: actions/download-artifact@v2
         with:
+          name: stellar_elfs
           path: tmp/
 
       - name: Gather elfs
         run: |
-          cp `find test/elfs/tmp -name "*.elf"` test/elfs/
-          rm -rf stellar*.elf
-          cp `find tmp/e2e_elfs/ -name "*.elf"` test/elfs/
+          rm -rf test/elfs/stellar*.elf
+          cp `find tmp/exchange_elfs/ -name "*.elf"` test/elfs/
+          cp `find tmp/stellar_elfs/ -name "*.elf"` test/elfs/
           ls -lh test/elfs/
       - name: Run zemu tests
         run: cd test && yarn test -t "XLM"
