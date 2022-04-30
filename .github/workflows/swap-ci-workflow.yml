@@ -89,13 +89,13 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: exchange_elfs
-          path: tmp/
+          path: tmp/exchange_elfs/
 
       - name: Download stellar app binaries
         uses: actions/download-artifact@v2
         with:
           name: stellar_elfs
-          path: tmp/
+          path: tmp/stellar_elfs/
 
       - name: Gather elfs
         run: |
