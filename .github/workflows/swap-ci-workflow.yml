@@ -1,5 +1,5 @@
 # https://github.com/LedgerHQ/app-exchange/blob/develop/.github/workflows/ci-workflow.yml
-name: Swap function test
+name: Swap function tests
 
 on:
   push:
