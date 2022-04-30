@@ -1,0 +1,114 @@
+# https://github.com/LedgerHQ/app-exchange/blob/develop/.github/workflows/ci-workflow.yml
+name: Swap function tests
+
+on:
+  push:
+  pull_request:
+    branches-ignore:
+      - "temp*"
+      - "tmp*"
+  release:
+    types: [created]
+
+jobs:
+  job_build_debug_exchange_apps:
+    name: Build debug Exchange App
+    runs-on: ubuntu-latest
+
+    container:
+      image: ghcr.io/ledgerhq/ledger-app-builder/ledger-app-builder:latest
+
+    steps:
+      - name: Clone
+        uses: actions/checkout@v2
+        with:
+          repository: "LedgerHQ/app-exchange"
+          ref: "e004004e01cbd381c0757de01a4497ed77e809f6"
+
+      - name: Build for NanoS
+        run: |
+          make clean && make BOLOS_SDK=$NANOS_SDK DEBUG=1 TESTING=1 TEST_PUBLIC_KEY=1
+          cp bin/app.elf exchange_nanos.elf
+
+      - name: Build for NanoX
+        run: |
+          make clean && make BOLOS_SDK=$NANOX_SDK DEBUG=1 TESTING=1 TEST_PUBLIC_KEY=1
+          cp bin/app.elf exchange_nanox.elf
+
+      - name: Build for NanoSP
+        run: |
+          make clean && make BOLOS_SDK=$NANOSP_SDK DEBUG=1 TESTING=1 TEST_PUBLIC_KEY=1
+          cp bin/app.elf exchange_nanosp.elf
+
+      - name: Upload app binary
+        uses: actions/upload-artifact@v2
+        with:
+          name: exchange_elfs
+          path: ./exchange_nano*.elf
+          if-no-files-found: error
+
+  job_build_stellar_apps:
+    name: Building Stellar Apps
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/ledgerhq/ledger-app-builder/ledger-app-builder:latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Build testing binaries
+        run: ./build_elfs.sh
+
+      - name: Upload app binaries
+        uses: actions/upload-artifact@v2
+        with:
+          name: stellar_elfs
+          path: ./elfs/
+
+  jobs-e2e-tests:
+    needs:
+      - job_build_debug_exchange_apps
+      - job_build_stellar_apps
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Clone
+        uses: actions/checkout@v2
+        with:
+          repository: "LedgerHQ/app-exchange"
+          ref: "e004004e01cbd381c0757de01a4497ed77e809f6"
+
+      - name: Install APT dependencies
+        run: sudo apt-get update -y && sudo apt-get install -y libusb-1.0.0 libudev-dev
+
+      - name: Install Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16
+
+      - name: Install Yarn
+        run: npm install -g yarn
+
+      - name: Install JS dependencies
+        run: cd test && yarn install
+
+      - name: Download app binaries
+        uses: actions/download-artifact@v2
+        with:
+          name: exchange_elfs
+          path: tmp/exchange_elfs/
+
+      - name: Download stellar app binaries
+        uses: actions/download-artifact@v2
+        with:
+          name: stellar_elfs
+          path: tmp/stellar_elfs/
+
+      - name: Gather elfs
+        run: |
+          rm -rf test/elfs/stellar*.elf
+          cp `find tmp/exchange_elfs/ -name "*.elf"` test/elfs/
+          cp `find tmp/stellar_elfs/ -name "*.elf"` test/elfs/
+          ls -lh test/elfs/
+      - name: Run zemu tests
+        run: cd test && yarn test -t "XLM"
