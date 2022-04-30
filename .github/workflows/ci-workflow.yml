@@ -163,6 +163,9 @@ jobs:
         with:
           node-version: "16"
 
+      - name: Build common js
+        run: cd tests_common_js && npm run build
+
       - name: Build/Install build js deps
         run: cd tests_zemu && npm install
 

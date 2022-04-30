@@ -6,6 +6,7 @@ import {
   Account,
   Memo,
   Keypair,
+  Asset,
 } from "stellar-base";
 
 // mnemonic: 'other base behind follow wet put glad muscle unlock sell income october'
@@ -45,6 +46,36 @@ export function opCreateAccount() {
     Operation.createAccount({
       destination: kp1.publicKey(),
       startingBalance: "100.0",
+    })
+  ).build();
+}
+
+export function opPaymentAssetNative() {
+  return getCommonTransactionBuilder().addOperation(
+    Operation.payment({
+      destination: kp1.publicKey(),
+      asset: new Asset("XLM"),
+      amount: "100.0",
+    })
+  ).build();
+}
+
+export function opPaymentAssetAlphanum4() {
+  return getCommonTransactionBuilder().addOperation(
+    Operation.payment({
+      destination: kp1.publicKey(),
+      asset: new Asset("BTC", "GATEMHCCKCY67ZUCKTROYN24ZYT5GK4EQZ65JJLDHKHRUZI3EUEKMTCH"),
+      amount: "100.0",
+    })
+  ).build();
+}
+
+export function opPaymentAssetAlphanum12() {
+  return getCommonTransactionBuilder().addOperation(
+    Operation.payment({
+      destination: kp1.publicKey(),
+      asset: new Asset("BANANANANANA", "GCDGPFKW2LUJS2ESKAS42HGOKC6VWOKEJ44TQ3ZXZAMD4ZM5FVHJHPJS"),
+      amount: "100.0",
     })
   ).build();
 }
