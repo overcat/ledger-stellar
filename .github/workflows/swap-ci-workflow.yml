@@ -104,112 +104,12 @@ jobs:
           name: e2e_elfs
           path: ./tests_zemu/elfs/
 
-  jobs-e2e-tests-nano-S:
+  jobs-e2e-tests:
     needs:
       - job_build_debug_nano_S
-      - building_stellar_binaries_for_e2e_tests
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Clone
-        uses: actions/checkout@v2
-        with:
-          repository: "LedgerHQ/app-exchange"
-          ref: "e004004e01cbd381c0757de01a4497ed77e809f6"
-
-      - name: Install APT dependencies
-        run: sudo apt-get update -y && sudo apt-get install -y libusb-1.0.0 libudev-dev
-
-      - name: Install Node
-        uses: actions/setup-node@v2
-        with:
-          node-version: 16
-
-      - name: Install Yarn
-        run: npm install -g yarn
-
-      - name: Install JS dependencies
-        run: cd test && yarn install
-
-      - name: Create tmp folder for artifacts
-        run: mkdir test/elfs/tmp
-
-      - name: Download app binaries
-        uses: actions/download-artifact@v2
-        with:
-          name: exchange
-          path: test/elfs/tmp
-
-      - name: Download stellar app binaries
-        uses: actions/download-artifact@v2
-        with:
-          path: tmp/
-
-      - name: Gather elfs
-        run: |
-          cp `find test/elfs/tmp -name "*.elf"` test/elfs/
-          rm -rf stellar*.elf
-          cp `find tmp/e2e_elfs/ -name "*.elf"` test/elfs/
-          ls -lh test/elfs/
-      - name: Run zemu tests
-        run: cd test && yarn test -t "\[Nano S\]"
-
-  jobs-e2e-tests-nano-X:
-    needs:
       - job_build_debug_nano_X
-      - building_stellar_binaries_for_e2e_tests
-
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Clone
-        uses: actions/checkout@v2
-        with:
-          repository: "LedgerHQ/app-exchange"
-          ref: "e004004e01cbd381c0757de01a4497ed77e809f6"
-
-      - name: Install APT dependencies
-        run: sudo apt-get update -y && sudo apt-get install -y libusb-1.0.0 libudev-dev
-
-      - name: Install Node
-        uses: actions/setup-node@v2
-        with:
-          node-version: 16
-
-      - name: Install Yarn
-        run: npm install -g yarn
-
-      - name: Install JS dependencies
-        run: cd test && yarn install
-
-      - name: Create tmp folder for artifacts
-        run: mkdir test/elfs/tmp
-
-      - name: Download app binaries
-        uses: actions/download-artifact@v2
-        with:
-          name: exchange
-          path: test/elfs/tmp
-
-      - name: Download stellar app binaries
-        uses: actions/download-artifact@v2
-        with:
-          path: tmp/
-
-      - name: Gather elfs
-        run: |
-          cp `find test/elfs/tmp -name "*.elf"` test/elfs/
-          rm -rf stellar*.elf
-          cp `find tmp/e2e_elfs/ -name "*.elf"` test/elfs/
-          ls -lh test/elfs/
-      - name: Run zemu tests
-        run: cd test && yarn test -t "\[Nano X\]"
-
-  jobs-e2e-tests-nano-SP:
-    needs:
       - job_build_debug_nano_SP
       - building_stellar_binaries_for_e2e_tests
-
     runs-on: ubuntu-latest
 
     steps:
@@ -254,4 +154,4 @@ jobs:
           cp `find tmp/e2e_elfs/ -name "*.elf"` test/elfs/
           ls -lh test/elfs/
       - name: Run zemu tests
-        run: cd test && yarn test -t "\[Nano SP\]"
+        run: cd test && yarn test -t "XLM"
