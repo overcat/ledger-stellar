@@ -25,14 +25,21 @@ jobs:
           repository: "LedgerHQ/app-exchange"
           ref: "e004004e01cbd381c0757de01a4497ed77e809f6"
 
-      - name: Build
+      - name: Build for NanoS
         run: |
           make clean && make BOLOS_SDK=$NANOS_SDK DEBUG=1 TESTING=1 TEST_PUBLIC_KEY=1
           cp bin/app.elf exchange_nanos.elf
-          make clean && make BOLOX_SDK=$NANOS_SDK DEBUG=1 TESTING=1 TEST_PUBLIC_KEY=1
+
+      - name: Build for NanoX
+        run: |
+          make clean && make BOLOS_SDK=$NANOX_SDK DEBUG=1 TESTING=1 TEST_PUBLIC_KEY=1
           cp bin/app.elf exchange_nanox.elf
+
+      - name: Build for NanoSP
+        run: |
           make clean && make BOLOS_SDK=$NANOSP_SDK DEBUG=1 TESTING=1 TEST_PUBLIC_KEY=1
           cp bin/app.elf exchange_nanosp.elf
+
       - name: Upload app binary
         uses: actions/upload-artifact@v2
         with:
