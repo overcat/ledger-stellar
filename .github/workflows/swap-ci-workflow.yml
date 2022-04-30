@@ -5,10 +5,10 @@ on:
   push:
   pull_request:
     branches-ignore:
-      - 'temp*'
-      - 'tmp*'
+      - "temp*"
+      - "tmp*"
   release:
-    types: [ created ]
+    types: [created]
 
 jobs:
   job_build_debug_nano_S:
@@ -22,8 +22,8 @@ jobs:
       - name: Clone
         uses: actions/checkout@v2
         with:
-          repository: 'LedgerHQ/app-exchange'
-          ref: 'e004004e01cbd381c0757de01a4497ed77e809f6'
+          repository: "LedgerHQ/app-exchange"
+          ref: "e004004e01cbd381c0757de01a4497ed77e809f6"
 
       - name: Build
         run: |
@@ -47,8 +47,8 @@ jobs:
       - name: Clone
         uses: actions/checkout@v2
         with:
-          repository: 'LedgerHQ/app-exchange'
-          ref: 'e004004e01cbd381c0757de01a4497ed77e809f6'
+          repository: "LedgerHQ/app-exchange"
+          ref: "e004004e01cbd381c0757de01a4497ed77e809f6"
 
       - name: Build
         run: |
@@ -72,8 +72,8 @@ jobs:
       - name: Clone
         uses: actions/checkout@v2
         with:
-          repository: 'LedgerHQ/app-exchange'
-          ref: 'e004004e01cbd381c0757de01a4497ed77e809f6'
+          repository: "LedgerHQ/app-exchange"
+          ref: "e004004e01cbd381c0757de01a4497ed77e809f6"
 
       - name: Build
         run: |
@@ -113,6 +113,9 @@ jobs:
     steps:
       - name: Clone
         uses: actions/checkout@v2
+        with:
+          repository: "LedgerHQ/app-exchange"
+          ref: "e004004e01cbd381c0757de01a4497ed77e809f6"
 
       - name: Install APT dependencies
         run: sudo apt-get update -y && sudo apt-get install -y libusb-1.0.0 libudev-dev
@@ -156,6 +159,9 @@ jobs:
     steps:
       - name: Clone
         uses: actions/checkout@v2
+        with:
+          repository: "LedgerHQ/app-exchange"
+          ref: "e004004e01cbd381c0757de01a4497ed77e809f6"
 
       - name: Install APT dependencies
         run: sudo apt-get update -y && sudo apt-get install -y libusb-1.0.0 libudev-dev
@@ -199,6 +205,9 @@ jobs:
     steps:
       - name: Clone
         uses: actions/checkout@v2
+        with:
+          repository: "LedgerHQ/app-exchange"
+          ref: "e004004e01cbd381c0757de01a4497ed77e809f6"
 
       - name: Install APT dependencies
         run: sudo apt-get update -y && sudo apt-get install -y libusb-1.0.0 libudev-dev
