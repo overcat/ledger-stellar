@@ -144,7 +144,7 @@ jobs:
         run: |
           cp `find test/elfs/tmp -name "*.elf"` test/elfs/
           rm -rf stelalr*.elf
-          cp `find tmp/e2e_elfs/ -name "*.elf"` tests_zemu/elfs/
+          cp `find tmp/e2e_elfs/ -name "*.elf"` test/elfs/
           ls -lh test/elfs/
       - name: Run zemu tests
         run: cd test && yarn test -t "\[Nano S\]"
@@ -190,7 +190,7 @@ jobs:
         run: |
           cp `find test/elfs/tmp -name "*.elf"` test/elfs/
           rm -rf stelalr*.elf
-          cp `find tmp/e2e_elfs/ -name "*.elf"` tests_zemu/elfs/
+          cp `find tmp/e2e_elfs/ -name "*.elf"` test/elfs/
           ls -lh test/elfs/
       - name: Run zemu tests
         run: cd test && yarn test -t "\[Nano X\]"
@@ -236,7 +236,7 @@ jobs:
         run: |
           cp `find test/elfs/tmp -name "*.elf"` test/elfs/
           rm -rf stelalr*.elf
-          cp `find tmp/e2e_elfs/ -name "*.elf"` tests_zemu/elfs/
+          cp `find tmp/e2e_elfs/ -name "*.elf"` test/elfs/
           ls -lh test/elfs/
       - name: Run zemu tests
         run: cd test && yarn test -t "\[Nano SP\]"
