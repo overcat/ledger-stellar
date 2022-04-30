@@ -148,7 +148,7 @@ jobs:
       - name: Gather elfs
         run: |
           cp `find test/elfs/tmp -name "*.elf"` test/elfs/
-          rm -rf stelalr*.elf
+          rm -rf stellar*.elf
           cp `find tmp/e2e_elfs/ -name "*.elf"` test/elfs/
           ls -lh test/elfs/
       - name: Run zemu tests
@@ -199,7 +199,7 @@ jobs:
       - name: Gather elfs
         run: |
           cp `find test/elfs/tmp -name "*.elf"` test/elfs/
-          rm -rf stelalr*.elf
+          rm -rf stellar*.elf
           cp `find tmp/e2e_elfs/ -name "*.elf"` test/elfs/
           ls -lh test/elfs/
       - name: Run zemu tests
@@ -250,7 +250,7 @@ jobs:
       - name: Gather elfs
         run: |
           cp `find test/elfs/tmp -name "*.elf"` test/elfs/
-          rm -rf stelalr*.elf
+          rm -rf stellar*.elf
           cp `find tmp/e2e_elfs/ -name "*.elf"` test/elfs/
           ls -lh test/elfs/
       - name: Run zemu tests
