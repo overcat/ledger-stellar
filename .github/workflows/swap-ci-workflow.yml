@@ -2,15 +2,13 @@
 name: Swap Function CI
 
 on:
-  workflow_dispatch:
   push:
-    branches:
-    - master
-    - develop
   pull_request:
-    branches:
-    - master
-    - develop
+    branches-ignore:
+      - 'temp*'
+      - 'tmp*'
+  release:
+    types: [ created ]
 
 jobs:
   job_build_debug_nano_S:
