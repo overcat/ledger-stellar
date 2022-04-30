@@ -156,4 +156,5 @@ tests-unit:
 	rm -rf tests_unit/build && cmake -Btests_unit/build -Htests_unit/ && make -C tests_unit/build/ && make -C tests_unit/build test
 
 tests-zemu:
-	cd tests_zemu && rm -rf elfs/stellar_nano*.elf && ./build_local_test_elfs.sh && npm run test
+	cd tests_common_js && npm install && npm run build
+	cd tests_zemu && npm install && rm -rf elfs/stellar_nano*.elf && rm -rf snapshots-tmp && ./build_local_test_elfs.sh && npm run test

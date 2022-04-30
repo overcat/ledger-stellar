@@ -1,0 +1,235 @@
+# https://github.com/LedgerHQ/app-exchange/blob/develop/.github/workflows/ci-workflow.yml
+name: Swap Function CI
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+    - master
+    - develop
+  pull_request:
+    branches:
+    - master
+    - develop
+
+jobs:
+  job_build_debug_nano_S:
+    name: Build debug NanoS
+    runs-on: ubuntu-latest
+
+    container:
+      image: ghcr.io/ledgerhq/ledger-app-builder/ledger-app-builder:latest
+
+    steps:
+      - name: Clone
+        uses: actions/checkout@v2
+        with:
+          repository: 'https://github.com/LedgerHQ/app-exchange'
+          ref: 'e004004e01cbd381c0757de01a4497ed77e809f6'
+
+      - name: Build
+        run: |
+          make DEBUG=1 TESTING=1 TEST_PUBLIC_KEY=1
+          cp bin/app.elf exchange_nanos.elf
+      - name: Upload app binary
+        uses: actions/upload-artifact@v2
+        with:
+          name: exchange
+          path: ./exchange_nanos.elf
+          if-no-files-found: error
+
+  job_build_debug_nano_X:
+    name: Build debug NanoX
+    runs-on: ubuntu-latest
+
+    container:
+      image: ghcr.io/ledgerhq/ledger-app-builder/ledger-app-builder:latest
+
+    steps:
+      - name: Clone
+        uses: actions/checkout@v2
+        with:
+          repository: 'https://github.com/LedgerHQ/app-exchange'
+          ref: 'e004004e01cbd381c0757de01a4497ed77e809f6'
+
+      - name: Build
+        run: |
+          make BOLOS_SDK=$NANOX_SDK DEBUG=1 TESTING=1 TEST_PUBLIC_KEY=1
+          cp bin/app.elf exchange_nanox.elf
+      - name: Upload app binary
+        uses: actions/upload-artifact@v2
+        with:
+          name: exchange
+          path: ./exchange_nanox.elf
+          if-no-files-found: error
+
+  job_build_debug_nano_SP:
+    name: Build debug NanoSP
+    runs-on: ubuntu-latest
+
+    container:
+      image: ghcr.io/ledgerhq/ledger-app-builder/ledger-app-builder:latest
+
+    steps:
+      - name: Clone
+        uses: actions/checkout@v2
+        with:
+          repository: 'https://github.com/LedgerHQ/app-exchange'
+          ref: 'e004004e01cbd381c0757de01a4497ed77e809f6'
+
+      - name: Build
+        run: |
+          make BOLOS_SDK=$NANOSP_SDK DEBUG=1 TESTING=1 TEST_PUBLIC_KEY=1
+          cp bin/app.elf exchange_nanosp.elf
+      - name: Upload app binary
+        uses: actions/upload-artifact@v2
+        with:
+          name: exchange
+          path: ./exchange_nanosp.elf
+          if-no-files-found: error
+
+  building_stellar_binaries_for_e2e_tests:
+    name: Building binaries for E2E tests
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/ledgerhq/ledger-app-builder/ledger-app-builder:latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Build testing binaries
+        run: cd tests_zemu && ./build_local_test_elfs.sh
+
+      - name: Upload app binaries
+        uses: actions/upload-artifact@v2
+        with:
+          name: e2e_elfs
+          path: ./tests_zemu/elfs/
+
+  jobs-e2e-tests-nano-S:
+    needs:
+      - job_build_debug_nano_S
+      - building_stellar_binaries_for_e2e_tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Clone
+        uses: actions/checkout@v2
+
+      - name: Install APT dependencies
+        run: sudo apt-get update -y && sudo apt-get install -y libusb-1.0.0 libudev-dev
+
+      - name: Install Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16
+
+      - name: Install Yarn
+        run: npm install -g yarn
+
+      - name: Install JS dependencies
+        run: cd test && yarn install
+
+      - name: Create tmp folder for artifacts
+        run: mkdir test/elfs/tmp
+
+      - name: Download app binaries
+        uses: actions/download-artifact@v2
+        with:
+          name: exchange
+          path: test/elfs/tmp
+
+      - name: Gather elfs
+        run: |
+          cp `find test/elfs/tmp -name "*.elf"` test/elfs/
+          rm -rf stelalr*.elf
+          cp `find tmp/e2e_elfs/ -name "*.elf"` tests_zemu/elfs/
+          ls -lh test/elfs/
+      - name: Run zemu tests
+        run: cd test && yarn test -t "\[Nano S\]"
+
+  jobs-e2e-tests-nano-X:
+    needs:
+      - job_build_debug_nano_X
+      - building_stellar_binaries_for_e2e_tests
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Clone
+        uses: actions/checkout@v2
+
+      - name: Install APT dependencies
+        run: sudo apt-get update -y && sudo apt-get install -y libusb-1.0.0 libudev-dev
+
+      - name: Install Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16
+
+      - name: Install Yarn
+        run: npm install -g yarn
+
+      - name: Install JS dependencies
+        run: cd test && yarn install
+
+      - name: Create tmp folder for artifacts
+        run: mkdir test/elfs/tmp
+
+      - name: Download app binaries
+        uses: actions/download-artifact@v2
+        with:
+          name: exchange
+          path: test/elfs/tmp
+
+      - name: Gather elfs
+        run: |
+          cp `find test/elfs/tmp -name "*.elf"` test/elfs/
+          rm -rf stelalr*.elf
+          cp `find tmp/e2e_elfs/ -name "*.elf"` tests_zemu/elfs/
+          ls -lh test/elfs/
+      - name: Run zemu tests
+        run: cd test && yarn test -t "\[Nano X\]"
+
+  jobs-e2e-tests-nano-SP:
+    needs:
+      - job_build_debug_nano_SP
+      - building_stellar_binaries_for_e2e_tests
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Clone
+        uses: actions/checkout@v2
+
+      - name: Install APT dependencies
+        run: sudo apt-get update -y && sudo apt-get install -y libusb-1.0.0 libudev-dev
+
+      - name: Install Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16
+
+      - name: Install Yarn
+        run: npm install -g yarn
+
+      - name: Install JS dependencies
+        run: cd test && yarn install
+
+      - name: Create tmp folder for artifacts
+        run: mkdir test/elfs/tmp
+
+      - name: Download app binaries
+        uses: actions/download-artifact@v2
+        with:
+          name: exchange
+          path: test/elfs/tmp
+
+      - name: Gather elfs
+        run: |
+          cp `find test/elfs/tmp -name "*.elf"` test/elfs/
+          rm -rf stelalr*.elf
+          cp `find tmp/e2e_elfs/ -name "*.elf"` tests_zemu/elfs/
+          ls -lh test/elfs/
+      - name: Run zemu tests
+        run: cd test && yarn test -t "\[Nano SP\]"
