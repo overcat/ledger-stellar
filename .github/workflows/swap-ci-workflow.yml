@@ -57,13 +57,13 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Build testing binaries
-        run: cd tests_zemu && ./build_local_test_elfs.sh
+        run: ./build_elfs.sh
 
       - name: Upload app binaries
         uses: actions/upload-artifact@v2
         with:
           name: stellar_elfs
-          path: ./tests_zemu/elfs/
+          path: ./elfs/
 
   jobs-e2e-tests:
     needs:
