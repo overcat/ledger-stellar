@@ -140,6 +140,11 @@ jobs:
           name: exchange
           path: test/elfs/tmp
 
+      - name: Download stellar app binaries
+        uses: actions/download-artifact@v2
+        with:
+          path: tmp/
+
       - name: Gather elfs
         run: |
           cp `find test/elfs/tmp -name "*.elf"` test/elfs/
@@ -186,6 +191,11 @@ jobs:
           name: exchange
           path: test/elfs/tmp
 
+      - name: Download stellar app binaries
+        uses: actions/download-artifact@v2
+        with:
+          path: tmp/
+
       - name: Gather elfs
         run: |
           cp `find test/elfs/tmp -name "*.elf"` test/elfs/
@@ -231,6 +241,11 @@ jobs:
         with:
           name: exchange
           path: test/elfs/tmp
+
+      - name: Download stellar app binaries
+        uses: actions/download-artifact@v2
+        with:
+          path: tmp/
 
       - name: Gather elfs
         run: |
