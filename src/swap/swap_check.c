@@ -31,11 +31,14 @@ bool swap_check() {
     }
 
     // destination addr
-    print_muxed_account(&txCtx->txDetails.opDetails.payment.destination,
-                        tmp_buf,
-                        0,
-                        0,
-                        DETAIL_VALUE_MAX_LENGTH);
+    if (!print_muxed_account(&txCtx->txDetails.opDetails.payment.destination,
+                             tmp_buf,
+                             DETAIL_VALUE_MAX_LENGTH,
+                             0,
+                             0)) {
+        return false;
+    };
+
     if (strcmp(tmp_buf, G_swap_values.destination) != 0) {
         return false;
     }

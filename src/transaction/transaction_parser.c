@@ -17,7 +17,7 @@
 
 #include <stdint.h>
 #include <string.h>
-#include "types.h"
+#include "../types.h"
 #include "common/buffer.h"
 #include "transaction_parser.h"
 

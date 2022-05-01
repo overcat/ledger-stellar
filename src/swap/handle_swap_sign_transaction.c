@@ -26,12 +26,10 @@ bool copy_transaction_parameters(const create_transaction_parameters_t* params) 
     }
 
     memcpy(&G_swap_values, &stack_data, sizeof(stack_data));
-
     return true;
 }
 
 void handle_swap_sign_transaction(void) {
-    explicit_bzero(&G_swap_values, sizeof(G_swap_values));
     io_seproxyhal_init();
     UX_INIT();
     USB_power(0);
