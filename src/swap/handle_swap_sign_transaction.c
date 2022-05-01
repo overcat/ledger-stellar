@@ -34,7 +34,6 @@ void handle_swap_sign_transaction(void) {
     UX_INIT();
     USB_power(0);
     USB_power(1);
-    // ui_idle();
     PRINTF("USB power ON/OFF\n");
 #ifdef TARGET_NANOX
     // grab the current plane mode setting
