@@ -86,3 +86,8 @@
  * Status word for hash signing model not enabled.
  */
 #define SW_TX_HASH_SIGNING_MODE_NOT_ENABLED 0x6C66
+
+/**
+ * Status word for fail to check swap params
+ */
+#define SW_SWAP_CHECKING_FAIL 0xB009

@@ -26,21 +26,6 @@
 #include "apdu/dispatcher.h"
 #include "swap/swap_lib_calls.h"
 
-uint8_t G_io_seproxyhal_spi_buffer[IO_SEPROXYHAL_BUFFER_SIZE_B];
-ux_state_t G_ux;
-bolos_ux_params_t G_ux_params;
-io_state_e G_io_state;
-global_ctx_t G_context;
-swap_values_t G_swap_values;
-bool called_from_swap;
-
-// We define these variables as global variables to reduce memory usage.
-char G_ui_detail_caption[DETAIL_CAPTION_MAX_LENGTH];
-char G_ui_detail_value[DETAIL_VALUE_MAX_LENGTH];
-volatile uint8_t G_ui_current_state;
-uint8_t G_ui_current_data_index;
-ui_action_validate_cb G_ui_validate_callback;
-
 /**
  * Handle APDU command received and send back APDU response using handlers.
  */
@@ -210,11 +195,13 @@ __attribute__((section(".boot"))) int main(int arg0) {
     os_boot();
     if (arg0 == 0) {
         // called from dashboard as standalone Stellar App
+        called_from_swap = false;
         standalone_app_main();
     } else {
         // Called as library from another app
         libargs_t *args = (libargs_t *) arg0;
         if (args->id == 0x100) {
+            called_from_swap = true;
             library_main(args);
         } else {
             app_exit();

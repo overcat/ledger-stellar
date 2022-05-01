@@ -26,19 +26,14 @@ bool copy_transaction_parameters(const create_transaction_parameters_t* params) 
     }
 
     memcpy(&G_swap_values, &stack_data, sizeof(stack_data));
-
     return true;
 }
 
 void handle_swap_sign_transaction(void) {
-    called_from_swap = true;
-    // TODO
-    // reset_ctx();
     io_seproxyhal_init();
     UX_INIT();
     USB_power(0);
     USB_power(1);
-    // ui_idle();
     PRINTF("USB power ON/OFF\n");
 #ifdef TARGET_NANOX
     // grab the current plane mode setting
