@@ -37,7 +37,7 @@ do
 
     echo "** Building app $appname..."
     make clean BOLOS_SDK="$nano_sdk"
-    make -j DEBUG=0 BOLOS_SDK="$nano_sdk"
+    make -j DEBUG=1 BOLOS_SDK="$nano_sdk"
     cp bin/app.elf "$BUILD_REL_PATH/elfs/${APPNAME}_${elf_suffix}.elf"
 done
 

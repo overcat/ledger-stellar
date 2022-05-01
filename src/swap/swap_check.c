@@ -4,6 +4,7 @@
 #include "../sw.h"
 
 bool swap_check() {
+    PRINTF("swap_check invoked.\n");
     char *tmp_buf = G_ui_detail_value;
 
     tx_ctx_t *txCtx = &G_context.tx_info;
