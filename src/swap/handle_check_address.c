@@ -45,7 +45,8 @@ int handle_check_address(const check_address_parameters_t* params) {
 
     char address[57];
     if (!encode_ed25519_public_key(stellar_publicKey, address, sizeof(address))) {
-        // TODO
+        PRINTF("public key encode failed\n");
+        return 0;
     };
 
     if (strcmp(address, params->address_to_check) != 0) {

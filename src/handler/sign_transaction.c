@@ -66,6 +66,21 @@ int handler_sign_tx(buffer_t *cdata, bool is_first_chunk, bool more) {
         THROW(SW_TX_PARSING_FAIL);
     }
 
+    G_context.state = STATE_PARSED;
+    PRINTF("tx parsed\n");
+
+    if (called_from_swap) {
+        if (!swap_check()) {
+            return io_send_sw(SW_SWAP_CHECKING_FAIL);
+        }
+        if (crypto_sign_message() < 0) {
+            G_context.state = STATE_NONE;
+            return io_send_sw(SW_SIGNATURE_FAIL);
+        } else {
+            return send_response_sig();
+        }
+    }
+
     cx_ecfp_private_key_t private_key = {0};
     cx_ecfp_public_key_t public_key = {0};
     // TODO: error
@@ -75,20 +90,6 @@ int handler_sign_tx(buffer_t *cdata, bool is_first_chunk, bool more) {
     crypto_init_public_key(&private_key, &public_key, G_context.raw_public_key);
     // reset private key
     explicit_bzero(&private_key, sizeof(private_key));
-
-    G_context.state = STATE_PARSED;
-    PRINTF("tx parsed\n");
-    if (called_from_swap) {
-        // TODO: check it
-        // swap_check();
-        // os_sched_exit(0);
-        if (crypto_sign_message() < 0) {
-            G_context.state = STATE_NONE;
-            return io_send_sw(SW_SIGNATURE_FAIL);
-        } else {
-            return send_response_sig();
-        }
-    }
 
     return ui_approve_tx_init();
 };

@@ -22,8 +22,6 @@
 #include "common/buffer.h"
 #include "common/write.h"
 
-uint32_t G_output_len = 0;
-
 void io_seproxyhal_display(const bagl_element_t *element) {
     io_seproxyhal_display_default((bagl_element_t *) element);
 }

@@ -3,30 +3,30 @@
 #include "../types.h"
 #include "../sw.h"
 
-void swap_check() {
+bool swap_check() {
     char *tmp_buf = G_ui_detail_value;
 
     tx_ctx_t *txCtx = &G_context.tx_info;
 
     // tx type
     if (txCtx->envelopeType != ENVELOPE_TYPE_TX) {
-        io_send_sw(SW_DENY);
+        return false;
     }
 
     // A XLM swap consist of only one "send" operation
-    if (txCtx->txDetails.opCount > 1) {
-        io_send_sw(SW_DENY);
+    if (txCtx->txDetails.opCount != 1) {
+        return false;
     }
 
     // op type
     if (txCtx->txDetails.opDetails.type != XDR_OPERATION_TYPE_PAYMENT) {
-        io_send_sw(SW_DENY);
+        return false;
     }
 
     // amount
     if (txCtx->txDetails.opDetails.payment.asset.type != ASSET_TYPE_NATIVE ||
         txCtx->txDetails.opDetails.payment.amount != (int64_t) G_swap_values.amount) {
-        io_send_sw(SW_DENY);
+        return false;
     }
 
     // destination addr
@@ -36,31 +36,25 @@ void swap_check() {
                         0,
                         DETAIL_VALUE_MAX_LENGTH);
     if (strcmp(tmp_buf, G_swap_values.destination) != 0) {
-        io_send_sw(SW_DENY);
+        return false;
     }
 
     if (txCtx->txDetails.opDetails.sourceAccountPresent) {
-        io_send_sw(SW_DENY);
+        return false;
     }
 
     // memo
     if (txCtx->txDetails.memo.type != MEMO_TEXT ||
         strcmp(txCtx->txDetails.memo.text, G_swap_values.memo) != 0) {
-        io_send_sw(SW_DENY);
+        return false;
     }
 
     // fees
     if (txCtx->network != NETWORK_TYPE_PUBLIC || txCtx->txDetails.fee != G_swap_values.fees) {
-        io_send_sw(SW_DENY);
+        return false;
     }
 
     // we don't do any check on "TX Source" field
     // If we've reached this point without failure, we're good to go!
-    if (crypto_sign_message() < 0) {
-        G_context.state = STATE_NONE;
-        io_send_sw(SW_SIGNATURE_FAIL);
-    } else {
-        send_response_sig();
-    }
-    os_sched_exit(0);
+    return true;
 }
