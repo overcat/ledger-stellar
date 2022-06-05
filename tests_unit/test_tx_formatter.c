@@ -125,7 +125,7 @@ static void get_result_filename(const char *filename, char *path, size_t size) {
 static void check_transaction_results(const char *filename) {
     char path[1024];
     char line[4096];
-    uint8_t opCount = G_context.tx_info.txDetails.opCount;
+    uint8_t opCount = G_context.tx_info.txDetails.operations_len;
     G_ui_current_data_index = 0;
     get_result_filename(filename, path, sizeof(path));
 

@@ -16,6 +16,9 @@
  */
 #define APP_VERSION_SIZE 3
 
+/**
+ * Length of app_mode_persistent_t.hash_signing_enabled
+ */
 #define APP_CONFIGURATION_SIZE 1
 
 /*
@@ -104,9 +107,9 @@ typedef struct {
     uint32_t rawLength;
     uint16_t offset;
     uint8_t network;
-    EnvelopeType envelopeType;
-    FeeBumpTransactionDetails feeBumpTxDetails;
-    TransactionDetails txDetails;
+    envelope_type_t envelopeType;
+    fee_bump_transaction_details_t feeBumpTxDetails;
+    transaction_details_t txDetails;
 } tx_ctx_t;
 
 /**

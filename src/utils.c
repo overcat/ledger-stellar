@@ -112,7 +112,7 @@ bool encode_pre_auth_x_key(const uint8_t raw_pre_auth_tx[static RAW_PRE_AUTH_TX_
     return encode_key(raw_pre_auth_tx, VERSION_BYTE_PRE_AUTH_TX_KEY, out, out_len);
 }
 
-bool encode_muxed_account(const MuxedAccount *raw_muxed_account, char *out, size_t out_len) {
+bool encode_muxed_account(const muxed_account_t *raw_muxed_account, char *out, size_t out_len) {
     if (raw_muxed_account->type == KEY_TYPE_ED25519) {
         return encode_ed25519_public_key(raw_muxed_account->ed25519, out, out_len);
     } else {
@@ -178,7 +178,7 @@ bool print_binary(const uint8_t *in,
     return format_hex(in, in_len, out, out_len);
 }
 
-bool print_account_id(const AccountID account_id,
+bool print_account_id(const account_id_t account_id,
                       char *out,
                       size_t out_len,
                       uint8_t num_chars_l,
@@ -193,7 +193,7 @@ bool print_account_id(const AccountID account_id,
     return encode_ed25519_public_key(account_id, out, out_len);
 }
 
-bool print_muxed_account(const MuxedAccount *muxed_account,
+bool print_muxed_account(const muxed_account_t *muxed_account,
                          char *out,
                          size_t out_len,
                          uint8_t num_chars_l,
@@ -208,7 +208,7 @@ bool print_muxed_account(const MuxedAccount *muxed_account,
     return encode_muxed_account(muxed_account, out, out_len);
 }
 
-bool print_claimable_balance_id(const ClaimableBalanceID *claimable_balance_id,
+bool print_claimable_balance_id(const claimable_balance_id *claimable_balance_id,
                                 char *out,
                                 size_t out_len) {
     if (out_len < 36 * 2 + 1) {
@@ -293,7 +293,7 @@ bool print_time(uint64_t seconds, char *out, size_t out_len) {
     return true;
 }
 
-bool print_asset_name(const Asset *asset, uint8_t network_id, char *out, size_t out_len) {
+bool print_asset_name(const asset_t *asset, uint8_t network_id, char *out, size_t out_len) {
     switch (asset->type) {
         case ASSET_TYPE_NATIVE:
             if (network_id == NETWORK_TYPE_UNKNOWN) {
@@ -304,7 +304,7 @@ bool print_asset_name(const Asset *asset, uint8_t network_id, char *out, size_t 
             return true;
         case ASSET_TYPE_CREDIT_ALPHANUM4:
             for (int i = 0; i < 4; i++) {
-                out[i] = asset->alphaNum4.assetCode[i];
+                out[i] = asset->alpha_num4.asset_code[i];
                 if (out[i] == 0) {
                     break;
                 }
@@ -313,7 +313,7 @@ bool print_asset_name(const Asset *asset, uint8_t network_id, char *out, size_t 
             return true;
         case ASSET_TYPE_CREDIT_ALPHANUM12:
             for (int i = 0; i < 12; i++) {
-                out[i] = asset->alphaNum12.assetCode[i];
+                out[i] = asset->alpha_num12.asset_code[i];
                 if (out[i] == 0) {
                     break;
                 }
@@ -325,17 +325,17 @@ bool print_asset_name(const Asset *asset, uint8_t network_id, char *out, size_t 
     }
 }
 
-bool print_asset(const Asset *asset, uint8_t network_id, char *out, size_t out_len) {
+bool print_asset(const asset_t *asset, uint8_t network_id, char *out, size_t out_len) {
     char asset_code[12 + 1];
     char asset_issuer[3 + 2 + 4 + 1];
     print_asset_name(asset, network_id, asset_code, sizeof(asset_code));
 
     switch (asset->type) {
         case ASSET_TYPE_CREDIT_ALPHANUM4:
-            print_account_id(asset->alphaNum4.issuer, asset_issuer, sizeof(asset_issuer), 3, 4);
+            print_account_id(asset->alpha_num4.issuer, asset_issuer, sizeof(asset_issuer), 3, 4);
             break;
         case ASSET_TYPE_CREDIT_ALPHANUM12:
-            print_account_id(asset->alphaNum12.issuer, asset_issuer, sizeof(asset_issuer), 3, 4);
+            print_account_id(asset->alpha_num12.issuer, asset_issuer, sizeof(asset_issuer), 3, 4);
             break;
         default:
             break;
@@ -380,7 +380,7 @@ void print_trust_line_flags(uint32_t flags, char *out, size_t out_len) {
 }
 
 bool print_amount(uint64_t amount,
-                  const Asset *asset,
+                  const asset_t *asset,
                   uint8_t network_id,
                   char *out,
                   size_t out_len) {

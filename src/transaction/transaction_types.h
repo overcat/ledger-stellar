@@ -45,12 +45,18 @@
 #define DATA_VALUE_MAX_SIZE     64
 #define HOME_DOMAIN_MAX_SIZE    32
 
+// TODO: remove
+#define NETWORK_TYPE_PUBLIC  0
+#define NETWORK_TYPE_TEST    1
+#define NETWORK_TYPE_UNKNOWN 2
+static const char *NETWORK_NAMES[3] = {"Public", "Testnet", "Unknown"};
+
 typedef enum {
     ASSET_TYPE_NATIVE = 0,
     ASSET_TYPE_CREDIT_ALPHANUM4 = 1,
     ASSET_TYPE_CREDIT_ALPHANUM12 = 2,
     ASSET_TYPE_POOL_SHARE = 3,
-} AssetType;
+} asset_type_t;
 
 typedef enum {
     MEMO_NONE = 0,
@@ -58,54 +64,44 @@ typedef enum {
     MEMO_ID = 2,
     MEMO_HASH = 3,
     MEMO_RETURN = 4,
-} MemoType;
+} memo_type_t;
 
 typedef enum {
     ENVELOPE_TYPE_TX = 2,
     ENVELOPE_TYPE_TX_FEE_BUMP = 5,
-} EnvelopeType;
-
-// TODO: enum
-#define NETWORK_TYPE_PUBLIC  0
-#define NETWORK_TYPE_TEST    1
-#define NETWORK_TYPE_UNKNOWN 2
-static const char *NETWORK_NAMES[3] = {"Public", "Testnet", "Unknown"};
+} envelope_type_t;
 
 typedef enum {
-    XDR_OPERATION_TYPE_CREATE_ACCOUNT = 0,
-    XDR_OPERATION_TYPE_PAYMENT = 1,
-    XDR_OPERATION_TYPE_PATH_PAYMENT_STRICT_RECEIVE = 2,
-    XDR_OPERATION_TYPE_MANAGE_SELL_OFFER = 3,
-    XDR_OPERATION_TYPE_CREATE_PASSIVE_SELL_OFFER = 4,
-    XDR_OPERATION_TYPE_SET_OPTIONS = 5,
-    XDR_OPERATION_TYPE_CHANGE_TRUST = 6,
-    XDR_OPERATION_TYPE_ALLOW_TRUST = 7,
-    XDR_OPERATION_TYPE_ACCOUNT_MERGE = 8,
-    XDR_OPERATION_TYPE_INFLATION = 9,
-    XDR_OPERATION_TYPE_MANAGE_DATA = 10,
-    XDR_OPERATION_TYPE_BUMP_SEQUENCE = 11,
-    XDR_OPERATION_TYPE_MANAGE_BUY_OFFER = 12,
-    XDR_OPERATION_TYPE_PATH_PAYMENT_STRICT_SEND = 13,
-    XDR_OPERATION_TYPE_CREATE_CLAIMABLE_BALANCE = 14,
-    XDR_OPERATION_TYPE_CLAIM_CLAIMABLE_BALANCE = 15,
-    XDR_OPERATION_TYPE_BEGIN_SPONSORING_FUTURE_RESERVES = 16,
-    XDR_OPERATION_TYPE_END_SPONSORING_FUTURE_RESERVES = 17,
-    XDR_OPERATION_TYPE_REVOKE_SPONSORSHIP = 18,
-    XDR_OPERATION_TYPE_CLAWBACK = 19,
-    XDR_OPERATION_TYPE_CLAWBACK_CLAIMABLE_BALANCE = 20,
-    XDR_OPERATION_TYPE_SET_TRUST_LINE_FLAGS = 21,
-    XDR_OPERATION_TYPE_LIQUIDITY_POOL_DEPOSIT = 22,
-    XDR_OPERATION_TYPE_LIQUIDITY_POOL_WITHDRAW = 23,
-} xdr_operation_type_e;
+    OPERATION_TYPE_CREATE_ACCOUNT = 0,
+    OPERATION_TYPE_PAYMENT = 1,
+    OPERATION_TYPE_PATH_PAYMENT_STRICT_RECEIVE = 2,
+    OPERATION_TYPE_MANAGE_SELL_OFFER = 3,
+    OPERATION_TYPE_CREATE_PASSIVE_SELL_OFFER = 4,
+    OPERATION_TYPE_SET_OPTIONS = 5,
+    OPERATION_TYPE_CHANGE_TRUST = 6,
+    OPERATION_TYPE_ALLOW_TRUST = 7,
+    OPERATION_TYPE_ACCOUNT_MERGE = 8,
+    OPERATION_TYPE_INFLATION = 9,
+    OPERATION_TYPE_MANAGE_DATA = 10,
+    OPERATION_TYPE_BUMP_SEQUENCE = 11,
+    OPERATION_TYPE_MANAGE_BUY_OFFER = 12,
+    OPERATION_TYPE_PATH_PAYMENT_STRICT_SEND = 13,
+    OPERATION_TYPE_CREATE_CLAIMABLE_BALANCE = 14,
+    OPERATION_TYPE_CLAIM_CLAIMABLE_BALANCE = 15,
+    OPERATION_TYPE_BEGIN_SPONSORING_FUTURE_RESERVES = 16,
+    OPERATION_TYPE_END_SPONSORING_FUTURE_RESERVES = 17,
+    OPERATION_TYPE_REVOKE_SPONSORSHIP = 18,
+    OPERATION_TYPE_CLAWBACK = 19,
+    OPERATION_TYPE_CLAWBACK_CLAIMABLE_BALANCE = 20,
+    OPERATION_TYPE_SET_TRUST_LINE_FLAGS = 21,
+    OPERATION_TYPE_LIQUIDITY_POOL_DEPOSIT = 22,
+    OPERATION_TYPE_LIQUIDITY_POOL_WITHDRAW = 23,
+} operation_type_t;
 
-// ------------------------------------------------------------------------- //
-//                           TYPE DEFINITIONS                                //
-// ------------------------------------------------------------------------- //
-
-typedef const uint8_t *AccountID;
-typedef int64_t SequenceNumber;
-typedef uint64_t TimePoint;
-typedef int64_t Duration;
+typedef const uint8_t *account_id_t;
+typedef int64_t sequence_number_t;
+typedef uint64_t time_point_t;
+typedef int64_t duration_t;
 
 typedef enum {
     KEY_TYPE_ED25519 = 0,
@@ -113,14 +109,14 @@ typedef enum {
     KEY_TYPE_HASH_X = 2,
     KEY_TYPE_ED25519_SIGNED_PAYLOAD = 3,
     KEY_TYPE_MUXED_ED25519 = 0x100
-} CryptoKeyType;
+} crypto_key_type_t;
 
 typedef enum {
     SIGNER_KEY_TYPE_ED25519 = KEY_TYPE_ED25519,
     SIGNER_KEY_TYPE_PRE_AUTH_TX = KEY_TYPE_PRE_AUTH_TX,
     SIGNER_KEY_TYPE_HASH_X = KEY_TYPE_HASH_X,
     SIGNER_KEY_TYPE_ED25519_SIGNED_PAYLOAD = KEY_TYPE_ED25519_SIGNED_PAYLOAD
-} SignerKeyType;
+} signer_key_type_t;
 
 typedef enum {
     // issuer has authorized account to perform transactions with its credit
@@ -131,196 +127,210 @@ typedef enum {
     // issuer has specified that it may clawback its credit, and that claimable
     // balances created with its credit may also be clawed back
     TRUSTLINE_CLAWBACK_ENABLED_FLAG = 4
-} TrustLineFlags;
+} trust_line_flags_t;
 
 typedef struct {
     uint64_t id;
     const uint8_t *ed25519;
-} MuxedAccountMed25519;
+} muxed_account_med25519_t;
 
 typedef struct {
-    CryptoKeyType type;
+    crypto_key_type_t type;
     union {
         const uint8_t *ed25519;
-        MuxedAccountMed25519 med25519;
+        muxed_account_med25519_t med25519;
     };
-} MuxedAccount;
+} muxed_account_t;
 
 typedef struct {
-    const char *assetCode;
-    AccountID issuer;
-} AlphaNum4;
+    const char *asset_code;
+    account_id_t issuer;
+} alpha_num4_t;
 
 typedef struct {
-    const char *assetCode;
-    AccountID issuer;
-} AlphaNum12;
+    const char *asset_code;
+    account_id_t issuer;
+} alpha_num12_t;
 
 typedef struct {
-    AssetType type;
+    asset_type_t type;
     union {
-        AlphaNum4 alphaNum4;
-        AlphaNum12 alphaNum12;
+        alpha_num4_t alpha_num4;
+        alpha_num12_t alpha_num12;
     };
-} Asset;
+} asset_t;
 
-typedef enum { LIQUIDITY_POOL_CONSTANT_PRODUCT = 0 } LiquidityPoolType;
+typedef enum { LIQUIDITY_POOL_CONSTANT_PRODUCT = 0 } liquidity_pool_type_t;
 
 typedef struct {
-    Asset assetA;
-    Asset assetB;
+    asset_t assetA;
+    asset_t assetB;
     int32_t fee;  // Fee is in basis points, so the actual rate is (fee/100)%
-} LiquidityPoolConstantProductParameters;
+} liquidity_pool_constant_product_parameters_t;
 
 typedef struct {
-    LiquidityPoolType type;
+    liquidity_pool_type_t type;
     union {
-        LiquidityPoolConstantProductParameters
-            constantProduct;  // type == LIQUIDITY_POOL_CONSTANT_PRODUCT
+        liquidity_pool_constant_product_parameters_t
+            constant_product;  // type == LIQUIDITY_POOL_CONSTANT_PRODUCT
     };
-} LiquidityPoolParameters;
+} liquidity_pool_parameters_t;
 
 typedef struct {
-    AssetType type;
+    asset_type_t type;
     union {
-        AlphaNum4 alphaNum4;
-        AlphaNum12 alphaNum12;
-        LiquidityPoolParameters liquidityPool;
+        alpha_num4_t alpha_num4;
+        alpha_num12_t alpha_num12;
+        liquidity_pool_parameters_t liquidity_pool;
     };
-} ChangeTrustAsset;
+} change_trust_asset_t;
 
 typedef struct {
-    AssetType type;
+    asset_type_t type;
     union {
-        AlphaNum4 alphaNum4;
-        AlphaNum12 alphaNum12;
-        uint8_t liquidityPoolID[LIQUIDITY_POOL_ID_SIZE];
+        alpha_num4_t alpha_num4;
+        alpha_num12_t alpha_num12;
+        uint8_t liquidity_pool_id[LIQUIDITY_POOL_ID_SIZE];
     };
-} TrustLineAsset;
+} trust_line_asset_t;
 
 typedef struct {
     int32_t n;  // numerator
     int32_t d;  // denominator
-} Price;
+} price_t;
 
 typedef struct {
-    AccountID destination;    // account to create
-    int64_t startingBalance;  // amount they end up with
-} CreateAccountOp;
+    account_id_t destination;  // account to create
+    int64_t starting_balance;  // amount they end up with
+} create_account_op_t;
 
 typedef struct {
-    MuxedAccount destination;  // recipient of the payment
-    Asset asset;               // what they end up with
-    int64_t amount;            // amount they end up with
-} PaymentOp;
+    muxed_account_t destination;  // recipient of the payment_op
+    asset_t asset;                // what they end up with
+    int64_t amount;               // amount they end up with
+} payment_op_t;
 
 typedef struct {
-    MuxedAccount destination;  // recipient of the payment
-    int64_t sendMax;           // the maximum amount of sendAsset to send (excluding fees).
-                               // The operation will fail if can't be met
-    int64_t destAmount;        // amount they end up with
-    Asset sendAsset;           // asset we pay with
-    Asset destAsset;           // what they end up with
-    Asset path[PATH_PAYMENT_MAX_PATH_LENGTH];  // additional hops it must go through to get there
-    uint8_t pathLen;
-} PathPaymentStrictReceiveOp;
+    muxed_account_t destination;  // recipient of the payment_op
+    int64_t send_max;             // the maximum amount of send_asset to send (excluding fees).
+                                  // The operation will fail if can't be met
+    int64_t dest_amount;          // amount they end up with
+    asset_t send_asset;           // asset we pay with
+    asset_t dest_asset;           // what they end up with
+    asset_t path[PATH_PAYMENT_MAX_PATH_LENGTH];  // additional hops it must go through to get there
+    uint8_t path_len;
+} path_payment_strict_receive_op_t;
 
 typedef struct {
-    Asset selling;   // A
-    Asset buying;    // B
-    int64_t amount;  // amount taker gets
-    Price price;     // cost of A in terms of B
-} CreatePassiveSellOfferOp;
+    asset_t selling;  // A
+    asset_t buying;   // B
+    int64_t amount;   // amount taker gets
+    price_t price;    // cost of A in terms of B
+} create_passive_sell_offer_op_t;
 
 typedef struct {
-    Asset selling;
-    Asset buying;
+    asset_t selling;
+    asset_t buying;
     int64_t amount;  // amount being sold. if set to 0, delete the offer
-    Price price;     // price of thing being sold in terms of what you are buying
+    price_t price;   // price of thing being sold in terms of what you are buying
 
     // 0=create a new offer, otherwise edit an existing offer
-    int64_t offerID;
-} ManageSellOfferOp;
+    int64_t offer_id;
+} manage_sell_offer_op_t;
 
 typedef struct {
-    Asset selling;
-    Asset buying;
-    int64_t buyAmount;  // amount being bought. if set to 0, delete the offer
-    Price price;        // price of thing being bought in terms of what you are
-                        // selling
+    asset_t selling;
+    asset_t buying;
+    int64_t buy_amount;  // amount being bought. if set to 0, delete the offer
+    price_t price;       // price of thing being bought in terms of what you are
+                         // selling
 
     // 0=create a new offer, otherwise edit an existing offer
-    int64_t offerID;
-} ManageBuyOfferOp;
+    int64_t offer_id;
+} manage_buy_offer_op_t;
 
 typedef struct {
-    MuxedAccount destination;                  // recipient of the payment
-    int64_t sendAmount;                        // amount of sendAsset to send (excluding fees)
-                                               // The operation will fail if can't be met
-    int64_t destMin;                           // the minimum amount of dest asset to
-                                               // be received
-                                               // The operation will fail if it can't be met
-    Asset sendAsset;                           // asset we pay with
-    Asset destAsset;                           // what they end up with
-    Asset path[PATH_PAYMENT_MAX_PATH_LENGTH];  // additional hops it must go through to get there
-    uint8_t pathLen;
-} PathPaymentStrictSendOp;
+    muxed_account_t destination;                 // recipient of the payment_op
+    int64_t send_amount;                         // amount of send_asset to send (excluding fees)
+                                                 // The operation will fail if can't be met
+    int64_t dest_min;                            // the minimum amount of dest asset to
+                                                 // be received
+                                                 // The operation will fail if it can't be met
+    asset_t send_asset;                          // asset we pay with
+    asset_t dest_asset;                          // what they end up with
+    asset_t path[PATH_PAYMENT_MAX_PATH_LENGTH];  // additional hops it must go through to get there
+    uint8_t path_len;
+} path_payment_strict_send_op_t;
 
 typedef struct {
-    ChangeTrustAsset line;
-
+    change_trust_asset_t line;
     uint64_t limit;  // if limit is set to 0, deletes the trust line
-} ChangeTrustOp;
+} change_trust_op_t;
 
 typedef struct {
-    AccountID trustor;
-    char assetCode[ASSET_CODE_MAX_LENGTH];
+    account_id_t trustor;
+    char asset_code[ASSET_CODE_MAX_LENGTH];
     // One of 0, AUTHORIZED_FLAG, or AUTHORIZED_TO_MAINTAIN_LIABILITIES_FLAG.
     uint32_t authorize;
-} AllowTrustOp;
-
-typedef MuxedAccount AccountMergeOp;
+} allow_trust_op_t;
 
 typedef struct {
-    SequenceNumber bumpTo;
-} BumpSequenceOp;
+    muxed_account_t destination;
+} account_merge_op_t;
 
 typedef struct {
-    SignerKeyType type;
-    const uint8_t *data;
-} SignerKey;
+    sequence_number_t bump_to;
+} bump_sequence_op_t;
 
 typedef struct {
-    SignerKey key;
+    const uint8_t *ed25519;
+    const uint8_t *payload;
+    size_t payload_len;
+} ed25519_signed_payload_t;
+
+typedef struct {
+    signer_key_type_t type;
+    union {
+        const uint8_t *ed25519;
+        const uint8_t *pre_auth_tx;
+        const uint8_t *hash_x;
+        ed25519_signed_payload_t ed25519_signed_payload;
+    };
+} signer_key_t;
+
+typedef struct {
+    signer_key_t key;
     uint32_t weight;  // really only need 1 byte
 } signer_t;
 
 typedef struct {
-    bool inflationDestinationPresent;
-    AccountID inflationDestination;
-    uint32_t clearFlags;
-    uint32_t setFlags;
-    bool masterWeightPresent;
-    uint32_t masterWeight;
-    bool lowThresholdPresent;
-    uint32_t lowThreshold;
-    bool mediumThresholdPresent;
-    uint32_t mediumThreshold;
-    bool highThresholdPresent;
-    uint32_t highThreshold;
-    bool homeDomainPresent;
-    uint32_t homeDomainSize;
-    const uint8_t *homeDomain;
-    bool signerPresent;
+    bool inflation_destination_present;
+    account_id_t inflation_destination;
+    bool clear_flags_present;  // TODO: read
+    uint32_t clear_flags;
+    bool set_flags_present;  // TODO: read
+    uint32_t set_flags;
+    bool master_weight_present;
+    uint32_t master_weight;
+    bool low_threshold_present;
+    uint32_t low_threshold;
+    bool medium_threshold_present;
+    uint32_t medium_threshold;
+    bool high_threshold_present;
+    uint32_t high_threshold;
+    bool home_domain_present;
+    uint32_t home_domain_size;
+    const uint8_t *home_domain;
+    bool signer_present;
     signer_t signer;
-} SetOptionsOp;
+} set_options_op_t;
 
 typedef struct {
-    uint8_t dataNameSize;
-    const uint8_t *dataName;
-    uint8_t dataValueSize;
-    const uint8_t *dataValue;
-} ManageDataOp;
+    uint8_t data_name_size;
+    const uint8_t *data_name;
+    uint8_t data_value_size;
+    const uint8_t *data_value;
+} manage_data_op_t;
 
 typedef enum {
     CLAIM_PREDICATE_UNCONDITIONAL = 0,
@@ -329,45 +339,45 @@ typedef enum {
     CLAIM_PREDICATE_NOT = 3,
     CLAIM_PREDICATE_BEFORE_ABSOLUTE_TIME = 4,
     CLAIM_PREDICATE_BEFORE_RELATIVE_TIME = 5
-} ClaimPredicateType;
+} claim_predicate_type_t;
 
 typedef enum {
     CLAIMANT_TYPE_V0 = 0,
-} ClaimantType;
+} claimant_type_t;
 
 typedef struct {
-    ClaimantType type;
+    claimant_type_t type;
     union {
         struct {
-            AccountID destination;  // The account that can use this condition
+            account_id_t destination;  // The account that can use this condition
         } v0;
     };
 
-} Claimant;
+} claimant_t;
 
 typedef struct {
-    Asset asset;
+    asset_t asset;
     int64_t amount;
-    uint8_t claimantLen;
-    Claimant claimants[CLAIMANTS_MAX_LENGTH];
-} CreateClaimableBalanceOp;
+    uint8_t claimant_len;
+    claimant_t claimants[CLAIMANTS_MAX_LENGTH];
+} create_claimable_balance_op_t;
 
 typedef enum {
     CLAIMABLE_BALANCE_ID_TYPE_V0 = 0,
-} ClaimableBalanceIDType;
+} claimable_balance_id_type_t;
 
 typedef struct {
-    ClaimableBalanceIDType type;
+    claimable_balance_id_type_t type;
     uint8_t v0[HASH_SIZE];
-} ClaimableBalanceID;
+} claimable_balance_id;
 
 typedef struct {
-    ClaimableBalanceID balanceID;
-} ClaimClaimableBalanceOp;
+    claimable_balance_id balance_id;
+} claim_claimable_balance_op_t;
 
 typedef struct {
-    AccountID sponsoredID;
-} BeginSponsoringFutureReservesOp;
+    account_id_t sponsored_id;
+} begin_sponsoring_future_reserves_op_t;
 
 typedef enum {
     ACCOUNT = 0,
@@ -376,164 +386,177 @@ typedef enum {
     DATA = 3,
     CLAIMABLE_BALANCE = 4,
     LIQUIDITY_POOL = 5
-} LedgerEntryType;
+} ledger_entry_type_t;
 
 typedef struct {
-    LedgerEntryType type;
+    ledger_entry_type_t type;
     union {
         struct {
-            AccountID accountID;
+            account_id_t account_id;
         } account;  // type == ACCOUNT
 
         struct {
-            AccountID accountID;
-            TrustLineAsset asset;
-        } trustLine;  // type == TRUSTLINE
+            account_id_t account_id;
+            trust_line_asset_t asset;
+        } trust_line;  // type == TRUSTLINE
 
         struct {
-            AccountID sellerID;
-            int64_t offerID;
+            account_id_t seller_id;
+            int64_t offer_id;
         } offer;  // type == OFFER
 
         struct {
-            AccountID accountID;
-            uint8_t dataNameSize;
-            const uint8_t *dataName;
+            account_id_t account_id;
+            uint8_t data_name_size;
+            const uint8_t *data_name;
         } data;  // type == DATA
 
         struct {
-            ClaimableBalanceID balanceId;
-        } claimableBalance;  // type == CLAIMABLE_BALANCE
+            claimable_balance_id balance_id;
+        } claimable_balance;  // type == CLAIMABLE_BALANCE
 
         struct {
-            uint8_t liquidityPoolID[LIQUIDITY_POOL_ID_SIZE];
-        } liquidityPool;  // type == LIQUIDITY_POOL
+            uint8_t liquidity_pool_id[LIQUIDITY_POOL_ID_SIZE];
+        } liquidity_pool;  // type == LIQUIDITY_POOL
     };
 
-} LedgerKey;
+} ledger_key_t;
 
 typedef enum {
     REVOKE_SPONSORSHIP_LEDGER_ENTRY = 0,
     REVOKE_SPONSORSHIP_SIGNER = 1
-} RevokeSponsorshipType;
+} revoke_sponsorship_type_t;
 
 typedef struct {
-    RevokeSponsorshipType type;
+    revoke_sponsorship_type_t type;
     union {
-        LedgerKey ledgerKey;
+        ledger_key_t ledger_key;
         struct {
-            AccountID accountID;
-            SignerKey signerKey;
+            account_id_t account_id;
+            signer_key_t signer_key;
         } signer;
     };
 
-} RevokeSponsorshipOp;
+} revoke_sponsorship_op_t;
 
 typedef struct {
-    Asset asset;
-    MuxedAccount from;
+    asset_t asset;
+    muxed_account_t from;
     int64_t amount;
-} ClawbackOp;
+} clawback_op_t;
 
 typedef struct {
-    ClaimableBalanceID balanceID;
-} ClawbackClaimableBalanceOp;
+    claimable_balance_id balance_id;
+} clawback_claimable_balance_op_t;
 
 typedef struct {
-    AccountID trustor;
-    Asset asset;
-    uint32_t clearFlags;  // which flags to clear
-    uint32_t setFlags;    // which flags to set
-} SetTrustLineFlagsOp;
+    account_id_t trustor;
+    asset_t asset;
+    uint32_t clear_flags;  // which flags to clear
+    uint32_t set_flags;    // which flags to set
+} set_trust_line_flags_op_t;
 
 typedef struct {
-    uint8_t liquidityPoolID[LIQUIDITY_POOL_ID_SIZE];
-    int64_t maxAmountA;  // maximum amount of first asset to deposit
-    int64_t maxAmountB;  // maximum amount of second asset to deposit
-    Price minPrice;      // minimum depositA/depositB
-    Price maxPrice;      // maximum depositA/depositB
-} LiquidityPoolDepositOp;
+    uint8_t liquidity_pool_id[LIQUIDITY_POOL_ID_SIZE];
+    int64_t max_amount_a;  // maximum amount of first asset to deposit
+    int64_t max_amount_b;  // maximum amount of second asset to deposit
+    price_t min_price;     // minimum depositA/depositB
+    price_t max_price;     // maximum depositA/depositB
+} liquidity_pool_deposit_op_t;
 
 typedef struct {
-    uint8_t liquidityPoolID[LIQUIDITY_POOL_ID_SIZE];
-    int64_t amount;      // amount of pool shares to withdraw
-    int64_t minAmountA;  // minimum amount of first asset to withdraw
-    int64_t minAmountB;  // minimum amount of second asset to withdraw
-} LiquidityPoolWithdrawOp;
+    uint8_t liquidity_pool_id[LIQUIDITY_POOL_ID_SIZE];
+    int64_t amount;        // amount of pool shares to withdraw
+    int64_t min_amount_a;  // minimum amount of first asset to withdraw
+    int64_t min_amount_b;  // minimum amount of second asset to withdraw
+} liquidity_pool_withdraw_op_t;
 
 typedef struct {
-    MuxedAccount sourceAccount;
+    muxed_account_t source_account;
     uint8_t type;
-    bool sourceAccountPresent;
+    bool source_account_present;
     union {
-        CreateAccountOp createAccount;
-        PaymentOp payment;
-        PathPaymentStrictReceiveOp pathPaymentStrictReceiveOp;
-        ManageSellOfferOp manageSellOfferOp;
-        CreatePassiveSellOfferOp createPassiveSellOfferOp;
-        SetOptionsOp setOptionsOp;
-        ChangeTrustOp changeTrustOp;
-        AllowTrustOp allowTrustOp;
-        MuxedAccount destination;
-        ManageDataOp manageDataOp;
-        BumpSequenceOp bumpSequenceOp;
-        ManageBuyOfferOp manageBuyOfferOp;
-        PathPaymentStrictSendOp pathPaymentStrictSendOp;
-        CreateClaimableBalanceOp createClaimableBalanceOp;
-        ClaimClaimableBalanceOp claimClaimableBalanceOp;
-        BeginSponsoringFutureReservesOp beginSponsoringFutureReservesOp;
-        RevokeSponsorshipOp revokeSponsorshipOp;
-        ClawbackOp clawbackOp;
-        ClawbackClaimableBalanceOp clawbackClaimableBalanceOp;
-        SetTrustLineFlagsOp setTrustLineFlagsOp;
-        LiquidityPoolDepositOp liquidityPoolDepositOp;
-        LiquidityPoolWithdrawOp liquidityPoolWithdrawOp;
+        create_account_op_t create_account_op;
+        payment_op_t payment_op;
+        path_payment_strict_receive_op_t path_payment_strict_receive_op;
+        manage_sell_offer_op_t manage_sell_offer_op;
+        create_passive_sell_offer_op_t create_passive_sell_offer_op;
+        set_options_op_t set_options_op;
+        change_trust_op_t change_trust_op;
+        allow_trust_op_t allow_trust_op;
+        account_merge_op_t account_merge_op;
+        manage_data_op_t manage_data_op;
+        bump_sequence_op_t bump_sequence_op;
+        manage_buy_offer_op_t manage_buy_offer_op;
+        path_payment_strict_send_op_t path_payment_strict_send_op;
+        create_claimable_balance_op_t create_claimable_balance_op;
+        claim_claimable_balance_op_t claim_claimable_balance_op;
+        begin_sponsoring_future_reserves_op_t begin_sponsoring_future_reserves_op;
+        revoke_sponsorship_op_t revoke_sponsorship_op;
+        clawback_op_t clawback_op;
+        clawback_claimable_balance_op_t clawback_claimable_balance_op;
+        set_trust_line_flags_op_t set_trust_line_flags_op;
+        liquidity_pool_deposit_op_t liquidity_pool_deposit_op;
+        liquidity_pool_withdraw_op_t liquidity_pool_withdraw_op;
     };
-} Operation;
+} operation_t;
 
 typedef struct {
-    MemoType type;
+    memo_type_t type;
     union {
         uint64_t id;
-        const char *text;
+        struct {
+            uint8_t text_size;
+            const uint8_t *text;
+        } text;
         const uint8_t *hash;
+        const uint8_t *return_hash;
     };
-} Memo;
+} memo_t;
 
 typedef struct {
-    TimePoint minTime;
-    TimePoint maxTime;  // 0 here means no maxTime
-} TimeBounds;
+    time_point_t min_time;
+    time_point_t max_time;  // 0 here means no max_time
+} time_bounds_t;
 
 typedef struct {
-    uint32_t minLedger;
-    uint32_t maxLedger;
-} LedgerBounds;
+    uint32_t min_ledger;
+    uint32_t max_ledger;
+} ledger_bounds_t;
 
-typedef enum { PRECOND_NONE = 0, PRECOND_TIME = 1, PRECOND_V2 = 2 } PreconditionType;
-typedef struct {
-    TimeBounds timeBounds;
-    LedgerBounds ledgerBounds;
-    SequenceNumber minSeqNum;
-    Duration minSeqAge;
-    uint32_t minSeqLedgerGap;
-    bool hasTimeBounds;
-    bool hasLedgerBounds;
-    bool hasMinSeqNum;
-} Preconditions;
+typedef enum { PRECOND_NONE = 0, PRECOND_TIME = 1, PRECOND_V2 = 2 } precondition_type_t;
 
 typedef struct {
-    MuxedAccount sourceAccount;     // account used to run the transaction
-    SequenceNumber sequenceNumber;  // sequence number to consume in the account
-    Preconditions cond;             // validity conditions
-    Memo memo;
-    Operation opDetails;
+    time_bounds_t time_bounds;
+    ledger_bounds_t ledger_bounds;
+    sequence_number_t min_seq_num;
+    duration_t min_seq_age;
+    uint32_t min_seq_ledger_gap;
+    signer_key_t extra_signers[2];
+    uint8_t extra_signers_len;
+    bool time_bounds_present;
+    bool ledger_bounds_present;
+    bool min_seq_num_present;
+} preconditions_t;
+
+typedef struct {
+    uint8_t signature_hint[4];
+    uint8_t signature[64];
+    uint8_t signature_size;
+} decorated_signature_t;
+
+typedef struct {
+    muxed_account_t source_account;     // account used to run the transaction
+    sequence_number_t sequence_number;  // sequence number to consume in the account
+    preconditions_t cond;               // validity conditions
+    memo_t memo;
+    operation_t op_details;
     uint32_t fee;  // the fee the sourceAccount will pay
-    uint8_t opCount;
-    uint8_t opIdx;
-} TransactionDetails;
+    uint8_t operations_len;
+    uint8_t operation_index;
+} transaction_details_t;
 
 typedef struct {
-    MuxedAccount feeSource;
+    muxed_account_t fee_source;
     int64_t fee;
-} FeeBumpTransactionDetails;
+} fee_bump_transaction_details_t;
