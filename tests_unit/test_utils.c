@@ -53,20 +53,20 @@ static void test_encode_muxed_account() {
         0xa4, 0xa2, 0xfb, 0x0d, 0x7a, 0x03, 0xfc, 0x7f, 0xe8, 0x9a,
     };
     // Valid non-multiplexed account
-    MuxedAccount account1 = {.type = KEY_TYPE_ED25519, .ed25519 = ed25519};
+    muxed_account_t account1 = {.type = KEY_TYPE_ED25519, .ed25519 = ed25519};
     assert_true(encode_muxed_account(&account1, out, sizeof(out)));
     assert_string_equal(out, "GA7QYNF7SOWQ3GLR2BGMZEHXAVIRZA4KVWLTJJFC7MGXUA74P7UJVSGZ");
 
     // Valid multiplexed account
-    MuxedAccount account2 = {.type = KEY_TYPE_MUXED_ED25519,
-                             .med25519 = {.id = 0, .ed25519 = ed25519}};
+    muxed_account_t account2 = {.type = KEY_TYPE_MUXED_ED25519,
+                                .med25519 = {.id = 0, .ed25519 = ed25519}};
     assert_true(encode_muxed_account(&account2, out, sizeof(out)));
     assert_string_equal(out,
                         "MA7QYNF7SOWQ3GLR2BGMZEHXAVIRZA4KVWLTJJFC7MGXUA74P7UJUAAAAAAAAAAAACJUQ");
 
     // Valid multiplexed account in which unsigned id exceeds maximum signed 64-bit integer
-    MuxedAccount account3 = {.type = KEY_TYPE_MUXED_ED25519,
-                             .med25519 = {.id = 9223372036854775808, .ed25519 = ed25519}};
+    muxed_account_t account3 = {.type = KEY_TYPE_MUXED_ED25519,
+                                .med25519 = {.id = 9223372036854775808, .ed25519 = ed25519}};
     assert_true(encode_muxed_account(&account3, out, sizeof(out)));
     assert_string_equal(out,
                         "MA7QYNF7SOWQ3GLR2BGMZEHXAVIRZA4KVWLTJJFC7MGXUA74P7UJVAAAAAAAAAAAAAJLK");
@@ -82,7 +82,7 @@ void test_print_binary() {
 }
 
 void test_print_claimable_balance_id() {
-    ClaimableBalanceID id = {
+    claimable_balance_id id = {
         .type = CLAIMABLE_BALANCE_ID_TYPE_V0,
         .v0 = {0xc9, 0xc4, 0xa9, 0xe3, 0xa4, 0x68, 0x91, 0xa3, 0x60, 0x15, 0xc3,
                0x17, 0xb3, 0xdf, 0x17, 0xb4, 0x2b, 0xf,  0x2a, 0xd8, 0xa2, 0xee,
@@ -164,7 +164,7 @@ void test_print_int() {
 }
 
 void test_print_asset() {
-    Asset assert_native = {.type = ASSET_TYPE_NATIVE};
+    asset_t assert_native = {.type = ASSET_TYPE_NATIVE};
     char out[24];
     assert_true(print_asset(&assert_native, 0, out, sizeof(out)));
     assert_string_equal(out, "XLM");
@@ -180,13 +180,13 @@ void test_print_asset() {
         0xcc, 0x90, 0xf7, 0x05, 0x51, 0x1c, 0x83, 0x8a, 0xad, 0x97, 0x34,
         0xa4, 0xa2, 0xfb, 0x0d, 0x7a, 0x03, 0xfc, 0x7f, 0xe8, 0x9a,
     };
-    Asset assert_alphanum4 = {.type = ASSET_TYPE_CREDIT_ALPHANUM4,
-                              .alphaNum4 = {.assetCode = "CAT", .issuer = ed25519}};
+    asset_t assert_alphanum4 = {.type = ASSET_TYPE_CREDIT_ALPHANUM4,
+                                .alpha_num4 = {.asset_code = "CAT", .issuer = ed25519}};
     assert_true(print_asset(&assert_alphanum4, 0, out, sizeof(out)));
     assert_string_equal(out, "CAT@GA7..VSGZ");
 
-    Asset assert_alphanum12 = {.type = ASSET_TYPE_CREDIT_ALPHANUM12,
-                               .alphaNum12 = {.assetCode = "BANANANANANA", .issuer = ed25519}};
+    asset_t assert_alphanum12 = {.type = ASSET_TYPE_CREDIT_ALPHANUM12,
+                                 .alpha_num12 = {.asset_code = "BANANANANANA", .issuer = ed25519}};
     assert_true(print_asset(&assert_alphanum12, 0, out, sizeof(out)));
     assert_string_equal(out, "BANANANANANA@GA7..VSGZ");
 }

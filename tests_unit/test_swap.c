@@ -53,7 +53,7 @@ void test_get_printable_amount(void **state) {
     };
 
     uint64_t amount;
-    Asset asset = {.type = ASSET_TYPE_NATIVE};
+    asset_t asset = {.type = ASSET_TYPE_NATIVE};
     assert_true(swap_str_to_u64(params.amount, params.amount_length, &amount));
     assert_int_equal(amount, 1234);
     assert_true(print_amount(amount,

@@ -49,7 +49,7 @@ bool swap_check() {
 
     // memo
     if (txCtx->txDetails.memo.type != MEMO_TEXT ||
-        strcmp((char *)txCtx->txDetails.memo.text.text, G_swap_values.memo) != 0) {
+        strcmp((char *) txCtx->txDetails.memo.text.text, G_swap_values.memo) != 0) {
         return false;
     }
 
