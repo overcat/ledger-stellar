@@ -139,6 +139,10 @@ jobs:
       image: ghcr.io/ledgerhq/ledger-app-builder/ledger-app-builder:latest
 
     steps:
+      # https://github.com/actions/checkout/issues/760
+      - name: Work around permission issue
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
       - uses: actions/checkout@v2
 
       - name: Build testing binaries
