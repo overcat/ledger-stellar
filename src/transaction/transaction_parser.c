@@ -35,7 +35,6 @@ static const uint8_t NETWORK_ID_PUBLIC_HASH[32] = {
 static const uint8_t NETWORK_ID_TEST_HASH[32] = {
     0xce, 0xe0, 0x30, 0x2d, 0x59, 0x84, 0x4d, 0x32, 0xbd, 0xca, 0x91, 0x5c, 0x82, 0x03, 0xdd, 0x44,
     0xb3, 0x3f, 0xbb, 0x7e, 0xdc, 0x19, 0x05, 0x1e, 0xa3, 0x7a, 0xbe, 0xdf, 0x28, 0xec, 0xd4, 0x72};
-uint8_t network_id;  // TODO: remove it?
 
 static void buffer_advance(buffer_t *buffer, size_t num_bytes) {
     buffer_seek_cur(buffer, num_bytes);
@@ -1008,11 +1007,11 @@ bool read_transaction_envelope_type(buffer_t *buffer, envelope_type_t *envelope_
 static bool read_network(buffer_t *buffer, uint8_t *network) {
     READER_CHECK(buffer_can_read(buffer, HASH_SIZE))
     if (memcmp(buffer->ptr, NETWORK_ID_PUBLIC_HASH, HASH_SIZE) == 0) {
-        network_id = *network = NETWORK_TYPE_PUBLIC;
+        *network = NETWORK_TYPE_PUBLIC;
     } else if (memcmp(buffer->ptr, NETWORK_ID_TEST_HASH, HASH_SIZE) == 0) {
-        network_id = *network = NETWORK_TYPE_TEST;
+        *network = NETWORK_TYPE_TEST;
     } else {
-        network_id = *network = NETWORK_TYPE_UNKNOWN;
+        *network = NETWORK_TYPE_UNKNOWN;
     }
     buffer_advance(buffer, HASH_SIZE);
     return true;
