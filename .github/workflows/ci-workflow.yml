@@ -183,3 +183,10 @@ jobs:
 
       - name: Run zemu tests
         run: cd tests_zemu && npm run test
+
+      - name: Upload snapshots
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          name: zemu-snapshots
+          path: tests_zemu/snapshots-tmp/
