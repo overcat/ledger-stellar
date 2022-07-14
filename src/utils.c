@@ -24,8 +24,9 @@
 #include <stdio.h>
 #include <time.h>
 
-#define MUXED_ACCOUNT_MED_25519_SIZE 43
-#define BINARY_MAX_SIZE              36
+#define MUXED_ACCOUNT_MED_25519_SIZE  43
+#define BINARY_MAX_SIZE               36
+#define AMOUNT_WITH_COMMAS_MAX_LENGTH 24  // 922,337,203,685.4775807
 
 static const char base64Alphabet[] =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
@@ -384,11 +385,16 @@ bool print_amount(uint64_t amount,
                   uint8_t network_id,
                   char *out,
                   size_t out_len) {
-    char buffer[AMOUNT_MAX_LENGTH] = {0};
+    char buffer[AMOUNT_WITH_COMMAS_MAX_LENGTH] = {0};
     uint64_t dVal = amount;
     int i;
 
     for (i = 0; dVal > 0 || i < 9; i++) {
+        // len('100.0000001') == 11
+        if (i >= 11 && (i - 11) % 4 == 0) {
+            buffer[i] = ',';
+            i++;
+        }
         if (dVal > 0) {
             buffer[i] = (dVal % 10) + '0';
             dVal /= 10;
@@ -399,7 +405,7 @@ bool print_amount(uint64_t amount,
             i += 1;
             buffer[i] = '.';
         }
-        if (i >= AMOUNT_MAX_LENGTH) {
+        if (i >= AMOUNT_WITH_COMMAS_MAX_LENGTH) {
             return false;
         }
     }
