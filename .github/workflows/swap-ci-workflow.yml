@@ -2,77 +2,99 @@
 name: Swap function tests
 
 on:
+  workflow_dispatch:
   push:
+    branches:
+    - master
+    - develop
   pull_request:
-    branches-ignore:
-      - "temp*"
-      - "tmp*"
-  release:
-    types: [created]
+    branches:
+    - master
+    - develop
 
 jobs:
-  job_build_debug_exchange_apps:
-    name: Build debug Exchange App
-    runs-on: ubuntu-latest
+  build_sideloaded_applications:
+    strategy:
+      matrix:
+        sdk:
+        - path: $NANOS_SDK
+          name: nanos
+        - path: $NANOX_SDK
+          name: nanox
+        - path: $NANOSP_SDK
+          name: nanosp
+        coin:
+        - name: stellar
+          repo: overcat/ledger-stellar
+        - name: tezos
+          repo: LedgerHQ/app-tezos
+        - name: xrp
+          repo: LedgerHQ/app-xrp
+        - name: ethereum
+          repo: LedgerHQ/app-ethereum
+        - name: litecoin
+          repo: LedgerHQ/app-bitcoin-new
+        - name: bitcoin
+          repo: LedgerHQ/app-bitcoin-new
 
+    name: Build App
+    runs-on: ubuntu-latest
     container:
       image: ghcr.io/ledgerhq/ledger-app-builder/ledger-app-builder:latest
 
     steps:
-      - name: Clone
-        uses: actions/checkout@v2
+      - name: Clone ${{ matrix.coin.repo }} for coin ${{ matrix.coin.name }}
+        uses: actions/checkout@v3
         with:
-          repository: "LedgerHQ/app-exchange"
-          ref: "e004004e01cbd381c0757de01a4497ed77e809f6"
+          repository: ${{ matrix.coin.repo }}
+          ref: develop
 
-      - name: Build for NanoS
+      - name: Build in ${{ matrix.coin.repo }} coin ${{ matrix.coin.name }} for SDK ${{ matrix.sdk.name }}
         run: |
-          make clean && make BOLOS_SDK=$NANOS_SDK DEBUG=1 TESTING=1 TEST_PUBLIC_KEY=1
-          cp bin/app.elf exchange_nanos.elf
-
-      - name: Build for NanoX
-        run: |
-          make clean && make BOLOS_SDK=$NANOX_SDK DEBUG=1 TESTING=1 TEST_PUBLIC_KEY=1
-          cp bin/app.elf exchange_nanox.elf
-
-      - name: Build for NanoSP
-        run: |
-          make clean && make BOLOS_SDK=$NANOSP_SDK DEBUG=1 TESTING=1 TEST_PUBLIC_KEY=1
-          cp bin/app.elf exchange_nanosp.elf
-
-      - name: Upload app binary
+          make clean ; make COIN=${{ matrix.coin.name }} BOLOS_SDK=${{ matrix.sdk.path }}
+          cp bin/app.elf ${{ matrix.coin.name }}_${{ matrix.sdk.name }}.elf
+      - name: Upload ${{ matrix.coin.name }} binaries
         uses: actions/upload-artifact@v2
         with:
-          name: exchange_elfs
-          path: ./exchange_nano*.elf
+          name: ${{ matrix.coin.name }}_binaries
+          path: ./*.elf
           if-no-files-found: error
 
-  job_build_stellar_apps:
-    name: Building Stellar Apps
+  job_build_exchange:
+    name: Build Exchange
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        sdk: [{path: $NANOS_SDK, name: nanos}, {path: $NANOX_SDK, name: nanox}, {path: $NANOSP_SDK, name: nanosp}]
+
     container:
       image: ghcr.io/ledgerhq/ledger-app-builder/ledger-app-builder:latest
 
     steps:
-      # https://github.com/actions/checkout/issues/760
-      - name: Work around permission issue
-        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
-        
-      - uses: actions/checkout@v2
+      - name: Clone
+        uses: actions/checkout@v2
+        with:
+          repository: "LedgerHQ/app-exchange"
+          ref: "3510c5a7e69bc7e12474b8fb3d535febcbde7cb9"
 
-      - name: Build testing binaries
-        run: ./build_elfs.sh
-
-      - name: Upload app binaries
+      - name: Build Exchange
+        run: |
+          make clean ; make BOLOS_SDK=${{ matrix.sdk.path }} TESTING=1 TEST_PUBLIC_KEY=1
+          cp bin/app.elf exchange_${{ matrix.sdk.name }}.elf
+      - name: Upload Exchange binaries
         uses: actions/upload-artifact@v2
         with:
-          name: stellar_elfs
-          path: ./elfs/
+          name: exchange_binaries
+          path: ./*.elf
+          if-no-files-found: error
 
-  jobs-e2e-tests:
+  jobs_e2e_tests:
+    strategy:
+      matrix:
+        device: ["Nano S", "Nano X", "Nano SP"]
     needs:
-      - job_build_debug_exchange_apps
-      - job_build_stellar_apps
+      - job_build_exchange
+      - build_sideloaded_applications
     runs-on: ubuntu-latest
 
     steps:
@@ -80,7 +102,7 @@ jobs:
         uses: actions/checkout@v2
         with:
           repository: "LedgerHQ/app-exchange"
-          ref: "e004004e01cbd381c0757de01a4497ed77e809f6"
+          ref: "3510c5a7e69bc7e12474b8fb3d535febcbde7cb9"
 
       - name: Install APT dependencies
         run: sudo apt-get update -y && sudo apt-get install -y libusb-1.0.0 libudev-dev
@@ -96,23 +118,15 @@ jobs:
       - name: Install JS dependencies
         run: cd test && yarn install
 
-      - name: Download app binaries
-        uses: actions/download-artifact@v2
-        with:
-          name: exchange_elfs
-          path: tmp/exchange_elfs/
+      - name: Upgrade @zondax/zemu
+        run: cd test && yarn upgrade @zondax/zemu@0.32.0
 
-      - name: Download stellar app binaries
+      - name: Download all binaries
         uses: actions/download-artifact@v2
-        with:
-          name: stellar_elfs
-          path: tmp/stellar_elfs/
 
-      - name: Gather elfs
+      - name: Gather artifacts
         run: |
-          rm -rf test/elfs/stellar*.elf
-          cp `find tmp/exchange_elfs/ -name "*.elf"` test/elfs/
-          cp `find tmp/stellar_elfs/ -name "*.elf"` test/elfs/
-          ls -lh test/elfs/
-      - name: Run zemu tests
-        run: cd test && yarn test -t "XLM"
+          mkdir test/elfs
+          mv *_binaries/*.elf test/elfs
+      - name: Run zemu tests for device ${{ matrix.device }}
+        run: cd test && yarn test -t "\[${{ matrix.device }}\]"
