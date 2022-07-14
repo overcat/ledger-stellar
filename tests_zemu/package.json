@@ -14,7 +14,7 @@
   "devDependencies": {
     "@ledgerhq/hw-app-str": "^6.27.1",
     "@types/jest": "^27.4.1",
-    "@zondax/zemu": "^0.29.0",
+    "@zondax/zemu": "0.32.0",
     "jest": "^27.5.1",
     "stellar-base": "^8.0.0",
     "tests-common": "file:../tests_common_js",
