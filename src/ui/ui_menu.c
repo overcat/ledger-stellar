@@ -22,7 +22,7 @@
 void ui_idle(void);
 void display_settings(const ux_flow_step_t* const start_step);
 void switch_settings_hash_signing();
-
+void switch_settings_sequence_number();
 // FLOW for the settings menu:
 // #1 screen: enable hash signing
 // #2 screen: quit
@@ -34,6 +34,13 @@ UX_STEP_CB(ux_settings_hash_signing_step,
                .title = "Hash signing",
                .text = G_ui_detail_value,
            });
+UX_STEP_CB(ux_settings_sequence_number_step,
+           bnnn_paging,
+           switch_settings_sequence_number(),
+           {
+               .title = "Sequence Number",
+               .text = G_ui_detail_value + 12,
+           });
 #else
 UX_STEP_CB(ux_settings_hash_signing_step,
            bnnn,
@@ -44,6 +51,15 @@ UX_STEP_CB(ux_settings_hash_signing_step,
                "hash signing",
                G_ui_detail_value,
            });
+UX_STEP_CB(ux_settings_sequence_number_step,
+           bnnn,
+           switch_settings_sequence_number(),
+           {
+               "Sequence Number",
+               "Display sequence",
+               "in transactions",
+               G_ui_detail_value + 12,
+           });
 #endif
 UX_STEP_CB(ux_settings_exit_step,
            pb,
@@ -52,7 +68,10 @@ UX_STEP_CB(ux_settings_exit_step,
                &C_icon_back_x,
                "Back",
            });
-UX_FLOW(ux_settings_flow, &ux_settings_hash_signing_step, &ux_settings_exit_step);
+UX_FLOW(ux_settings_flow,
+        &ux_settings_hash_signing_step,
+        &ux_settings_sequence_number_step,
+        &ux_settings_exit_step);
 
 // We have a screen with the icon and "Stellar is ready"
 UX_STEP_NOCB(ux_menu_ready_step, pnn, {&C_icon_stellar, "Stellar", "is ready"});
@@ -89,11 +108,19 @@ void ui_idle(void) {
 void display_settings(const ux_flow_step_t* const start_step) {
     strlcpy(G_ui_detail_value,
             (HAS_SETTING(S_HASH_SIGNING_ENABLED) ? "Enabled" : "NOT Enabled"),
-            DETAIL_VALUE_MAX_LENGTH);
+            12);
+    strlcpy(G_ui_detail_value + 12,
+            (HAS_SETTING(S_SEQUENCE_NUMBER_ENABLED) ? "Displayed" : "NOT Displayed"),
+            14);
     ux_flow_init(0, ux_settings_flow, start_step);
 }
 
 void switch_settings_hash_signing() {
     SETTING_TOGGLE(S_HASH_SIGNING_ENABLED);
     display_settings(&ux_settings_hash_signing_step);
+}
+
+void switch_settings_sequence_number() {
+    SETTING_TOGGLE(S_SEQUENCE_NUMBER_ENABLED);
+    display_settings(&ux_settings_sequence_number_step);
 }
