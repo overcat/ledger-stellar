@@ -17,7 +17,7 @@
 #define APP_VERSION_SIZE 3
 
 /**
- * Length of app_mode_persistent_t.hash_signing_enabled
+ * Length of hash_signing_enabled
  */
 #define APP_CONFIGURATION_SIZE 1
 

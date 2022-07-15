@@ -17,7 +17,7 @@
 
 #include "ui.h"
 #include "globals.h"
-#include "app_mode.h"
+#include "settings.h"
 
 void ui_idle(void);
 void display_settings(const ux_flow_step_t* const start_step);
@@ -88,12 +88,12 @@ void ui_idle(void) {
 
 void display_settings(const ux_flow_step_t* const start_step) {
     strlcpy(G_ui_detail_value,
-            (app_mode_hash_signing_enabled() ? "Enabled" : "NOT Enabled"),
+            (HAS_SETTING(S_HASH_SIGNING_ENABLED) ? "Enabled" : "NOT Enabled"),
             DETAIL_VALUE_MAX_LENGTH);
     ux_flow_init(0, ux_settings_flow, start_step);
 }
 
 void switch_settings_hash_signing() {
-    app_mode_change_hash_signing_setting();
+    SETTING_TOGGLE(S_HASH_SIGNING_ENABLED);
     display_settings(&ux_settings_hash_signing_step);
 }

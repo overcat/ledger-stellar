@@ -28,7 +28,7 @@
 #include "../sw.h"
 #include "../types.h"
 #include "common/buffer.h"
-#include "../app_mode.h"
+#include "../settings.h"
 
 int handler_get_app_configuration() {
     PRINTF("handler_get_app_configuration invoked\n");
@@ -44,7 +44,7 @@ int handler_get_app_configuration() {
     return io_send_response(
         &(const buffer_t){.ptr =
                               (uint8_t[APP_CONFIGURATION_SIZE + APP_VERSION_SIZE]){
-                                  (uint8_t) app_mode_hash_signing_enabled(),
+                                  (uint8_t) HAS_SETTING(S_HASH_SIGNING_ENABLED),
                                   (uint8_t) MAJOR_VERSION,
                                   (uint8_t) MINOR_VERSION,
                                   (uint8_t) PATCH_VERSION},

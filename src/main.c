@@ -110,7 +110,14 @@ void standalone_app_main() {
             TRY {
                 io_seproxyhal_init();
 
+                if (!HAS_SETTING(S_INITIALIZED)) {
+                    internal_storage_t storage = 0x00;
+                    storage |= 0x80;
+                    nvm_write((void *) &N_settings, (void *) &storage, sizeof(internal_storage_t));
+                }
+
 #ifdef TARGET_NANOX
+                // grab the current plane mode setting
                 G_io_app.plane_mode = os_setting_get(OS_SETTING_PLANEMODE, NULL, 0);
 #endif  // TARGET_NANOX
 

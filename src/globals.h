@@ -4,8 +4,12 @@
 
 #include "ux.h"
 #include "types.h"
-
 #include "io.h"
+#include "settings.h"
+/**
+ * The settings, stored in NVRAM. Initializer is ignored by ledger.
+ */
+extern const internal_storage_t N_storage_real;
 
 /**
  * Global buffer for interactions between SE and MCU.
