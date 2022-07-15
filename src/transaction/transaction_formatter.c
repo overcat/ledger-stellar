@@ -197,11 +197,15 @@ static void format_fee(tx_ctx_t *txCtx) {
                  txCtx->network,
                  G_ui_detail_value,
                  DETAIL_VALUE_MAX_LENGTH);
+#ifdef TEST
+    push_to_formatter_stack(&format_sequence);
+#else
     if (HAS_SETTING(S_SEQUENCE_NUMBER_ENABLED)) {
         push_to_formatter_stack(&format_sequence);
     } else {
         push_to_formatter_stack(&format_time_bounds);
     }
+#endif  // TEST
 }
 
 static void format_memo(tx_ctx_t *txCtx) {
