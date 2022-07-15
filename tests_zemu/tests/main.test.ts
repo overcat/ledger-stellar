@@ -116,6 +116,13 @@ describe('operations', () => {
         await sim.start({ ...defaultOptions, model: m.name });
         let transport = await sim.getTransport();
         let str = new Str(transport);
+
+        // display sequence
+        await sim.clickRight()
+        await sim.clickBoth()
+        await sim.clickRight()
+        await sim.clickBoth()
+
         let result = str.signTransaction("44'/148'/0'", tx.signatureBase())
         await sim.waitScreenChange()
         await sim.navigateAndCompareUntilText(".", `${m.prefix.toLowerCase()}-${c.filePath}`, 'Finalize')
