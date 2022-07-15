@@ -17,14 +17,14 @@
 
 #include "handler.h"
 #include "../globals.h"
-#include "../app_mode.h"
+#include "../settings.h"
 #include "../sw.h"
 #include "../crypto.h"
 #include "../ui/ui.h"
 
 int handler_sign_tx_hash(buffer_t *cdata) {
     PRINTF("handler_sign_tx_hash invoked\n");
-    if (!app_mode_hash_signing_enabled()) {
+    if (!HAS_SETTING(S_HASH_SIGNING_ENABLED)) {
         return io_send_sw(SW_TX_HASH_SIGNING_MODE_NOT_ENABLED);
     }
     explicit_bzero(&G_context, sizeof(G_context));
