@@ -358,8 +358,8 @@ export function opChangeTrustAddTrustLine() {
     .addOperation(
       Operation.changeTrust({
         asset: new Asset(
-          "USD",
-          "GDGUPDK4V7Z6ERQMROUA2Q5LYT344VY2JQ5K5QH6GS5KCPTH5F6AYCW"
+          "USDC",
+          "GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN"
         ),
         limit: "922337203680.9999999",
         source: kp0.publicKey(),
@@ -374,7 +374,7 @@ export function opChangeTrustRemoveTrustLine() {
       Operation.changeTrust({
         asset: new Asset(
           "USD",
-          "GDGUPDK4V7Z6ERQMROUA2Q5LYT344VY2JQ5K5QH6GS5KCPTH5F6AYCW"
+          "GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN"
         ),
         limit: "0",
         source: kp0.publicKey(),
@@ -385,12 +385,12 @@ export function opChangeTrustRemoveTrustLine() {
 
 export function opChangeTrustWithLiquidityPoolAssetAddTrustLine() {
   const asset1 = new Asset(
-    "USDC",
-    "GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN"
-  );
-  const asset2 = new Asset(
     "BTC",
     "GATEMHCCKCY67ZUCKTROYN24ZYT5GK4EQZ65JJLDHKHRUZI3EUEKMTCH"
+  );
+  const asset2 = new Asset(
+    "USDC",
+    "GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN"
   );
   const asset = new LiquidityPoolAsset(asset1, asset2, 30);
 
@@ -407,12 +407,12 @@ export function opChangeTrustWithLiquidityPoolAssetAddTrustLine() {
 
 export function opChangeTrustWithLiquidityPoolAssetRemoveTrustLine() {
   const asset1 = new Asset(
-    "USDC",
-    "GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN"
-  );
-  const asset2 = new Asset(
     "BTC",
     "GATEMHCCKCY67ZUCKTROYN24ZYT5GK4EQZ65JJLDHKHRUZI3EUEKMTCH"
+  );
+  const asset2 = new Asset(
+    "USDC",
+    "GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN"
   );
   const asset = new LiquidityPoolAsset(asset1, asset2, 30);
 
@@ -689,8 +689,8 @@ export function opCreateClaimableBalance() {
     .addOperation(
       Operation.createClaimableBalance({
         asset: new Asset(
-          "USD",
-          "GDGUPDK4V7Z6ERQMROUA2Q5LYT344VY2JQ5K5QH6GS5KCPTH5F6AYCW"
+          "USDC",
+          "GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN"
         ),
         amount: "100",
         claimants: claimants,
@@ -761,12 +761,12 @@ export function opRevokeSponsorshipTrustLineWithAsset() {
 
 export function opRevokeSponsorshipTrustLineWithLiquidityPoolId() {
   const asset1 = new Asset(
-    "USDC",
-    "GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN"
-  );
-  const asset2 = new Asset(
     "BTC",
     "GATEMHCCKCY67ZUCKTROYN24ZYT5GK4EQZ65JJLDHKHRUZI3EUEKMTCH"
+  );
+  const asset2 = new Asset(
+    "USDC",
+    "GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN"
   );
 
   const asset = new LiquidityPoolAsset(asset1, asset2, 30);
@@ -1012,12 +1012,12 @@ export function opSetTrustLineFlagsAuthorizedAndClawbackEnabled() {
 
 export function opLiquidityPoolDeposit() {
   const asset1 = new Asset(
-    "USDC",
-    "GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN"
-  );
-  const asset2 = new Asset(
     "BTC",
     "GATEMHCCKCY67ZUCKTROYN24ZYT5GK4EQZ65JJLDHKHRUZI3EUEKMTCH"
+  );
+  const asset2 = new Asset(
+    "USDC",
+    "GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN"
   );
 
   const asset = new LiquidityPoolAsset(asset1, asset2, 30);
@@ -1042,12 +1042,12 @@ export function opLiquidityPoolDeposit() {
 
 export function opLiquidityPoolWithdraw() {
   const asset1 = new Asset(
-    "USDC",
-    "GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN"
-  );
-  const asset2 = new Asset(
     "BTC",
     "GATEMHCCKCY67ZUCKTROYN24ZYT5GK4EQZ65JJLDHKHRUZI3EUEKMTCH"
+  );
+  const asset2 = new Asset(
+    "USDC",
+    "GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN"
   );
 
   const asset = new LiquidityPoolAsset(asset1, asset2, 30);
