@@ -102,6 +102,7 @@ jobs:
     strategy:
       matrix:
         device: ["nanos", "nanox", "nanosp"]
+      fail-fast: false
     needs: job_build_debug_app
     runs-on: ubuntu-latest
     steps:
