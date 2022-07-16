@@ -1,13 +1,13 @@
 name: Code style check
 
 on:
+  workflow_dispatch:
   push:
+    branches:
+    - develop
   pull_request:
-    branches-ignore:
-      - 'temp*'
-      - 'tmp*'
-  release:
-    types: [ created ]
+    branches:
+    - develop
 
 jobs:
   job_lint:
