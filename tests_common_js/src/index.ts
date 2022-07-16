@@ -1674,7 +1674,7 @@ export function txWithMuxedSource() {
     .build();
 }
 
-export function FeeBumpTx() {
+export function feeBumpTx() {
   const account = new Account(kp0.publicKey(), "103720918407102567");
   const innerTx = new TransactionBuilder(account, {
     fee: "50",
@@ -1712,7 +1712,7 @@ export function FeeBumpTx() {
   return feeBumpTx;
 }
 
-export function FeeBumpTxWithMuxedFeeSource() {
+export function feeBumpTxWithMuxedFeeSource() {
   const account = new Account(kp0.publicKey(), "103720918407102567");
   const innerTx = new TransactionBuilder(account, {
     fee: "50",
