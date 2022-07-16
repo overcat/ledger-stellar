@@ -1,6 +1,6 @@
 import Zemu, { DEFAULT_START_OPTIONS } from "@zondax/zemu";
 import { APP_SEED, models } from "./common";
-import { opCreateAccount, opPaymentAssetNative } from 'tests-common'
+import * as testCasesFunction from 'tests-common'
 import { Keypair } from 'stellar-base'
 import Str from '@ledgerhq/hw-app-str'
 
@@ -96,19 +96,25 @@ describe('get public key', () => {
   });
 })
 
-describe('operations', () => {
-  describe.each([
-    {
-      txFunction: opCreateAccount,
-      caseName: 'create account',
-      filePath: 'op-create-account'
-    },
-    {
-      txFunction: opPaymentAssetNative,
-      caseName: 'payment with asset native',
-      filePath: 'op-payment-asset-native'
-    }
-  ])('$caseName', (c) => {
+function camelToFilePath(str: string) {
+  return str.replace(/([A-Z])/g, '-$1').toLowerCase();
+}
+
+function getTestCases() {
+  const casesFunction = Object.keys(testCasesFunction);
+  const cases = []
+  for (const rawCase of casesFunction) {
+    cases.push({
+      caseName: rawCase,
+      filePath: camelToFilePath(rawCase),
+      txFunction: (testCasesFunction as any)[rawCase]  // dirty hack
+    });
+  }
+  return cases;
+}
+
+describe('transactions', () => {
+  describe.each(getTestCases())('$caseName', (c) => {
     test.each(models)("$name", async (m) => {
       let tx = c.txFunction();
       let sim = new Zemu(m.path);
