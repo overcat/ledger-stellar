@@ -336,7 +336,6 @@ export function opAllowTrustDeauthorize() {
   ).build();
 }
 
-
 export function opAllowTrustAuthorize() {
   return getCommonTransactionBuilder().addOperation(
     Operation.allowTrust({
@@ -514,7 +513,7 @@ export function opCreateClaimableBalance() {
       kp1.publicKey(), Claimant.predicateUnconditional()
     ),
     new Claimant(
-      kp2.publicKey(), Claimant.predicateAnd(Claimant.predicateBeforeRelativeTime("2352354235232"), Claimant.predicateNot(Claimant.predicateBeforeAbsoluteTime("12343433254")))
+      kp2.publicKey(), Claimant.predicateAnd(Claimant.predicateOr(Claimant.predicateBeforeAbsoluteTime("1629344902"), Claimant.predicateBeforeAbsoluteTime("1629300000")), Claimant.predicateNot(Claimant.predicateBeforeRelativeTime("180")))
     )
   ]
 
