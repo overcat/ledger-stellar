@@ -775,7 +775,7 @@ export function opRevokeSponsorshipTrustLineWithLiquidityPoolId() {
     asset.getLiquidityPoolParameters()
   );
 
-  const id = new LiquidityPoolId(poolId.toString());
+  const id = new LiquidityPoolId(poolId.toString("hex"));
 
   return getCommonTransactionBuilder()
     .addOperation(
