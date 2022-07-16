@@ -11,7 +11,8 @@ import {
   Claimant,
   getLiquidityPoolId,
   LiquidityPoolAsset,
-  MuxedAccount
+  MuxedAccount,
+  LiquidityPoolId,
 } from "stellar-base";
 
 // mnemonic: 'other base behind follow wet put glad muscle unlock sell income october'
@@ -538,9 +539,8 @@ export function opClaimClaimableBalance() {
 
 export function opBeginSponsoringFutureReserves() {
   return getCommonTransactionBuilder().addOperation(
-    Operation.revokeTrustlineSponsorship({
-      account: kp1.publicKey(),
-      asset: new Asset("BTC", "GATEMHCCKCY67ZUCKTROYN24ZYT5GK4EQZ65JJLDHKHRUZI3EUEKMTCH"),
+    Operation.beginSponsoringFutureReserves({
+      sponsoredId: kp1.publicKey(),
       source: kp0.publicKey(),
     })
   ).build();
@@ -563,11 +563,33 @@ export function opRevokeSponsorshipAccount() {
   ).build();
 }
 
-export function opRevokeSponsorshipTrustLine() {
+export function opRevokeSponsorshipTrustLineWithAsset() {
   return getCommonTransactionBuilder().addOperation(
     Operation.revokeTrustlineSponsorship({
       account: kp1.publicKey(),
       asset: new Asset("BTC", "GATEMHCCKCY67ZUCKTROYN24ZYT5GK4EQZ65JJLDHKHRUZI3EUEKMTCH"),
+      source: kp0.publicKey(),
+    })
+  ).build();
+}
+
+export function opRevokeSponsorshipTrustLineWithLiquidityPoolId() {
+  const asset1 = new Asset("USDC", "GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN")
+  const asset2 = new Asset("BTC", "GATEMHCCKCY67ZUCKTROYN24ZYT5GK4EQZ65JJLDHKHRUZI3EUEKMTCH")
+
+  const asset = new LiquidityPoolAsset(asset1, asset2, 30)
+  const poolId = getLiquidityPoolId(
+    'constant_product',
+    asset.getLiquidityPoolParameters()
+  )
+
+  const id = new LiquidityPoolId(poolId.toString())
+
+
+  return getCommonTransactionBuilder().addOperation(
+    Operation.revokeTrustlineSponsorship({
+      account: kp1.publicKey(),
+      asset: id,
       source: kp0.publicKey(),
     })
   ).build();
@@ -813,3 +835,104 @@ export function opWithMuxedSource() {
     })
   ).build();
 }
+
+export function txMemoNone() {
+  let account = new Account(kp0.publicKey(), "103720918407102567");
+  return new TransactionBuilder(account, {
+    fee: BASE_FEE,
+    networkPassphrase: Networks.PUBLIC,
+    timebounds: {
+      minTime: 0,
+      maxTime: 1670818332, // 2022-04-27T13:24:12+00:00
+    },
+  }).addOperation(
+    Operation.payment({
+      destination: kp1.publicKey(),
+      asset: Asset.native(),
+      amount: "1",
+      source: kp0.publicKey(),
+    })
+  ).build();
+}
+
+export function txMemoId() {
+  let account = new Account(kp0.publicKey(), "103720918407102567");
+  return new TransactionBuilder(account, {
+    fee: BASE_FEE,
+    networkPassphrase: Networks.PUBLIC,
+    memo: Memo.id("18446744073709551615"),
+    timebounds: {
+      minTime: 0,
+      maxTime: 1670818332, // 2022-04-27T13:24:12+00:00
+    },
+  }).addOperation(
+    Operation.payment({
+      destination: kp1.publicKey(),
+      asset: Asset.native(),
+      amount: "1",
+      source: kp0.publicKey(),
+    })
+  ).build();
+}
+
+// TODO: buffer memo
+export function txMemoText() {
+  let account = new Account(kp0.publicKey(), "103720918407102567");
+  return new TransactionBuilder(account, {
+    fee: BASE_FEE,
+    networkPassphrase: Networks.PUBLIC,
+    memo: Memo.text("hello world"),
+    timebounds: {
+      minTime: 0,
+      maxTime: 1670818332, // 2022-04-27T13:24:12+00:00
+    },
+  }).addOperation(
+    Operation.payment({
+      destination: kp1.publicKey(),
+      asset: Asset.native(),
+      amount: "1",
+      source: kp0.publicKey(),
+    })
+  ).build();
+}
+
+export function txMemoHash() {
+  let account = new Account(kp0.publicKey(), "103720918407102567");
+  return new TransactionBuilder(account, {
+    fee: BASE_FEE,
+    networkPassphrase: Networks.PUBLIC,
+    memo: Memo.hash("573c10b148fc4bc7db97540ce49da22930f4bcd48a060dc7347be84ea9f52d9f"),
+    timebounds: {
+      minTime: 0,
+      maxTime: 1670818332, // 2022-04-27T13:24:12+00:00
+    },
+  }).addOperation(
+    Operation.payment({
+      destination: kp1.publicKey(),
+      asset: Asset.native(),
+      amount: "1",
+      source: kp0.publicKey(),
+    })
+  ).build();
+}
+
+export function txMemoReturnHash() {
+  let account = new Account(kp0.publicKey(), "103720918407102567");
+  return new TransactionBuilder(account, {
+    fee: BASE_FEE,
+    networkPassphrase: Networks.PUBLIC,
+    memo: Memo.return("573c10b148fc4bc7db97540ce49da22930f4bcd48a060dc7347be84ea9f52d9f"),
+    timebounds: {
+      minTime: 0,
+      maxTime: 1670818332, // 2022-04-27T13:24:12+00:00
+    },
+  }).addOperation(
+    Operation.payment({
+      destination: kp1.publicKey(),
+      asset: Asset.native(),
+      amount: "1",
+      source: kp0.publicKey(),
+    })
+  ).build();
+}
+
