@@ -131,7 +131,7 @@ describe('transactions', () => {
 
         let result = str.signTransaction("44'/148'/0'", tx.signatureBase())
         await sim.waitScreenChange()
-        await sim.navigateAndCompareUntilText(".", `${m.prefix.toLowerCase()}-${c.filePath}`, 'Finalize')
+        await sim.navigateAndCompareUntilText(".", `${m.prefix.toLowerCase()}-${c.filePath}`, 'Finalize', 60000)
 
         let kp = Keypair.fromSecret("SAIYWGGWU2WMXYDSK33UBQBMBDKU4TTJVY3ZIFF24H2KQDR7RQW5KAEK")
         tx.sign(kp)
