@@ -276,7 +276,7 @@ export function opSetOptionsAddPreAuthTxSigner() {
   ).build();
 }
 
-export function opAppendChangeTrustAddTrustLine() {
+export function opChangeTrustAddTrustLine() {
   return getCommonTransactionBuilder().addOperation(
     Operation.changeTrust({
       asset: new Asset("USD", "GDGUPDK4V7Z6ERQMROUA2Q5LYT344VY2JQ5K5QH6GS5KCPTH5F6AYCW"),
@@ -286,7 +286,7 @@ export function opAppendChangeTrustAddTrustLine() {
   ).build();
 }
 
-export function opAppendChangeTrustRemoveTrustLine() {
+export function opChangeTrustRemoveTrustLine() {
   return getCommonTransactionBuilder().addOperation(
     Operation.changeTrust({
       asset: new Asset("USD", "GDGUPDK4V7Z6ERQMROUA2Q5LYT344VY2JQ5K5QH6GS5KCPTH5F6AYCW"),
@@ -297,7 +297,7 @@ export function opAppendChangeTrustRemoveTrustLine() {
 }
 
 
-export function opAppendChangeTrustWithLiquidityPoolAssetAddTrustLine() {
+export function opChangeTrustWithLiquidityPoolAssetAddTrustLine() {
   const asset1 = new Asset("USDC", "GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN")
   const asset2 = new Asset("BTC", "GATEMHCCKCY67ZUCKTROYN24ZYT5GK4EQZ65JJLDHKHRUZI3EUEKMTCH")
   const asset = new LiquidityPoolAsset(asset1, asset2, 30)
@@ -311,7 +311,7 @@ export function opAppendChangeTrustWithLiquidityPoolAssetAddTrustLine() {
   ).build();
 }
 
-export function opAppendChangeTrustWithLiquidityPoolAssetRemoveTrustLine() {
+export function opChangeTrustWithLiquidityPoolAssetRemoveTrustLine() {
   const asset1 = new Asset("USDC", "GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN")
   const asset2 = new Asset("BTC", "GATEMHCCKCY67ZUCKTROYN24ZYT5GK4EQZ65JJLDHKHRUZI3EUEKMTCH")
   const asset = new LiquidityPoolAsset(asset1, asset2, 30)
