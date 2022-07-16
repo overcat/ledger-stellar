@@ -38,7 +38,7 @@ const kp2 = Keypair.fromSecret(
 );
 
 function getCommonTransactionBuilder() {
-  let account = new Account(kp0.publicKey(), "103720918407102567");
+  const account = new Account(kp0.publicKey(), "103720918407102567");
   return new TransactionBuilder(account, {
     fee: BASE_FEE,
     networkPassphrase: Networks.PUBLIC,
@@ -836,7 +836,7 @@ export function opWithMuxedSource() {
 }
 
 export function txMemoNone() {
-  let account = new Account(kp0.publicKey(), "103720918407102567");
+  const account = new Account(kp0.publicKey(), "103720918407102567");
   return new TransactionBuilder(account, {
     fee: BASE_FEE,
     networkPassphrase: Networks.PUBLIC,
@@ -855,7 +855,7 @@ export function txMemoNone() {
 }
 
 export function txMemoId() {
-  let account = new Account(kp0.publicKey(), "103720918407102567");
+  const account = new Account(kp0.publicKey(), "103720918407102567");
   return new TransactionBuilder(account, {
     fee: BASE_FEE,
     networkPassphrase: Networks.PUBLIC,
@@ -876,7 +876,7 @@ export function txMemoId() {
 
 // TODO: buffer memo
 export function txMemoText() {
-  let account = new Account(kp0.publicKey(), "103720918407102567");
+  const account = new Account(kp0.publicKey(), "103720918407102567");
   return new TransactionBuilder(account, {
     fee: BASE_FEE,
     networkPassphrase: Networks.PUBLIC,
@@ -896,7 +896,7 @@ export function txMemoText() {
 }
 
 export function txMemoHash() {
-  let account = new Account(kp0.publicKey(), "103720918407102567");
+  const account = new Account(kp0.publicKey(), "103720918407102567");
   return new TransactionBuilder(account, {
     fee: BASE_FEE,
     networkPassphrase: Networks.PUBLIC,
@@ -916,7 +916,7 @@ export function txMemoHash() {
 }
 
 export function txMemoReturnHash() {
-  let account = new Account(kp0.publicKey(), "103720918407102567");
+  const account = new Account(kp0.publicKey(), "103720918407102567");
   return new TransactionBuilder(account, {
     fee: BASE_FEE,
     networkPassphrase: Networks.PUBLIC,
@@ -935,3 +935,342 @@ export function txMemoReturnHash() {
   ).build();
 }
 
+export function txCondWithAllItems() {
+  const account = new Account(kp0.publicKey(), "103720918407102567");
+  return new TransactionBuilder(account, {
+    fee: BASE_FEE,
+    networkPassphrase: Networks.PUBLIC,
+    memo: Memo.return("573c10b148fc4bc7db97540ce49da22930f4bcd48a060dc7347be84ea9f52d9f"),
+    timebounds: {
+      minTime: 1670818332, // 2022-04-27T13:24:12+00:00
+      maxTime: 1657951297, // 2022-07-16T06:01:37+00:00
+    },
+    ledgerbounds: {
+      minLedger: 40351800,
+      maxLedger: 40352000,
+    },
+    minAccountSequence: "103420918407103888",
+    minAccountSequenceAge: 1649239999,
+    minAccountSequenceLedgerGap: 30,
+    extraSigners: [
+      "GBJCHUKZMTFSLOMNC7P4TS4VJJBTCYL3XKSOLXAUJSD56C4LHND5TWUC",
+      "PA7QYNF7SOWQ3GLR2BGMZEHXAVIRZA4KVWLTJJFC7MGXUA74P7UJUAAAAAQACAQDAQCQMBYIBEFAWDANBYHRAEISCMKBKFQXDAMRUGY4DUPB6IBZGM"
+    ]
+  }).addOperation(
+    Operation.payment({
+      destination: kp1.publicKey(),
+      asset: Asset.native(),
+      amount: "1",
+      source: kp0.publicKey(),
+    })
+  ).build();
+}
+
+export function txCondTimeBounds() {
+  const account = new Account(kp0.publicKey(), "103720918407102567");
+  return new TransactionBuilder(account, {
+    fee: BASE_FEE,
+    networkPassphrase: Networks.PUBLIC,
+    memo: Memo.return("573c10b148fc4bc7db97540ce49da22930f4bcd48a060dc7347be84ea9f52d9f"),
+    timebounds: {
+      minTime: 1670818332, // 2022-04-27T13:24:12+00:00
+      maxTime: 1657951297, // 2022-07-16T06:01:37+00:00
+    },
+  }).addOperation(
+    Operation.payment({
+      destination: kp1.publicKey(),
+      asset: Asset.native(),
+      amount: "1",
+      source: kp0.publicKey(),
+    })
+  ).build();
+}
+
+export function txCondTimeBoundsMaxIsZero() {
+  const account = new Account(kp0.publicKey(), "103720918407102567");
+  return new TransactionBuilder(account, {
+    fee: BASE_FEE,
+    networkPassphrase: Networks.PUBLIC,
+    memo: Memo.return("573c10b148fc4bc7db97540ce49da22930f4bcd48a060dc7347be84ea9f52d9f"),
+    timebounds: {
+      minTime: 1670818332, // 2022-04-27T13:24:12+00:00
+      maxTime: 0,
+    },
+  }).addOperation(
+    Operation.payment({
+      destination: kp1.publicKey(),
+      asset: Asset.native(),
+      amount: "1",
+      source: kp0.publicKey(),
+    })
+  ).build();
+}
+
+export function txCondTimeBoundsMinIsZero() {
+  const account = new Account(kp0.publicKey(), "103720918407102567");
+  return new TransactionBuilder(account, {
+    fee: BASE_FEE,
+    networkPassphrase: Networks.PUBLIC,
+    memo: Memo.return("573c10b148fc4bc7db97540ce49da22930f4bcd48a060dc7347be84ea9f52d9f"),
+    timebounds: {
+      minTime: 0,
+      maxTime: 1657951297, // 2022-07-16T06:01:37+00:00
+    },
+  }).addOperation(
+    Operation.payment({
+      destination: kp1.publicKey(),
+      asset: Asset.native(),
+      amount: "1",
+      source: kp0.publicKey(),
+    })
+  ).build();
+}
+
+export function txCondTimeBoundsAreZero() {
+  const account = new Account(kp0.publicKey(), "103720918407102567");
+  return new TransactionBuilder(account, {
+    fee: BASE_FEE,
+    networkPassphrase: Networks.PUBLIC,
+    memo: Memo.return("573c10b148fc4bc7db97540ce49da22930f4bcd48a060dc7347be84ea9f52d9f"),
+    timebounds: {
+      minTime: 0,
+      maxTime: 0,
+    },
+  }).addOperation(
+    Operation.payment({
+      destination: kp1.publicKey(),
+      asset: Asset.native(),
+      amount: "1",
+      source: kp0.publicKey(),
+    })
+  ).build();
+}
+
+export function txCondLedgerBounds() {
+  const account = new Account(kp0.publicKey(), "103720918407102567");
+  return new TransactionBuilder(account, {
+    fee: BASE_FEE,
+    networkPassphrase: Networks.PUBLIC,
+    memo: Memo.return("573c10b148fc4bc7db97540ce49da22930f4bcd48a060dc7347be84ea9f52d9f"),
+    timebounds: {
+      minTime: 0,
+      maxTime: 0,
+    },
+    ledgerbounds: {
+      minLedger: 40351800,
+      maxLedger: 40352000,
+    },
+  }).addOperation(
+    Operation.payment({
+      destination: kp1.publicKey(),
+      asset: Asset.native(),
+      amount: "1",
+      source: kp0.publicKey(),
+    })
+  ).build();
+}
+
+export function txCondLedgerBoundsMaxIsZero() {
+  const account = new Account(kp0.publicKey(), "103720918407102567");
+  return new TransactionBuilder(account, {
+    fee: BASE_FEE,
+    networkPassphrase: Networks.PUBLIC,
+    memo: Memo.return("573c10b148fc4bc7db97540ce49da22930f4bcd48a060dc7347be84ea9f52d9f"),
+    timebounds: {
+      minTime: 0,
+      maxTime: 0,
+    },
+    ledgerbounds: {
+      minLedger: 40351800,
+      maxLedger: 0,
+    },
+  }).addOperation(
+    Operation.payment({
+      destination: kp1.publicKey(),
+      asset: Asset.native(),
+      amount: "1",
+      source: kp0.publicKey(),
+    })
+  ).build();
+}
+
+export function txCondLedgerBoundsMinIsZero() {
+  const account = new Account(kp0.publicKey(), "103720918407102567");
+  return new TransactionBuilder(account, {
+    fee: BASE_FEE,
+    networkPassphrase: Networks.PUBLIC,
+    memo: Memo.return("573c10b148fc4bc7db97540ce49da22930f4bcd48a060dc7347be84ea9f52d9f"),
+    timebounds: {
+      minTime: 0,
+      maxTime: 0,
+    },
+    ledgerbounds: {
+      minLedger: 0,
+      maxLedger: 40352000,
+    },
+  }).addOperation(
+    Operation.payment({
+      destination: kp1.publicKey(),
+      asset: Asset.native(),
+      amount: "1",
+      source: kp0.publicKey(),
+    })
+  ).build();
+}
+
+export function txCondLedgerBoundsAreZero() {
+  const account = new Account(kp0.publicKey(), "103720918407102567");
+  return new TransactionBuilder(account, {
+    fee: BASE_FEE,
+    networkPassphrase: Networks.PUBLIC,
+    memo: Memo.return("573c10b148fc4bc7db97540ce49da22930f4bcd48a060dc7347be84ea9f52d9f"),
+    timebounds: {
+      minTime: 0,
+      maxTime: 0,
+    },
+    ledgerbounds: {
+      minLedger: 0,
+      maxLedger: 0,
+    },
+  }).addOperation(
+    Operation.payment({
+      destination: kp1.publicKey(),
+      asset: Asset.native(),
+      amount: "1",
+      source: kp0.publicKey(),
+    })
+  ).build();
+}
+
+export function txCondMinAccountSequence() {
+  const account = new Account(kp0.publicKey(), "103720918407102567");
+  return new TransactionBuilder(account, {
+    fee: BASE_FEE,
+    networkPassphrase: Networks.PUBLIC,
+    memo: Memo.return("573c10b148fc4bc7db97540ce49da22930f4bcd48a060dc7347be84ea9f52d9f"),
+    timebounds: {
+      minTime: 0,
+      maxTime: 0,
+    },
+    minAccountSequence: "103420918407103888",
+  }).addOperation(
+    Operation.payment({
+      destination: kp1.publicKey(),
+      asset: Asset.native(),
+      amount: "1",
+      source: kp0.publicKey(),
+    })
+  ).build();
+}
+
+export function txCondMinAccountSequenceAge() {
+  const account = new Account(kp0.publicKey(), "103720918407102567");
+  return new TransactionBuilder(account, {
+    fee: BASE_FEE,
+    networkPassphrase: Networks.PUBLIC,
+    memo: Memo.return("573c10b148fc4bc7db97540ce49da22930f4bcd48a060dc7347be84ea9f52d9f"),
+    timebounds: {
+      minTime: 0,
+      maxTime: 0,
+    },
+    minAccountSequenceAge: 1649239999,
+  }).addOperation(
+    Operation.payment({
+      destination: kp1.publicKey(),
+      asset: Asset.native(),
+      amount: "1",
+      source: kp0.publicKey(),
+    })
+  ).build();
+}
+
+export function txCondMinAccountSequenceLedgerGap() {
+  const account = new Account(kp0.publicKey(), "103720918407102567");
+  return new TransactionBuilder(account, {
+    fee: BASE_FEE,
+    networkPassphrase: Networks.PUBLIC,
+    memo: Memo.return("573c10b148fc4bc7db97540ce49da22930f4bcd48a060dc7347be84ea9f52d9f"),
+    timebounds: {
+      minTime: 0,
+      maxTime: 0,
+    },
+    minAccountSequenceLedgerGap: 30,
+  }).addOperation(
+    Operation.payment({
+      destination: kp1.publicKey(),
+      asset: Asset.native(),
+      amount: "1",
+      source: kp0.publicKey(),
+    })
+  ).build();
+}
+
+export function txCondExtraSignersWithOneSigner() {
+  const account = new Account(kp0.publicKey(), "103720918407102567");
+  return new TransactionBuilder(account, {
+    fee: BASE_FEE,
+    networkPassphrase: Networks.PUBLIC,
+    memo: Memo.return("573c10b148fc4bc7db97540ce49da22930f4bcd48a060dc7347be84ea9f52d9f"),
+    timebounds: {
+      minTime: 0,
+      maxTime: 0,
+    },
+    extraSigners: [
+      "PA7QYNF7SOWQ3GLR2BGMZEHXAVIRZA4KVWLTJJFC7MGXUA74P7UJUAAAAAQACAQDAQCQMBYIBEFAWDANBYHRAEISCMKBKFQXDAMRUGY4DUPB6IBZGM"
+    ]
+  }).addOperation(
+    Operation.payment({
+      destination: kp1.publicKey(),
+      asset: Asset.native(),
+      amount: "1",
+      source: kp0.publicKey(),
+    })
+  ).build();
+}
+
+
+export function txCondExtraSignersWithTwoSigners() {
+  const account = new Account(kp0.publicKey(), "103720918407102567");
+  return new TransactionBuilder(account, {
+    fee: BASE_FEE,
+    networkPassphrase: Networks.PUBLIC,
+    memo: Memo.return("573c10b148fc4bc7db97540ce49da22930f4bcd48a060dc7347be84ea9f52d9f"),
+    timebounds: {
+      minTime: 0,
+      maxTime: 0,
+    },
+    extraSigners: [
+      "PA7QYNF7SOWQ3GLR2BGMZEHXAVIRZA4KVWLTJJFC7MGXUA74P7UJUAAAAAQACAQDAQCQMBYIBEFAWDANBYHRAEISCMKBKFQXDAMRUGY4DUPB6IBZGM",
+      "GBJCHUKZMTFSLOMNC7P4TS4VJJBTCYL3XKSOLXAUJSD56C4LHND5TWUC"
+    ]
+  }).addOperation(
+    Operation.payment({
+      destination: kp1.publicKey(),
+      asset: Asset.native(),
+      amount: "1",
+      source: kp0.publicKey(),
+    })
+  ).build();
+}
+
+// TODO: timebounds is null
+
+export function txMultiOperations() {
+  return getCommonTransactionBuilder().addOperation(
+    Operation.payment({
+      destination: kp1.publicKey(),
+      asset: Asset.native(),
+      amount: "922337203685.4775807",
+      source: kp0.publicKey(),
+    })
+  ).addOperation(
+    Operation.payment({
+      destination: kp1.publicKey(),
+      asset: new Asset("BTC", "GATEMHCCKCY67ZUCKTROYN24ZYT5GK4EQZ65JJLDHKHRUZI3EUEKMTCH"),
+      amount: "922337203685.4775807",
+      source: kp0.publicKey(),
+    })
+  ).addOperation(Operation.setOptions({
+    homeDomain: "stellar.org",
+  })).build();
+}
