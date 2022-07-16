@@ -23,8 +23,6 @@ jobs:
         - path: $NANOSP_SDK
           name: nanosp
         coin:
-        - name: stellar
-          repo: overcat/ledger-stellar
         - name: tezos
           repo: LedgerHQ/app-tezos
         - name: xrp
@@ -56,6 +54,37 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: ${{ matrix.coin.name }}_binaries
+          path: ./*.elf
+          if-no-files-found: error
+
+  build_stellar_applications:
+    strategy:
+      matrix:
+        sdk:
+        - path: $NANOS_SDK
+          name: nanos
+        - path: $NANOX_SDK
+          name: nanox
+        - path: $NANOSP_SDK
+          name: nanosp
+
+    name: Build Stellar App
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/ledgerhq/ledger-app-builder/ledger-app-builder:latest
+
+    steps:
+      - name: Clone
+        uses: actions/checkout@v3
+
+      - name: Build for SDK ${{ matrix.sdk.name }}
+        run: |
+          make clean ; make BOLOS_SDK=${{ matrix.sdk.path }}
+          cp bin/app.elf stellar_${{ matrix.sdk.name }}.elf
+      - name: Upload stellar binaries
+        uses: actions/upload-artifact@v2
+        with:
+          name: stellar_binaries
           path: ./*.elf
           if-no-files-found: error
 
@@ -94,6 +123,7 @@ jobs:
     needs:
       - job_build_exchange
       - build_sideloaded_applications
+      - build_stellar_applications
     runs-on: ubuntu-latest
 
     steps:
