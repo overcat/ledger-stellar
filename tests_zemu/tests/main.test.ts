@@ -109,7 +109,7 @@ describe('operations', () => {
       filePath: 'op-payment-asset-native'
     }
   ])('$caseName', (c) => {
-    test.each(models)("$name", async (m) => {
+    test.each(models)("device ($name)", async (m) => {
       let tx = c.txFunction();
       let sim = new Zemu(m.path);
       try {
