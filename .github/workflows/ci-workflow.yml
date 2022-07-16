@@ -130,7 +130,7 @@ jobs:
           cp ./stellar-app-${{ matrix.device }}-debug/app.elf ./tests_zemu/elfs/stellar_${{ matrix.device }}.elf
 
       - name: Run zemu tests
-        run: cd tests_zemu && npm run test -- -t "${{ matrix.device }}"
+        run: cd tests_zemu && npm run test -- -t "(${{ matrix.device }})"
 
       - name: Upload snapshots
         if: always()
