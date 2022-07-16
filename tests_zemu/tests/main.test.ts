@@ -8,7 +8,7 @@ beforeAll(async () => {
   await Zemu.checkAndPullImage();
 });
 
-jest.setTimeout(1000 * 60 * 3);
+jest.setTimeout(1000 * 60 * 60);
 
 const defaultOptions = {
   ...DEFAULT_START_OPTIONS,
@@ -131,7 +131,7 @@ describe('transactions', () => {
 
         let result = str.signTransaction("44'/148'/0'", tx.signatureBase())
         await sim.waitScreenChange()
-        await sim.navigateAndCompareUntilText(".", `${m.prefix.toLowerCase()}-${c.filePath}`, 'Finalize', 1000 * 60 * 3)
+        await sim.navigateAndCompareUntilText(".", `${m.prefix.toLowerCase()}-${c.filePath}`, 'Finalize', 1000 * 60 * 60)
 
         let kp = Keypair.fromSecret("SAIYWGGWU2WMXYDSK33UBQBMBDKU4TTJVY3ZIFF24H2KQDR7RQW5KAEK")
         tx.sign(kp)
