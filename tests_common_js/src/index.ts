@@ -659,7 +659,7 @@ export function opClawback() {
   ).build();
 }
 
-export function opClawbackWithMuxedDestination() {
+export function opClawbackWithMuxedFrom() {
   const muxedAccount = new MuxedAccount(
     new Account(kp1.publicKey(), "0"),
     "10000",
@@ -783,6 +783,33 @@ export function opLiquidityPoolWithdraw() {
       minAmountA: "10000",
       minAmountB: "20000",
       source: kp0.publicKey(),
+    })
+  ).build();
+}
+
+export function opWithEmptySource() {
+  return getCommonTransactionBuilder().addOperation(
+    Operation.payment({
+      destination: kp1.publicKey(),
+      asset: Asset.native(),
+      amount: "922337203685.4775807",
+      source: kp0.publicKey(),
+    })
+  ).build();
+}
+
+export function opWithMuxedSource() {
+  const muxedAccount = new MuxedAccount(
+    new Account(kp0.publicKey(), "0"),
+    "10000",
+  ).accountId();
+
+  return getCommonTransactionBuilder().addOperation(
+    Operation.payment({
+      destination: kp1.publicKey(),
+      asset: Asset.native(),
+      amount: "922337203685.4775807",
+      source: muxedAccount,
     })
   ).build();
 }
