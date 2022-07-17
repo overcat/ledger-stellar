@@ -1674,6 +1674,66 @@ export function txWithMuxedSource() {
     .build();
 }
 
+export function txNetworkPublic() {
+  const account = new Account(kp0.publicKey(), "103720918407102567");
+  return new TransactionBuilder(account, {
+    fee: BASE_FEE,
+    networkPassphrase: Networks.PUBLIC,
+    memo: Memo.text("hello world"),
+    timebounds: {
+      minTime: 0,
+      maxTime: 1670818332, // 2022-04-27T13:24:12+00:00
+    },
+  })
+    .addOperation(
+      Operation.bumpSequence({
+        bumpTo: "1232134324234",
+        source: kp0.publicKey(),
+      })
+    )
+    .build();
+}
+
+export function txNetworkTestnet() {
+  const account = new Account(kp0.publicKey(), "103720918407102567");
+  return new TransactionBuilder(account, {
+    fee: BASE_FEE,
+    networkPassphrase: Networks.TESTNET,
+    memo: Memo.text("hello world"),
+    timebounds: {
+      minTime: 0,
+      maxTime: 1670818332, // 2022-04-27T13:24:12+00:00
+    },
+  })
+    .addOperation(
+      Operation.bumpSequence({
+        bumpTo: "1232134324234",
+        source: kp0.publicKey(),
+      })
+    )
+    .build();
+}
+
+export function txNetworkCustom() {
+  const account = new Account(kp0.publicKey(), "103720918407102567");
+  return new TransactionBuilder(account, {
+    fee: BASE_FEE,
+    networkPassphrase: "Custom Network; July 2022",
+    memo: Memo.text("hello world"),
+    timebounds: {
+      minTime: 0,
+      maxTime: 1670818332, // 2022-04-27T13:24:12+00:00
+    },
+  })
+    .addOperation(
+      Operation.bumpSequence({
+        bumpTo: "1232134324234",
+        source: kp0.publicKey(),
+      })
+    )
+    .build();
+}
+
 export function feeBumpTx() {
   const account = new Account(kp0.publicKey(), "103720918407102567");
   const innerTx = new TransactionBuilder(account, {
