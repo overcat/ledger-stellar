@@ -73,7 +73,7 @@ describe('get public key', () => {
     }
   });
 
-  test.each(models)("get public key with confirmation ($name)", async (m) => {
+  test.each(models)("get public key with confirmation - approve ($name)", async (m) => {
     const sim = new Zemu(m.path);
     try {
       await sim.start({ ...defaultOptions, model: m.name });
@@ -83,7 +83,7 @@ describe('get public key', () => {
       const kp = Keypair.fromSecret("SAIYWGGWU2WMXYDSK33UBQBMBDKU4TTJVY3ZIFF24H2KQDR7RQW5KAEK")
 
       await sim.waitScreenChange()
-      await sim.navigateAndCompareUntilText(".", `${m.prefix.toLowerCase()}-public-key`, 'Approve')
+      await sim.navigateAndCompareUntilText(".", `${m.prefix.toLowerCase()}-public-key-approve`, 'Approve')
 
       expect(result).resolves.toStrictEqual({
         publicKey: kp.publicKey(),
@@ -93,7 +93,23 @@ describe('get public key', () => {
       await sim.close();
     }
   });
-  // TODO: refuse
+
+  test.each(models)("get public key with confirmation - reject ($name)", async (m) => {
+    const sim = new Zemu(m.path);
+    try {
+      await sim.start({ ...defaultOptions, model: m.name });
+      const transport = await sim.getTransport();
+      const str = new Str(transport);
+
+      // TODO: Maybe we should throw a more specific exception in @ledgerhq/hw-app-str
+      expect(() => str.getPublicKey("44'/148'/0'", false, true)).rejects.toThrow("Ledger device: Condition of use not satisfied (denied by the user?) (0x6985)");
+
+      await sim.waitScreenChange()
+      await sim.navigateAndCompareUntilText(".", `${m.prefix.toLowerCase()}-public-key-reject`, 'Reject')
+    } finally {
+      await sim.close();
+    }
+  });
 })
 
 describe('hash signing', () => {
