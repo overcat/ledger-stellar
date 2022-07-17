@@ -19,7 +19,7 @@ const defaultOptions = {
 };
 
 test.each(models)("can start and stop container ($name)", async (m) => {
-  let sim = new Zemu(m.path);
+  const sim = new Zemu(m.path);
   try {
     await sim.start({ ...defaultOptions, model: m.name });
   } finally {
@@ -28,7 +28,7 @@ test.each(models)("can start and stop container ($name)", async (m) => {
 });
 
 test.each(models)("main menu ($name)", async (m) => {
-  let sim = new Zemu(m.path);
+  const sim = new Zemu(m.path);
   try {
     await sim.start({ ...defaultOptions, model: m.name });
     await sim.navigateAndCompareSnapshots(
@@ -42,12 +42,12 @@ test.each(models)("main menu ($name)", async (m) => {
 });
 
 test.each(models)("app version ($name)", async (m) => {
-  let sim = new Zemu(m.path);
+  const sim = new Zemu(m.path);
   try {
     await sim.start({ ...defaultOptions, model: m.name });
-    let transport = await sim.getTransport();
-    let str = new Str(transport);
-    let result = await str.getAppConfiguration();
+    const transport = await sim.getTransport();
+    const str = new Str(transport);
+    const result = await str.getAppConfiguration();
     expect(result.version).toBe('4.0.0');
   } finally {
     await sim.close();
@@ -56,13 +56,13 @@ test.each(models)("app version ($name)", async (m) => {
 
 describe('get public key', () => {
   test.each(models)("get public key without confirmation ($name)", async (m) => {
-    let sim = new Zemu(m.path);
+    const sim = new Zemu(m.path);
     try {
       await sim.start({ ...defaultOptions, model: m.name });
-      let transport = await sim.getTransport();
-      let str = new Str(transport);
-      let result = await str.getPublicKey("44'/148'/0'", false, false);
-      let kp = Keypair.fromSecret("SAIYWGGWU2WMXYDSK33UBQBMBDKU4TTJVY3ZIFF24H2KQDR7RQW5KAEK")
+      const transport = await sim.getTransport();
+      const str = new Str(transport);
+      const result = await str.getPublicKey("44'/148'/0'", false, false);
+      const kp = Keypair.fromSecret("SAIYWGGWU2WMXYDSK33UBQBMBDKU4TTJVY3ZIFF24H2KQDR7RQW5KAEK")
 
       expect(result).toStrictEqual({
         publicKey: kp.publicKey(),
@@ -74,13 +74,13 @@ describe('get public key', () => {
   });
 
   test.each(models)("get public key with confirmation ($name)", async (m) => {
-    let sim = new Zemu(m.path);
+    const sim = new Zemu(m.path);
     try {
       await sim.start({ ...defaultOptions, model: m.name });
-      let transport = await sim.getTransport();
-      let str = new Str(transport);
-      let result = str.getPublicKey("44'/148'/0'", false, true);
-      let kp = Keypair.fromSecret("SAIYWGGWU2WMXYDSK33UBQBMBDKU4TTJVY3ZIFF24H2KQDR7RQW5KAEK")
+      const transport = await sim.getTransport();
+      const str = new Str(transport);
+      const result = str.getPublicKey("44'/148'/0'", false, true);
+      const kp = Keypair.fromSecret("SAIYWGGWU2WMXYDSK33UBQBMBDKU4TTJVY3ZIFF24H2KQDR7RQW5KAEK")
 
       await sim.waitScreenChange()
       await sim.navigateAndCompareUntilText(".", `${m.prefix.toLowerCase()}-public-key`, 'Approve')
@@ -98,11 +98,11 @@ describe('get public key', () => {
 
 describe('hash signing', () => {
   test.each(models)("hash signing mode is not enabled ($name)", async (m) => {
-    let sim = new Zemu(m.path);
+    const sim = new Zemu(m.path);
     try {
       await sim.start({ ...defaultOptions, model: m.name });
-      let transport = await sim.getTransport();
-      let str = new Str(transport);
+      const transport = await sim.getTransport();
+      const str = new Str(transport);
       const hash = Buffer.from("3389e9f0f1a65f19736cacf544c2e825313e8447f569233bb8db39aa607c8889", "hex")
       expect(() => str.signHash("44'/148'/0'", hash)).rejects.toThrow(new Error("Hash signing not allowed. Have you enabled it in the app settings?"));
     } finally {
@@ -111,11 +111,11 @@ describe('hash signing', () => {
   });
 
   test.each(models)("approve ($name)", async (m) => {
-    let sim = new Zemu(m.path);
+    const sim = new Zemu(m.path);
     try {
       await sim.start({ ...defaultOptions, model: m.name });
-      let transport = await sim.getTransport();
-      let str = new Str(transport);
+      const transport = await sim.getTransport();
+      const str = new Str(transport);
 
       // enable hash signing
       await sim.clickRight()
@@ -126,7 +126,7 @@ describe('hash signing', () => {
       const result = str.signHash("44'/148'/0'", hash)
       await sim.waitScreenChange()
       await sim.navigateAndCompareUntilText(".", `${m.prefix.toLowerCase()}-hash-signing-approve`, 'Approve')
-      let kp = Keypair.fromSecret("SAIYWGGWU2WMXYDSK33UBQBMBDKU4TTJVY3ZIFF24H2KQDR7RQW5KAEK")
+      const kp = Keypair.fromSecret("SAIYWGGWU2WMXYDSK33UBQBMBDKU4TTJVY3ZIFF24H2KQDR7RQW5KAEK")
       expect((await result).signature).toStrictEqual(kp.sign(hash));
     } finally {
       await sim.close();
@@ -134,11 +134,11 @@ describe('hash signing', () => {
   });
 
   test.each(models)("reject ($name)", async (m) => {
-    let sim = new Zemu(m.path);
+    const sim = new Zemu(m.path);
     try {
       await sim.start({ ...defaultOptions, model: m.name });
-      let transport = await sim.getTransport();
-      let str = new Str(transport);
+      const transport = await sim.getTransport();
+      const str = new Str(transport);
 
       // enable hash signing
       await sim.clickRight()
@@ -159,12 +159,12 @@ describe('hash signing', () => {
 describe('transactions', () => {
   describe.each(getTestCases())('$caseName', (c) => {
     test.each(models)("device ($name)", async (m) => {
-      let tx = c.txFunction();
-      let sim = new Zemu(m.path);
+      const tx = c.txFunction();
+      const sim = new Zemu(m.path);
       try {
         await sim.start({ ...defaultOptions, model: m.name });
-        let transport = await sim.getTransport();
-        let str = new Str(transport);
+        const transport = await sim.getTransport();
+        const str = new Str(transport);
 
         // display sequence
         await sim.clickRight()
@@ -172,11 +172,11 @@ describe('transactions', () => {
         await sim.clickRight()
         await sim.clickBoth()
 
-        let result = str.signTransaction("44'/148'/0'", tx.signatureBase())
+        const result = str.signTransaction("44'/148'/0'", tx.signatureBase())
         await sim.waitScreenChange(1000 * 60 * 60)
         await sim.navigateAndCompareUntilText(".", `${m.prefix.toLowerCase()}-${c.filePath}`, 'Finalize', 1000 * 60 * 60)
 
-        let kp = Keypair.fromSecret("SAIYWGGWU2WMXYDSK33UBQBMBDKU4TTJVY3ZIFF24H2KQDR7RQW5KAEK")
+        const kp = Keypair.fromSecret("SAIYWGGWU2WMXYDSK33UBQBMBDKU4TTJVY3ZIFF24H2KQDR7RQW5KAEK")
         tx.sign(kp)
         expect((await result).signature).toStrictEqual(tx.signatures[0].signature());
       } finally {
