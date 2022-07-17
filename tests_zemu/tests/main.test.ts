@@ -246,6 +246,46 @@ describe('transactions', () => {
       await sim.close();
     }
   })
+
+  test.each(models)("hide sequence tx ($name)", async (m) => {
+    const tx = testCasesFunction.txNetworkPublic()
+    const sim = new Zemu(m.path);
+    try {
+      await sim.start({ ...defaultOptions, model: m.name });
+      const transport = await sim.getTransport();
+      const str = new Str(transport);
+
+      const result = str.signTransaction("44'/148'/0'", tx.signatureBase())
+      await sim.waitScreenChange(1000 * 60 * 60)
+      await sim.navigateAndCompareUntilText(".", `${m.prefix.toLowerCase()}-tx-hide-sequence`, 'Finalize', 1000 * 60 * 60)
+
+      const kp = Keypair.fromSecret("SAIYWGGWU2WMXYDSK33UBQBMBDKU4TTJVY3ZIFF24H2KQDR7RQW5KAEK")
+      tx.sign(kp)
+      expect((await result).signature).toStrictEqual(tx.signatures[0].signature());
+    } finally {
+      await sim.close();
+    }
+  })
+
+  test.each(models)("hide sequence fee bump tx ($name)", async (m) => {
+    const tx = testCasesFunction.feeBumpTx()
+    const sim = new Zemu(m.path);
+    try {
+      await sim.start({ ...defaultOptions, model: m.name });
+      const transport = await sim.getTransport();
+      const str = new Str(transport);
+
+      const result = str.signTransaction("44'/148'/0'", tx.signatureBase())
+      await sim.waitScreenChange(1000 * 60 * 60)
+      await sim.navigateAndCompareUntilText(".", `${m.prefix.toLowerCase()}-fee-bump-tx-hide-sequence`, 'Finalize', 1000 * 60 * 60)
+
+      const kp = Keypair.fromSecret("SAIYWGGWU2WMXYDSK33UBQBMBDKU4TTJVY3ZIFF24H2KQDR7RQW5KAEK")
+      tx.sign(kp)
+      expect((await result).signature).toStrictEqual(tx.signatures[0].signature());
+    } finally {
+      await sim.close();
+    }
+  })
 })
 
 function camelToFilePath(str: string) {
