@@ -1815,3 +1815,301 @@ export function feeBumpTxWithMuxedFeeSource() {
   );
   return feeBumpTx;
 }
+
+export function txSourceOmitSourceEqualSigner() {
+  const account = new Account(kp0.publicKey(), "103720918407102567");
+  return new TransactionBuilder(account, {
+    fee: BASE_FEE,
+    networkPassphrase: Networks.PUBLIC,
+    memo: Memo.text("hello world"),
+    timebounds: {
+      minTime: 0,
+      maxTime: 1670818332, // 2022-12-12T04:12:12+00:00
+    },
+  })
+    .addOperation(
+      Operation.bumpSequence({
+        bumpTo: "1232134324234",
+        source: kp0.publicKey(),
+      })
+    )
+    .build();
+}
+
+export function txSourceOmitSourceNotEqualSigner() {
+  const account = new Account(kp1.publicKey(), "103720918407102567");
+  return new TransactionBuilder(account, {
+    fee: BASE_FEE,
+    networkPassphrase: Networks.PUBLIC,
+    memo: Memo.text("hello world"),
+    timebounds: {
+      minTime: 0,
+      maxTime: 1670818332, // 2022-12-12T04:12:12+00:00
+    },
+  })
+    .addOperation(
+      Operation.bumpSequence({
+        bumpTo: "1232134324234",
+        source: kp1.publicKey(),
+      })
+    )
+    .build();
+}
+
+export function txSourceOmitMuxedSourceEqualSigner() {
+  const muxedAccount = new MuxedAccount(
+    new Account(kp0.publicKey(), "103720918407102567"),
+    "10000"
+  );
+  return new TransactionBuilder(muxedAccount, {
+    fee: BASE_FEE,
+    networkPassphrase: Networks.PUBLIC,
+    memo: Memo.text("hello world"),
+    timebounds: {
+      minTime: 0,
+      maxTime: 1670818332, // 2022-12-12T04:12:12+00:00
+    },
+  })
+    .addOperation(
+      Operation.bumpSequence({
+        bumpTo: "1232134324234",
+        source: kp0.publicKey(),
+      })
+    )
+    .build();
+}
+
+export function feeBumpTxOmitFeeSourceEqualSigner() {
+  const account = new Account(kp0.publicKey(), "103720918407102567");
+  const innerTx = new TransactionBuilder(account, {
+    fee: "50",
+    networkPassphrase: Networks.PUBLIC,
+    memo: Memo.text("hello world"),
+    timebounds: {
+      minTime: 0,
+      maxTime: 1670818332, // 2022-12-12T04:12:12+00:00
+    },
+  })
+    .addOperation(
+      Operation.bumpSequence({
+        bumpTo: "1232134324234",
+        source: kp0.publicKey(),
+      })
+    )
+    .build();
+  innerTx.sign(kp0);
+  const feeBumpTx = TransactionBuilder.buildFeeBumpTransaction(
+    kp0,
+    "750",
+    innerTx,
+    Networks.PUBLIC
+  );
+  return feeBumpTx;
+}
+
+export function feeBumpTxOmitFeeSourceNotEqualSigner() {
+  const account = new Account(kp0.publicKey(), "103720918407102567");
+  const innerTx = new TransactionBuilder(account, {
+    fee: "50",
+    networkPassphrase: Networks.PUBLIC,
+    memo: Memo.text("hello world"),
+    timebounds: {
+      minTime: 0,
+      maxTime: 1670818332, // 2022-12-12T04:12:12+00:00
+    },
+  })
+    .addOperation(
+      Operation.bumpSequence({
+        bumpTo: "1232134324234",
+        source: kp0.publicKey(),
+      })
+    )
+    .build();
+  innerTx.sign(kp0);
+  const feeBumpTx = TransactionBuilder.buildFeeBumpTransaction(
+    kp1,
+    "750",
+    innerTx,
+    Networks.PUBLIC
+  );
+  return feeBumpTx;
+}
+
+export function feeBumpTxOmitMuxedFeeSourceEqualSigner() {
+  const account = new Account(kp0.publicKey(), "103720918407102567");
+  const innerTx = new TransactionBuilder(account, {
+    fee: "50",
+    networkPassphrase: Networks.PUBLIC,
+    memo: Memo.text("hello world"),
+    timebounds: {
+      minTime: 0,
+      maxTime: 1670818332, // 2022-12-12T04:12:12+00:00
+    },
+  })
+    .addOperation(
+      Operation.bumpSequence({
+        bumpTo: "1232134324234",
+        source: kp0.publicKey(),
+      })
+    )
+    .build();
+  innerTx.sign(kp0);
+
+  const muxedAccount = new MuxedAccount(
+    new Account(kp0.publicKey(), "103720918407102567"),
+    "10000"
+  ).accountId();
+  const feeBumpTx = TransactionBuilder.buildFeeBumpTransaction(
+    muxedAccount,
+    "750",
+    innerTx,
+    Networks.PUBLIC
+  );
+  return feeBumpTx;
+}
+
+export function opSourceOmitTxSourceEqualOpSourceEqualSigner() {
+  const account = new Account(kp0.publicKey(), "103720918407102567");
+  return new TransactionBuilder(account, {
+    fee: BASE_FEE,
+    networkPassphrase: Networks.PUBLIC,
+    memo: Memo.text("hello world"),
+    timebounds: {
+      minTime: 0,
+      maxTime: 1670818332, // 2022-12-12T04:12:12+00:00
+    },
+  })
+    .addOperation(
+      Operation.bumpSequence({
+        bumpTo: "1232134324234",
+        source: kp0.publicKey(),
+      })
+    )
+    .build();
+}
+
+export function opSourceOmitTxSourceEqualOpSourceNotEqualSigner() {
+  const account = new Account(kp1.publicKey(), "103720918407102567");
+  return new TransactionBuilder(account, {
+    fee: BASE_FEE,
+    networkPassphrase: Networks.PUBLIC,
+    memo: Memo.text("hello world"),
+    timebounds: {
+      minTime: 0,
+      maxTime: 1670818332, // 2022-12-12T04:12:12+00:00
+    },
+  })
+    .addOperation(
+      Operation.bumpSequence({
+        bumpTo: "1232134324234",
+        source: kp1.publicKey(),
+      })
+    )
+    .build();
+}
+
+export function opSourceOmitOpSourceEqualSignerNotEqualTxSource() {
+  const account = new Account(kp1.publicKey(), "103720918407102567");
+  return new TransactionBuilder(account, {
+    fee: BASE_FEE,
+    networkPassphrase: Networks.PUBLIC,
+    memo: Memo.text("hello world"),
+    timebounds: {
+      minTime: 0,
+      maxTime: 1670818332, // 2022-12-12T04:12:12+00:00
+    },
+  })
+    .addOperation(
+      Operation.bumpSequence({
+        bumpTo: "1232134324234",
+        source: kp0.publicKey(),
+      })
+    )
+    .build();
+}
+
+export function opSourceOmitTxSourceEqualSignerNotEqualOpSource() {
+  const account = new Account(kp0.publicKey(), "103720918407102567");
+  return new TransactionBuilder(account, {
+    fee: BASE_FEE,
+    networkPassphrase: Networks.PUBLIC,
+    memo: Memo.text("hello world"),
+    timebounds: {
+      minTime: 0,
+      maxTime: 1670818332, // 2022-12-12T04:12:12+00:00
+    },
+  })
+    .addOperation(
+      Operation.bumpSequence({
+        bumpTo: "1232134324234",
+        source: kp1.publicKey(),
+      })
+    )
+    .build();
+}
+
+export function opSourceOmitTxMuxedSourceEqualOpMuxedSourceEqualSigner() {
+  const muxedAccount = new MuxedAccount(
+    new Account(kp0.publicKey(), "103720918407102567"),
+    "10000"
+  );
+  return new TransactionBuilder(muxedAccount, {
+    fee: BASE_FEE,
+    networkPassphrase: Networks.PUBLIC,
+    memo: Memo.text("hello world"),
+    timebounds: {
+      minTime: 0,
+      maxTime: 1670818332, // 2022-12-12T04:12:12+00:00
+    },
+  })
+    .addOperation(
+      Operation.bumpSequence({
+        bumpTo: "1232134324234",
+        source: muxedAccount.accountId(),
+      })
+    )
+    .build();
+}
+
+export function opSourceOmitTxSourceEqualOpMuxedSourceEqualSigner() {
+  const account = new Account(kp0.publicKey(), "103720918407102567");
+  const muxedAccount = new MuxedAccount(account, "10000");
+
+  return new TransactionBuilder(account, {
+    fee: BASE_FEE,
+    networkPassphrase: Networks.PUBLIC,
+    memo: Memo.text("hello world"),
+    timebounds: {
+      minTime: 0,
+      maxTime: 1670818332, // 2022-12-12T04:12:12+00:00
+    },
+  })
+    .addOperation(
+      Operation.bumpSequence({
+        bumpTo: "1232134324234",
+        source: muxedAccount.accountId(),
+      })
+    )
+    .build();
+}
+
+export function opSourceOmitTxMuxedSourceEqualOpSourceEqualSigner() {
+  const account = new Account(kp0.publicKey(), "103720918407102567");
+  const muxedAccount = new MuxedAccount(account, "10000");
+  return new TransactionBuilder(muxedAccount, {
+    fee: BASE_FEE,
+    networkPassphrase: Networks.PUBLIC,
+    memo: Memo.text("hello world"),
+    timebounds: {
+      minTime: 0,
+      maxTime: 1670818332, // 2022-12-12T04:12:12+00:00
+    },
+  })
+    .addOperation(
+      Operation.bumpSequence({
+        bumpTo: "1232134324234",
+        source: kp0.publicKey(),
+      })
+    )
+    .build();
+}
