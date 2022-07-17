@@ -200,6 +200,52 @@ describe('transactions', () => {
       }
     });
   })
+
+  test.each(models)("reject tx ($name)", async (m) => {
+    const tx = testCasesFunction.txNetworkPublic()
+    const sim = new Zemu(m.path);
+    try {
+      await sim.start({ ...defaultOptions, model: m.name });
+      const transport = await sim.getTransport();
+      const str = new Str(transport);
+
+      // display sequence
+      await sim.clickRight()
+      await sim.clickBoth()
+      await sim.clickRight()
+      await sim.clickBoth()
+
+      expect(() => str.signTransaction("44'/148'/0'", tx.signatureBase())).rejects.toThrow(new Error("Transaction approval request was rejected"));
+
+      await sim.waitScreenChange(1000 * 60 * 60)
+      await sim.navigateAndCompareUntilText(".", `${m.prefix.toLowerCase()}-tx-reject`, 'Cancel', 1000 * 60 * 60)
+    } finally {
+      await sim.close();
+    }
+  })
+
+  test.each(models)("reject fee bump tx ($name)", async (m) => {
+    const tx = testCasesFunction.feeBumpTx()
+    const sim = new Zemu(m.path);
+    try {
+      await sim.start({ ...defaultOptions, model: m.name });
+      const transport = await sim.getTransport();
+      const str = new Str(transport);
+
+      // display sequence
+      await sim.clickRight()
+      await sim.clickBoth()
+      await sim.clickRight()
+      await sim.clickBoth()
+
+      expect(() => str.signTransaction("44'/148'/0'", tx.signatureBase())).rejects.toThrow(new Error("Transaction approval request was rejected"));
+
+      await sim.waitScreenChange(1000 * 60 * 60)
+      await sim.navigateAndCompareUntilText(".", `${m.prefix.toLowerCase()}-fee-bump-tx-reject`, 'Cancel', 1000 * 60 * 60)
+    } finally {
+      await sim.close();
+    }
+  })
 })
 
 function camelToFilePath(str: string) {
