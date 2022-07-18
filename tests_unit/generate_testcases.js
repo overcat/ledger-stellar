@@ -18,11 +18,12 @@ function getTestCases() {
 function main() {
     for (const testCase of getTestCases()) {
         const outputPath = path.join(__dirname, "testcases", `${testCase.caseName}.raw`)
-        const buf = testCasesFunction.feeBumpTx().signatureBase()
+        const buf = testCase.txFunction().signatureBase()
         fs.writeFile(outputPath, buf, (err) => {
             if (err) {
                 console.log(`Failed to write to ${testCase.caseName}`)
                 console.log(err)
+                process.exit(1)
             }
         });
     }
