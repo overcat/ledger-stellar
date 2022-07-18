@@ -7,6 +7,7 @@ debug/
 dep/
 obj/
 tests_unit/build/
+tests_unit/testcases/*.raw
 tests_zemu/node_modules/
 tests_zemu/snapshots-tmp/
 tests_zemu/elfs/stellar_*.elf

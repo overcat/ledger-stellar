@@ -1,9 +1,0 @@
-Network; Testnet
-Max Fee; 0.00001 XLM
-Sequence Num; 2
-Tx Source; GD2J5ZZTU4XM5LEX3XPKSCJIQ3UMXU7NLZMHOZEMELXKI4XLPHHKGVM5
-Operation Type; Liquidity Pool Withdraw
-Liquidity Pool ID; 889c2dcfe223b587de360be99a40ecf4d64c9b87a5f2bb35cbe42c91a4f3c254
-Amount; 15
-Min Amount A; 10
-Min Amount B; 20
