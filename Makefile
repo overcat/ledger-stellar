@@ -153,6 +153,8 @@ listvariants:
 	@echo VARIANTS COIN stellar
 
 tests-unit:
+	cd tests_common_js && npm install && npm run build
+	cd tests_unit && npm install && npm run generate
 	rm -rf tests_unit/build && cmake -Btests_unit/build -Htests_unit/ && make -C tests_unit/build/ && make -C tests_unit/build test
 
 tests-zemu:
