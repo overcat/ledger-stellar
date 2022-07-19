@@ -26,6 +26,9 @@
 #include "apdu/dispatcher.h"
 #include "swap/swap_lib_calls.h"
 
+// The settings, stored in NVRAM.
+const internal_storage_t N_storage_real;
+
 /**
  * Handle APDU command received and send back APDU response using handlers.
  */
@@ -202,13 +205,13 @@ __attribute__((section(".boot"))) int main(int arg0) {
     os_boot();
     if (arg0 == 0) {
         // called from dashboard as standalone Stellar App
-        called_from_swap = false;
+        G_called_from_swap = false;
         standalone_app_main();
     } else {
         // Called as library from another app
         libargs_t *args = (libargs_t *) arg0;
         if (args->id == 0x100) {
-            called_from_swap = true;
+            G_called_from_swap = true;
             library_main(args);
         } else {
             app_exit();

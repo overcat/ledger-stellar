@@ -69,7 +69,7 @@ int handler_sign_tx(buffer_t *cdata, bool is_first_chunk, bool more) {
     G_context.state = STATE_PARSED;
     PRINTF("tx parsed\n");
 
-    if (called_from_swap) {
+    if (G_called_from_swap) {
         if (!swap_check()) {
             return io_send_sw(SW_SWAP_CHECKING_FAIL);
         }

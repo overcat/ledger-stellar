@@ -6,10 +6,6 @@
 #include "types.h"
 #include "io.h"
 #include "settings.h"
-/**
- * The settings, stored in NVRAM. Initializer is ignored by ledger.
- */
-extern const internal_storage_t N_storage_real;
 
 /**
  * Global buffer for interactions between SE and MCU.
@@ -42,7 +38,7 @@ extern io_state_e G_io_state;
 extern global_ctx_t G_context;
 
 extern swap_values_t G_swap_values;
-extern bool called_from_swap;
+extern bool G_called_from_swap;
 
 extern char G_ui_detail_caption[DETAIL_CAPTION_MAX_LENGTH];
 extern char G_ui_detail_value[DETAIL_VALUE_MAX_LENGTH];

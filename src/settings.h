@@ -4,6 +4,11 @@
 
 typedef uint8_t internal_storage_t;
 
+/**
+ * The settings, stored in NVRAM. Initializer is ignored by ledger.
+ */
+extern const internal_storage_t N_storage_real;
+
 #define N_settings (*(volatile internal_storage_t *) PIC(&N_storage_real))
 
 // flip a bit k = 0 to 7 for u8
