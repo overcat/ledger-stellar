@@ -120,9 +120,9 @@ typedef struct {
     uint8_t hash[HASH_SIZE];                              // tx hash
     uint32_t bip32_path[MAX_BIP32_PATH];                  // BIP32 path
     uint8_t raw_public_key[RAW_ED25519_PUBLIC_KEY_SIZE];  // BIP32 path public key
+    uint8_t bip32_path_len;                               // length of BIP32 path
     state_e state;                                        // state of the context
     request_type_e req_type;                              // user request
-    uint8_t bip32_path_len;                               // length of BIP32 path
 } global_ctx_t;
 
 typedef struct {
