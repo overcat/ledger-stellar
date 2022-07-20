@@ -92,7 +92,10 @@ int crypto_init_public_key(cx_ecfp_private_key_t *private_key,
     return 0;
 }
 
-int crypto_sign_message() {
+int crypto_sign_message(const uint8_t *message,
+                        uint8_t message_len,
+                        const uint8_t *signature,
+                        uint8_t signature_len) {
     cx_ecfp_private_key_t private_key = {0};
     int sig_len = 0;
 
@@ -104,14 +107,14 @@ int crypto_sign_message() {
             sig_len = cx_eddsa_sign(&private_key,
                                     CX_LAST,
                                     CX_SHA512,
-                                    G_context.hash,
-                                    sizeof(G_context.hash),
+                                    message,
+                                    message_len,
                                     NULL,
                                     0,
-                                    G_context.signature,
-                                    sizeof(G_context.signature),
+                                    signature,
+                                    signature_len,
                                     NULL);
-            PRINTF("Signature: %.*H\n", sig_len, G_context.signature);
+            PRINTF("Signature: %.*H\n", sig_len, signature);
         }
         CATCH_OTHER(e) {
             THROW(e);

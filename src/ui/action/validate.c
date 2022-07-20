@@ -37,12 +37,13 @@ void ui_action_validate_pubkey(bool choice) {
 void ui_action_validate_transaction(bool choice) {
     if (choice) {
         G_context.state = STATE_APPROVED;
-
-        if (crypto_sign_message() < 0) {
+        uint8_t signature[SIGNATURE_SIZE];
+        if (crypto_sign_message(G_context.hash, sizeof(G_context.hash), signature, SIGNATURE_SIZE) <
+            0) {
             G_context.state = STATE_NONE;
             io_send_sw(SW_SIGNATURE_FAIL);
         } else {
-            send_response_sig();
+            send_response_sig(signature, SIGNATURE_SIZE);
         }
     } else {
         G_context.state = STATE_NONE;
