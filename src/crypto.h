@@ -44,11 +44,14 @@ int crypto_init_public_key(cx_ecfp_private_key_t *private_key,
                            uint8_t raw_public_key[static RAW_ED25519_PUBLIC_KEY_SIZE]);
 
 /**
- * Sign message hash in global context.
+ * Sign message.
  *
  * @return 0 if success, -1 otherwise.
  *
  * @throw INVALID_PARAMETER
  *
  */
-int crypto_sign_message(void);
+int crypto_sign_message(const uint8_t *message,
+                        uint8_t message_len,
+                        const uint8_t *signature,
+                        uint8_t signature_len);

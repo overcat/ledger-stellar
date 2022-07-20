@@ -18,10 +18,9 @@ typedef void (*format_function_t)(tx_ctx_t *txCtx);
 
 /* the current formatter */
 extern format_function_t formatter_stack[MAX_FORMATTERS_PER_OPERATION];
-extern int8_t formatter_index;
-
 /* the current details printed by the formatter */
 extern char op_caption[OPERATION_CAPTION_MAX_SIZE];
+extern int8_t formatter_index;
 
 #ifdef TEST
 extern uint8_t G_ui_current_data_index;

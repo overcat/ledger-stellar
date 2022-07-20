@@ -73,11 +73,13 @@ int handler_sign_tx(buffer_t *cdata, bool is_first_chunk, bool more) {
         if (!swap_check()) {
             return io_send_sw(SW_SWAP_CHECKING_FAIL);
         }
-        if (crypto_sign_message() < 0) {
+        uint8_t signature[SIGNATURE_SIZE];
+        if (crypto_sign_message(G_context.hash, sizeof(G_context.hash), signature, SIGNATURE_SIZE) <
+            0) {
             G_context.state = STATE_NONE;
             return io_send_sw(SW_SIGNATURE_FAIL);
         } else {
-            return send_response_sig();
+            return send_response_sig(signature, SIGNATURE_SIZE);
         }
     }
 

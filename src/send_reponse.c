@@ -27,8 +27,7 @@ int send_response_pubkey() {
                             SW_OK);
 }
 
-int send_response_sig() {
-    return io_send_response(
-        &(const buffer_t){.ptr = G_context.signature, .size = SIGNATURE_SIZE, .offset = 0},
-        SW_OK);
+int send_response_sig(const uint8_t *signature, uint8_t signature_len) {
+    return io_send_response(&(const buffer_t){.ptr = signature, .size = signature_len, .offset = 0},
+                            SW_OK);
 }

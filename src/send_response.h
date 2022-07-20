@@ -17,9 +17,7 @@ int send_response_pubkey(void);
 /**
  * Helper to send APDU response with signature.
  *
- * response = G_context.signature (SIGNATURE_SIZE)
- *
  * @return zero or positive integer if success, -1 otherwise.
  *
  */
-int send_response_sig(void);
+int send_response_sig(const uint8_t *signature, uint8_t signature_len);
