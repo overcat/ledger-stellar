@@ -111,7 +111,7 @@ int crypto_sign_message(const uint8_t *message,
                                     message_len,
                                     NULL,
                                     0,
-                                    signature,
+                                    (unsigned char *) signature,
                                     signature_len,
                                     NULL);
             PRINTF("Signature: %.*H\n", sig_len, signature);
