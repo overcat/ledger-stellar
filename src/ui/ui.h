@@ -22,11 +22,16 @@ int ui_display_address();
 void ui_menu_main();
 
 /**
- * TODO:
+ * Shows the process of signing a transaction hash.
  *
  * @return 0 if success, negative integer otherwise.
  *
  */
 int ui_approve_tx_hash_init();
 
+/**
+ * Shows the process of signing a transaction.
+ *
+ * @return 0 if success, negative integer otherwise.
+ */
 int ui_approve_tx_init();
