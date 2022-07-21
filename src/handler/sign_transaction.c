@@ -85,7 +85,7 @@ int handler_sign_tx(buffer_t *cdata, bool is_first_chunk, bool more) {
 
     cx_ecfp_private_key_t private_key = {0};
     cx_ecfp_public_key_t public_key = {0};
-    // TODO: error
+
     // derive private key according to BIP32 path
     crypto_derive_private_key(&private_key, G_context.bip32_path, G_context.bip32_path_len);
     // generate corresponding public key
