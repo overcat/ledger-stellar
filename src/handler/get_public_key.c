@@ -45,7 +45,6 @@ int handler_get_public_key(buffer_t *cdata, bool display) {
         return io_send_sw(SW_WRONG_DATA_LENGTH);
     }
 
-    // TODO: error
     // derive private key according to BIP32 path
     crypto_derive_private_key(&private_key, G_context.bip32_path, G_context.bip32_path_len);
     // generate corresponding public key
