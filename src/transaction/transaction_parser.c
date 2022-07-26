@@ -1017,38 +1017,39 @@ static bool read_network(buffer_t *buffer, uint8_t *network) {
 
 bool parse_tx_xdr(const uint8_t *data, size_t size, tx_ctx_t *txCtx) {
     buffer_t buffer = {data, size, 0};
-    uint32_t envelopeType;
+    uint32_t envelope_type;
 
     uint16_t offset = txCtx->offset;
     buffer.offset = txCtx->offset;
 
     if (offset == 0) {
-        explicit_bzero(&txCtx->txDetails, sizeof(transaction_details_t));
-        explicit_bzero(&txCtx->feeBumpTxDetails, sizeof(fee_bump_transaction_details_t));
+        explicit_bzero(&txCtx->tx_details, sizeof(transaction_details_t));
+        explicit_bzero(&txCtx->fee_bump_tx_details, sizeof(fee_bump_transaction_details_t));
         READER_CHECK(read_network(&buffer, &txCtx->network))
-        READER_CHECK(buffer_read32(&buffer, &envelopeType))
-        txCtx->envelopeType = envelopeType;
-        switch (envelopeType) {
+        READER_CHECK(buffer_read32(&buffer, &envelope_type))
+        txCtx->envelope_type = envelope_type;
+        switch (envelope_type) {
             case ENVELOPE_TYPE_TX:
-                READER_CHECK(read_transaction_details(&buffer, &txCtx->txDetails))
+                READER_CHECK(read_transaction_details(&buffer, &txCtx->tx_details))
                 break;
             case ENVELOPE_TYPE_TX_FEE_BUMP:
-                READER_CHECK(read_fee_bump_transaction_details(&buffer, &txCtx->feeBumpTxDetails))
+                READER_CHECK(
+                    read_fee_bump_transaction_details(&buffer, &txCtx->fee_bump_tx_details))
                 uint32_t innerEnvelopeType;
                 READER_CHECK(buffer_read32(&buffer, &innerEnvelopeType))
                 if (innerEnvelopeType != ENVELOPE_TYPE_TX) {
                     return false;
                 }
-                READER_CHECK(read_transaction_details(&buffer, &txCtx->txDetails))
+                READER_CHECK(read_transaction_details(&buffer, &txCtx->tx_details))
                 break;
             default:
                 return false;
         }
     }
 
-    READER_CHECK(read_operation(&buffer, &txCtx->txDetails.op_details))
+    READER_CHECK(read_operation(&buffer, &txCtx->tx_details.op_details))
     offset = buffer.offset;
-    txCtx->txDetails.operation_index += 1;
+    txCtx->tx_details.operation_index += 1;
     txCtx->offset = offset;
     return true;
 }
