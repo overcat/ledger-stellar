@@ -118,8 +118,8 @@ static void parse_tx(const char *filename) {
     assert_non_null(f);
     tx_ctx_t tx_info;
     memset(&tx_info, 0, sizeof(tx_ctx_t));
-    tx_info.rawLength = fread(tx_info.raw, 1, RAW_TX_MAX_SIZE, f);
-    if (!parse_tx_xdr(tx_info.raw, tx_info.rawLength, &tx_info)) {
+    tx_info.raw_length = fread(tx_info.raw, 1, RAW_TX_MAX_SIZE, f);
+    if (!parse_tx_xdr(tx_info.raw, tx_info.raw_length, &tx_info)) {
         fail_msg("parse %s failed!", filename);
     }
 }

@@ -121,8 +121,8 @@ static void load_transaction_data(const char *filename, tx_ctx_t *txCtx) {
     FILE *f = fopen(filename, "rb");
     assert_non_null(f);
 
-    txCtx->rawLength = fread(txCtx->raw, 1, RAW_TX_MAX_SIZE, f);
-    assert_int_not_equal(txCtx->rawLength, 0);
+    txCtx->raw_length = fread(txCtx->raw, 1, RAW_TX_MAX_SIZE, f);
+    assert_int_not_equal(txCtx->raw_length, 0);
     fclose(f);
 }
 
@@ -188,7 +188,7 @@ static void test_tx(const char *filename) {
     // TODO: check status
     // G_context.state = STATE_APPROVE_TX;
     assert_true(
-        parse_tx_xdr(G_context.tx_info.raw, G_context.tx_info.rawLength, &G_context.tx_info));
+        parse_tx_xdr(G_context.tx_info.raw, G_context.tx_info.raw_length, &G_context.tx_info));
     memcpy(G_context.raw_public_key, publicKey, sizeof(publicKey));
 
     // G_context.state = STATE_APPROVE_TX;
