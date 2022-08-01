@@ -137,7 +137,7 @@ static void get_result_filename(const char *filename, char *path, size_t size) {
 static void check_transaction_results(const char *filename) {
     char path[1024];
     char line[4096];
-    uint8_t opCount = G_context.tx_info.tx_details.operations_len;
+    uint8_t op_len = G_context.tx_info.tx_details.operations_len;
     G_ui_current_data_index = 0;
     get_result_filename(filename, path, sizeof(path));
 
@@ -146,7 +146,7 @@ static void check_transaction_results(const char *filename) {
 
     set_state_data(true);
 
-    while ((opCount != 0 && G_ui_current_data_index < opCount) ||
+    while ((op_len != 0 && G_ui_current_data_index < op_len) ||
            formatter_stack[formatter_index] != NULL) {
         assert_non_null(fgets(line, sizeof(line), fp));
 
@@ -182,16 +182,12 @@ static void test_tx(const char *filename) {
     load_transaction_data(filename, &G_context.tx_info);
 
     // GDUTHCF37UX32EMANXIL2WOOVEDZ47GHBTT3DYKU6EKM37SOIZXM2FN7
-    uint8_t publicKey[] = {0xe9, 0x33, 0x88, 0xbb, 0xfd, 0x2f, 0xbd, 0x11, 0x80, 0x6d, 0xd0,
-                           0xbd, 0x59, 0xce, 0xa9, 0x7,  0x9e, 0x7c, 0xc7, 0xc,  0xe7, 0xb1,
-                           0xe1, 0x54, 0xf1, 0x14, 0xcd, 0xfe, 0x4e, 0x46, 0x6e, 0xcd};
-    // TODO: check status
-    // G_context.state = STATE_APPROVE_TX;
+    uint8_t public_key[] = {0xe9, 0x33, 0x88, 0xbb, 0xfd, 0x2f, 0xbd, 0x11, 0x80, 0x6d, 0xd0,
+                            0xbd, 0x59, 0xce, 0xa9, 0x7,  0x9e, 0x7c, 0xc7, 0xc,  0xe7, 0xb1,
+                            0xe1, 0x54, 0xf1, 0x14, 0xcd, 0xfe, 0x4e, 0x46, 0x6e, 0xcd};
     assert_true(
         parse_tx_xdr(G_context.tx_info.raw, G_context.tx_info.raw_length, &G_context.tx_info));
-    memcpy(G_context.raw_public_key, publicKey, sizeof(publicKey));
-
-    // G_context.state = STATE_APPROVE_TX;
+    memcpy(G_context.raw_public_key, public_key, sizeof(public_key));
 
     check_transaction_results(filename);
 }
