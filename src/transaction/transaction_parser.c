@@ -136,12 +136,12 @@ bool read_optional_type(buffer_t *buffer, xdr_type_reader reader, void *dst, boo
 }
 
 bool read_signer_key(buffer_t *buffer, signer_key_t *key) {
-    uint32_t signerType;
+    uint32_t signer_type;
 
-    READER_CHECK(buffer_read32(buffer, &signerType))
-    key->type = signerType;
+    READER_CHECK(buffer_read32(buffer, &signer_type))
+    key->type = signer_type;
 
-    switch (signerType) {
+    switch (signer_type) {
         case SIGNER_KEY_TYPE_ED25519:
             READER_CHECK(buffer_can_read(buffer, 32))
             key->ed25519 = buffer->ptr + buffer->offset;
@@ -179,9 +179,9 @@ bool read_signer_key(buffer_t *buffer, signer_key_t *key) {
 }
 
 bool read_account_id(buffer_t *buffer, const uint8_t **account_id) {
-    uint32_t accountType;
+    uint32_t account_type;
 
-    READER_CHECK(buffer_read32(buffer, &accountType) || accountType != PUBLIC_KEY_TYPE_ED25519)
+    READER_CHECK(buffer_read32(buffer, &account_type) || account_type != PUBLIC_KEY_TYPE_ED25519)
     READER_CHECK(buffer_can_read(buffer, 32))
     *account_id = buffer->ptr + buffer->offset;
     buffer_advance(buffer, 32);
@@ -189,9 +189,9 @@ bool read_account_id(buffer_t *buffer, const uint8_t **account_id) {
 }
 
 bool read_muxed_account(buffer_t *buffer, muxed_account_t *muxed_account) {
-    uint32_t cryptoKeyType;
-    READER_CHECK(buffer_read32(buffer, &cryptoKeyType))
-    muxed_account->type = cryptoKeyType;
+    uint32_t crypto_key_type;
+    READER_CHECK(buffer_read32(buffer, &crypto_key_type))
+    muxed_account->type = crypto_key_type;
 
     switch (muxed_account->type) {
         case KEY_TYPE_ED25519:
@@ -235,9 +235,9 @@ bool read_extra_signers(buffer_t *buffer) {
 }
 
 bool read_preconditions(buffer_t *buffer, preconditions_t *cond) {
-    uint32_t preconditionType;
-    READER_CHECK(buffer_read32(buffer, &preconditionType))
-    switch (preconditionType) {
+    uint32_t precondition_type;
+    READER_CHECK(buffer_read32(buffer, &precondition_type))
+    switch (precondition_type) {
         case PRECOND_NONE:
             cond->time_bounds_present = false;
             cond->min_seq_num_present = false;
@@ -332,10 +332,10 @@ bool read_alpha_num12_asset(buffer_t *buffer, alpha_num12_t *asset) {
 }
 
 bool read_asset(buffer_t *buffer, asset_t *asset) {
-    uint32_t assetType;
+    uint32_t asset_type;
 
-    READER_CHECK(buffer_read32(buffer, &assetType))
-    asset->type = assetType;
+    READER_CHECK(buffer_read32(buffer, &asset_type))
+    asset->type = asset_type;
     switch (asset->type) {
         case ASSET_TYPE_NATIVE: {
             return true;
@@ -352,10 +352,10 @@ bool read_asset(buffer_t *buffer, asset_t *asset) {
 }
 
 bool read_trust_line_asset(buffer_t *buffer, trust_line_asset_t *asset) {
-    uint32_t assetType;
+    uint32_t asset_type;
 
-    READER_CHECK(buffer_read32(buffer, &assetType))
-    asset->type = assetType;
+    READER_CHECK(buffer_read32(buffer, &asset_type))
+    asset->type = asset_type;
     switch (asset->type) {
         case ASSET_TYPE_NATIVE: {
             return true;
@@ -376,9 +376,9 @@ bool read_trust_line_asset(buffer_t *buffer, trust_line_asset_t *asset) {
 
 bool read_liquidity_pool_parameters(buffer_t *buffer,
                                     liquidity_pool_parameters_t *liquidityPoolParameters) {
-    uint32_t liquidityPoolType;
-    READER_CHECK(buffer_read32(buffer, &liquidityPoolType))
-    switch (liquidityPoolType) {
+    uint32_t liquidity_pool_type;
+    READER_CHECK(buffer_read32(buffer, &liquidity_pool_type))
+    switch (liquidity_pool_type) {
         case LIQUIDITY_POOL_CONSTANT_PRODUCT: {
             READER_CHECK(read_asset(buffer, &liquidityPoolParameters->constant_product.assetA))
             READER_CHECK(read_asset(buffer, &liquidityPoolParameters->constant_product.assetB))
@@ -392,10 +392,10 @@ bool read_liquidity_pool_parameters(buffer_t *buffer,
 }
 
 bool read_change_trust_asset(buffer_t *buffer, change_trust_asset_t *asset) {
-    uint32_t assetType;
+    uint32_t asset_type;
 
-    READER_CHECK(buffer_read32(buffer, &assetType))
-    asset->type = assetType;
+    READER_CHECK(buffer_read32(buffer, &asset_type))
+    asset->type = asset_type;
     switch (asset->type) {
         case ASSET_TYPE_NATIVE: {
             return true;
@@ -448,12 +448,12 @@ bool read_path_payment_strict_receive(buffer_t *buffer, path_payment_strict_rece
 }
 
 bool read_allow_trust(buffer_t *buffer, allow_trust_op_t *op) {
-    uint32_t assetType;
+    uint32_t asset_type;
 
     READER_CHECK(read_account_id(buffer, &op->trustor))
-    READER_CHECK(buffer_read32(buffer, &assetType))
+    READER_CHECK(buffer_read32(buffer, &asset_type))
 
-    switch (assetType) {
+    switch (asset_type) {
         case ASSET_TYPE_CREDIT_ALPHANUM4: {
             READER_CHECK(buffer_read_bytes(buffer, (uint8_t *) op->asset_code, 4))
             op->asset_code[4] = '\0';  // FIXME: it's OK?
@@ -495,7 +495,6 @@ bool read_manage_data(buffer_t *buffer, manage_data_op_t *op) {
 }
 
 bool read_price(buffer_t *buffer, price_t *price) {
-    // FIXME: must correctly read int32_t
     READER_CHECK(buffer_read32(buffer, (uint32_t *) &price->n))
     READER_CHECK(buffer_read32(buffer, (uint32_t *) &price->d))
 
@@ -624,13 +623,13 @@ bool read_claimant_predicate(buffer_t *buffer) {
     // Currently, does not support displaying claimant details.
     // So here we will not store the parsed data, just to ensure that the data can be parsed
     // correctly.
-    uint32_t claimPredicateType;
+    uint32_t claim_predicate_type;
     uint32_t predicatesLen;
     bool notPredicatePresent;
     int64_t absBefore;
     int64_t relBefore;
-    READER_CHECK(buffer_read32(buffer, &claimPredicateType))
-    switch (claimPredicateType) {
+    READER_CHECK(buffer_read32(buffer, &claim_predicate_type))
+    switch (claim_predicate_type) {
         case CLAIM_PREDICATE_UNCONDITIONAL:
             return true;
         case CLAIM_PREDICATE_AND:
@@ -660,9 +659,9 @@ bool read_claimant_predicate(buffer_t *buffer) {
 }
 
 bool read_claimant(buffer_t *buffer, claimant_t *claimant) {
-    uint32_t claimantType;
-    READER_CHECK(buffer_read32(buffer, &claimantType))
-    claimant->type = claimantType;
+    uint32_t claimant_type;
+    READER_CHECK(buffer_read32(buffer, &claimant_type))
+    claimant->type = claimant_type;
 
     switch (claimant->type) {
         case CLAIMANT_TYPE_V0:
@@ -689,9 +688,9 @@ bool read_create_claimable_balance(buffer_t *buffer, create_claimable_balance_op
     return true;
 }
 bool read_claimable_balance_id(buffer_t *buffer, claimable_balance_id *claimableBalanceID) {
-    uint32_t claimableBalanceIDType;
-    READER_CHECK(buffer_read32(buffer, &claimableBalanceIDType))
-    claimableBalanceID->type = claimableBalanceIDType;
+    uint32_t claimable_balance_id_type;
+    READER_CHECK(buffer_read32(buffer, &claimable_balance_id_type))
+    claimableBalanceID->type = claimable_balance_id_type;
 
     switch (claimableBalanceID->type) {
         case CLAIMABLE_BALANCE_ID_TYPE_V0:
@@ -714,9 +713,9 @@ bool read_begin_sponsoring_future_reserves(buffer_t *buffer,
 }
 
 bool read_ledger_key(buffer_t *buffer, ledger_key_t *ledger_key) {
-    uint32_t ledgerEntryType;
-    READER_CHECK(buffer_read32(buffer, &ledgerEntryType))
-    ledger_key->type = ledgerEntryType;
+    uint32_t ledger_entry_type;
+    READER_CHECK(buffer_read32(buffer, &ledger_entry_type))
+    ledger_key->type = ledger_entry_type;
     switch (ledger_key->type) {
         case ACCOUNT:
             READER_CHECK(read_account_id(buffer, &ledger_key->account.account_id))
@@ -751,9 +750,9 @@ bool read_ledger_key(buffer_t *buffer, ledger_key_t *ledger_key) {
 }
 
 bool read_revoke_sponsorship(buffer_t *buffer, revoke_sponsorship_op_t *op) {
-    uint32_t revokeSponsorshipType;
-    READER_CHECK(buffer_read32(buffer, &revokeSponsorshipType))
-    op->type = revokeSponsorshipType;
+    uint32_t revoke_sponsorship_type;
+    READER_CHECK(buffer_read32(buffer, &revoke_sponsorship_type))
+    op->type = revoke_sponsorship_type;
 
     switch (op->type) {
         case REVOKE_SPONSORSHIP_LEDGER_ENTRY:
@@ -807,15 +806,15 @@ bool read_liquidity_pool_withdraw(buffer_t *buffer, liquidity_pool_withdraw_op_t
 
 bool read_operation(buffer_t *buffer, operation_t *operation) {
     explicit_bzero(operation, sizeof(operation_t));
-    uint32_t opType;
+    uint32_t op_type;
 
     READER_CHECK(read_optional_type(buffer,
                                     (xdr_type_reader) read_muxed_account,
                                     &operation->source_account,
                                     &operation->source_account_present))
 
-    READER_CHECK(buffer_read32(buffer, &opType))
-    operation->type = opType;
+    READER_CHECK(buffer_read32(buffer, &op_type))
+    operation->type = op_type;
     switch (operation->type) {
         case OPERATION_TYPE_CREATE_ACCOUNT: {
             return read_create_account(buffer, &operation->create_account_op);
@@ -1037,9 +1036,9 @@ bool parse_tx_xdr(const uint8_t *data, size_t size, tx_ctx_t *txCtx) {
             case ENVELOPE_TYPE_TX_FEE_BUMP:
                 READER_CHECK(
                     read_fee_bump_transaction_details(&buffer, &txCtx->fee_bump_tx_details))
-                uint32_t innerEnvelopeType;
-                READER_CHECK(buffer_read32(&buffer, &innerEnvelopeType))
-                if (innerEnvelopeType != ENVELOPE_TYPE_TX) {
+                uint32_t inner_envelope_type;
+                READER_CHECK(buffer_read32(&buffer, &inner_envelope_type))
+                if (inner_envelope_type != ENVELOPE_TYPE_TX) {
                     return false;
                 }
                 READER_CHECK(read_transaction_details(&buffer, &txCtx->tx_details))
