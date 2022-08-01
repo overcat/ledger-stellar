@@ -17,7 +17,9 @@
 
 #include <stdint.h>
 #include <string.h>
+#include "os.h"
 #include "../types.h"
+#include "../sw.h"
 #include "common/buffer.h"
 #include "transaction_parser.h"
 
@@ -804,7 +806,7 @@ bool read_liquidity_pool_withdraw(buffer_t *buffer, liquidity_pool_withdraw_op_t
 }
 
 bool read_operation(buffer_t *buffer, operation_t *operation) {
-    //    explicit_bzero(operation, sizeof(operation_t));
+    explicit_bzero(operation, sizeof(operation_t));
     uint32_t opType;
 
     READER_CHECK(read_optional_type(buffer,
@@ -890,7 +892,7 @@ bool read_operation(buffer_t *buffer, operation_t *operation) {
         case OPERATION_TYPE_LIQUIDITY_POOL_WITHDRAW:
             return read_liquidity_pool_withdraw(buffer, &operation->liquidity_pool_withdraw_op);
         default:
-            return false;  // Unknown operation TODO: throw unknown op error?
+            THROW(SW_UNKNOWN_OP);
     }
 }
 
