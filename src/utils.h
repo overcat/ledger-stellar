@@ -68,4 +68,4 @@ bool print_int(int64_t num, char *out, size_t out_len);
 
 bool base64_encode(const uint8_t *data, size_t in_len, char *out, size_t out_len);
 
-bool is_printable_string(const char *str, size_t str_len);
+bool is_printable_string(const uint8_t *str, size_t str_len);

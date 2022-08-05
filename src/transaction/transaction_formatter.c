@@ -219,7 +219,7 @@ static void format_memo(tx_ctx_t *txCtx) {
         case MEMO_TEXT: {
             if (is_printable_string(memo->text.text, memo->text.text_size)) {
                 strcpy(G_ui_detail_caption, "Memo Text");
-                strlcpy(G_ui_detail_value, memo->text.text, MEMO_TEXT_MAX_SIZE + 1);
+                strlcpy(G_ui_detail_value, (char *) memo->text.text, MEMO_TEXT_MAX_SIZE + 1);
             } else {
                 strcpy(G_ui_detail_caption, "Memo Text (base64)");
                 base64_encode(memo->text.text,
@@ -377,7 +377,7 @@ static void format_manage_data_value(tx_ctx_t *txCtx) {
     if (is_printable_string(txCtx->tx_details.op_details.manage_data_op.data_value,
                             txCtx->tx_details.op_details.manage_data_op.data_value_size)) {
         strcpy(G_ui_detail_caption, "Data Value");
-        strcpy(tmp, txCtx->tx_details.op_details.manage_data_op.data_value);
+        strcpy(tmp, (char *) txCtx->tx_details.op_details.manage_data_op.data_value);
         tmp[txCtx->tx_details.op_details.manage_data_op.data_value_size] = '\0';
         strcpy(G_ui_detail_value, tmp);
     } else {
