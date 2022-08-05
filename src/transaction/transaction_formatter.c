@@ -220,6 +220,7 @@ static void format_memo(tx_ctx_t *txCtx) {
             if (is_printable_string(memo->text.text, memo->text.text_size)) {
                 strcpy(G_ui_detail_caption, "Memo Text");
                 strlcpy(G_ui_detail_value, (char *) memo->text.text, MEMO_TEXT_MAX_SIZE + 1);
+                G_ui_detail_value[memo->text.text_size] = '\0';
             } else {
                 strcpy(G_ui_detail_caption, "Memo Text (base64)");
                 base64_encode(memo->text.text,
