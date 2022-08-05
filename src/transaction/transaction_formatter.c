@@ -217,10 +217,16 @@ static void format_memo(tx_ctx_t *txCtx) {
             break;
         }
         case MEMO_TEXT: {
-            strcpy(G_ui_detail_caption, "Memo Text");
-            strlcpy(G_ui_detail_value,
-                    (char *) memo->text.text,
-                    MEMO_TEXT_MAX_SIZE + 1);  // TODO: base64?
+            if (is_printable_string(memo->text.text, memo->text.text_size)) {
+                strcpy(G_ui_detail_caption, "Memo Text");
+                strlcpy(G_ui_detail_value, memo->text.text, MEMO_TEXT_MAX_SIZE + 1);
+            } else {
+                strcpy(G_ui_detail_caption, "Memo Text (base64)");
+                base64_encode(memo->text.text,
+                              memo->text.text_size,
+                              G_ui_detail_value,
+                              DETAIL_VALUE_MAX_LENGTH);
+            }
             break;
         }
         case MEMO_HASH: {
@@ -367,14 +373,21 @@ static void format_account_merge(tx_ctx_t *txCtx) {
 }
 
 static void format_manage_data_value(tx_ctx_t *txCtx) {
-    // TODO: if printable?
-    strcpy(G_ui_detail_caption, "Data Value");
     char tmp[89];
-    base64_encode(txCtx->tx_details.op_details.manage_data_op.data_value,
-                  txCtx->tx_details.op_details.manage_data_op.data_value_size,
-                  tmp,
-                  sizeof(tmp));
-    print_summary(tmp, G_ui_detail_value, DETAIL_VALUE_MAX_LENGTH, 12, 12);
+    if (is_printable_string(txCtx->tx_details.op_details.manage_data_op.data_value,
+                            txCtx->tx_details.op_details.manage_data_op.data_value_size)) {
+        strcpy(G_ui_detail_caption, "Data Value");
+        strcpy(tmp, txCtx->tx_details.op_details.manage_data_op.data_value);
+        tmp[txCtx->tx_details.op_details.manage_data_op.data_value_size] = '\0';
+        strcpy(G_ui_detail_value, tmp);
+    } else {
+        strcpy(G_ui_detail_caption, "Data Value (base64)");
+        base64_encode(txCtx->tx_details.op_details.manage_data_op.data_value,
+                      txCtx->tx_details.op_details.manage_data_op.data_value_size,
+                      tmp,
+                      sizeof(tmp));
+        print_summary(tmp, G_ui_detail_value, DETAIL_VALUE_MAX_LENGTH, 12, 12);
+    }
     format_operation_source_prepare(txCtx);
 }
 
