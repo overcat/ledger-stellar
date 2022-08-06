@@ -4,5 +4,5 @@ Sequence Num; 103720918407102568
 Valid Before (UTC); 2022-12-12 04:12:12
 Tx Source; GDUTHC..XM2FN7
 Operation Type; Manage Data
-Remove Data; Ledger Stell..bcdabcdabcda
+Remove Data; Ledger Stellar App abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcda
 Op Source; GDUTHC..XM2FN7
