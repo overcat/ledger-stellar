@@ -17,12 +17,12 @@
 
 #include <stdbool.h>  // bool
 #include <string.h>   // memset
-#include "globals.h"
 #include "common/format.h"
 #include "utils.h"
 #include "types.h"
 #include "transaction/transaction_parser.h"
 #include "transaction_formatter.h"
+#include "../globals.h"
 
 #ifdef TEST
 uint8_t G_ui_current_data_index;
@@ -217,10 +217,17 @@ static void format_memo(tx_ctx_t *txCtx) {
             break;
         }
         case MEMO_TEXT: {
-            strcpy(G_ui_detail_caption, "Memo Text");
-            strlcpy(G_ui_detail_value,
-                    (char *) memo->text.text,
-                    MEMO_TEXT_MAX_SIZE + 1);  // TODO: base64?
+            char tmp[DETAIL_VALUE_MAX_LENGTH];
+            if (is_printable_binary(memo->text.text, memo->text.text_size)) {
+                strcpy(G_ui_detail_caption, "Memo Text");
+                memcpy(tmp, (char *) memo->text.text, memo->text.text_size);
+                tmp[memo->text.text_size] = '\0';
+                strlcpy(G_ui_detail_value, tmp, DETAIL_VALUE_MAX_LENGTH);
+            } else {
+                strcpy(G_ui_detail_caption, "Memo Text (base64)");
+                base64_encode(memo->text.text, memo->text.text_size, tmp, DETAIL_VALUE_MAX_LENGTH);
+                print_summary(tmp, G_ui_detail_value, DETAIL_VALUE_MAX_LENGTH, 6, 6);
+            }
             break;
         }
         case MEMO_HASH: {
@@ -367,14 +374,23 @@ static void format_account_merge(tx_ctx_t *txCtx) {
 }
 
 static void format_manage_data_value(tx_ctx_t *txCtx) {
-    // TODO: if printable?
-    strcpy(G_ui_detail_caption, "Data Value");
-    char tmp[89];
-    base64_encode(txCtx->tx_details.op_details.manage_data_op.data_value,
-                  txCtx->tx_details.op_details.manage_data_op.data_value_size,
-                  tmp,
-                  sizeof(tmp));
-    print_summary(tmp, G_ui_detail_value, DETAIL_VALUE_MAX_LENGTH, 12, 12);
+    char tmp[DETAIL_VALUE_MAX_LENGTH];
+    if (is_printable_binary(txCtx->tx_details.op_details.manage_data_op.data_value,
+                            txCtx->tx_details.op_details.manage_data_op.data_value_size)) {
+        strcpy(G_ui_detail_caption, "Data Value");
+        memcpy(tmp,
+               (char *) txCtx->tx_details.op_details.manage_data_op.data_value,
+               txCtx->tx_details.op_details.manage_data_op.data_value_size);
+        tmp[txCtx->tx_details.op_details.manage_data_op.data_value_size] = '\0';
+        strlcpy(G_ui_detail_value, tmp, DETAIL_VALUE_MAX_LENGTH);
+    } else {
+        strcpy(G_ui_detail_caption, "Data Value (base64)");
+        base64_encode(txCtx->tx_details.op_details.manage_data_op.data_value,
+                      txCtx->tx_details.op_details.manage_data_op.data_value_size,
+                      tmp,
+                      sizeof(tmp));
+        print_summary(tmp, G_ui_detail_value, DETAIL_VALUE_MAX_LENGTH, 6, 6);
+    }
     format_operation_source_prepare(txCtx);
 }
 
@@ -391,7 +407,7 @@ static void format_manage_data_detail(tx_ctx_t *txCtx) {
            txCtx->tx_details.op_details.manage_data_op.data_name,
            txCtx->tx_details.op_details.manage_data_op.data_name_size);
     tmp[txCtx->tx_details.op_details.manage_data_op.data_name_size] = '\0';
-    print_summary(tmp, G_ui_detail_value, DETAIL_VALUE_MAX_LENGTH, 12, 12);
+    strlcpy(G_ui_detail_value, tmp, DETAIL_VALUE_MAX_LENGTH);
 }
 
 static void format_manage_data(tx_ctx_t *txCtx) {
