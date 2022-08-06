@@ -1282,6 +1282,12 @@ export function txCondWithAllItems() {
     .build();
 }
 
+export function txCondIsNone() {
+  // We cannot build such a transaction directly through the js-stellar-base
+  const xdr = "AAAAAgAAAADpM4i7/S+9EYBt0L1ZzqkHnnzHDOex4VTxFM3+TkZuzQAAAGQBcH2gMW7AaAAAAAAAAAAEVzwQsUj8S8fbl1QM5J2iKTD0vNSKBg3HNHvoTqn1LZ8AAAABAAAAAQAAAADpM4i7/S+9EYBt0L1ZzqkHnnzHDOex4VTxFM3+TkZuzQAAAAEAAAAA4saBD5tQmyZL8lxf+El0W8/MdWWJGd3aNqynMuZp6FUAAAAAAAAAAACYloAAAAAAAAAAAA==";
+  return TransactionBuilder.fromXDR(xdr, Networks.PUBLIC);
+}
+
 export function txCondTimeBounds() {
   const account = new Account(kp0.publicKey(), "103720918407102567");
   return new TransactionBuilder(account, {
@@ -1376,6 +1382,12 @@ export function txCondTimeBoundsAreZero() {
       })
     )
     .build();
+}
+
+export function txCondTimeBoundsIsNone() {
+  // We cannot build such a transaction directly through the js-stellar-base
+  const xdr = "AAAAAgAAAADpM4i7/S+9EYBt0L1ZzqkHnnzHDOex4VTxFM3+TkZuzQAAAGQBcH2gMW7AaAAAAAIAAAAAAAAAAQJnuDgCZ7kAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAARXPBCxSPxLx9uXVAzknaIpMPS81IoGDcc0e+hOqfUtnwAAAAEAAAABAAAAAOkziLv9L70RgG3QvVnOqQeefMcM57HhVPEUzf5ORm7NAAAAAQAAAADixoEPm1CbJkvyXF/4SXRbz8x1ZYkZ3do2rKcy5mnoVQAAAAAAAAAAAJiWgAAAAAAAAAAA"
+  return TransactionBuilder.fromXDR(xdr, Networks.PUBLIC);
 }
 
 export function txCondLedgerBounds() {
