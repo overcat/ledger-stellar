@@ -226,7 +226,7 @@ static void format_memo(tx_ctx_t *txCtx) {
             } else {
                 strcpy(G_ui_detail_caption, "Memo Text (base64)");
                 base64_encode(memo->text.text, memo->text.text_size, tmp, DETAIL_VALUE_MAX_LENGTH);
-                print_summary(tmp, G_ui_detail_value, DETAIL_VALUE_MAX_LENGTH, 12, 12);
+                print_summary(tmp, G_ui_detail_value, DETAIL_VALUE_MAX_LENGTH, 6, 6);
             }
             break;
         }
@@ -389,7 +389,7 @@ static void format_manage_data_value(tx_ctx_t *txCtx) {
                       txCtx->tx_details.op_details.manage_data_op.data_value_size,
                       tmp,
                       sizeof(tmp));
-        print_summary(tmp, G_ui_detail_value, DETAIL_VALUE_MAX_LENGTH, 12, 12);
+        print_summary(tmp, G_ui_detail_value, DETAIL_VALUE_MAX_LENGTH, 6, 6);
     }
     format_operation_source_prepare(txCtx);
 }
