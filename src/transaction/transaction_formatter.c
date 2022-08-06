@@ -218,7 +218,7 @@ static void format_memo(tx_ctx_t *txCtx) {
         }
         case MEMO_TEXT: {
             char tmp[DETAIL_VALUE_MAX_LENGTH];
-            if (is_printable_string(memo->text.text, memo->text.text_size)) {
+            if (is_printable_binary(memo->text.text, memo->text.text_size)) {
                 strcpy(G_ui_detail_caption, "Memo Text");
                 memcpy(tmp, (char *) memo->text.text, memo->text.text_size);
                 tmp[memo->text.text_size] = '\0';
@@ -375,7 +375,7 @@ static void format_account_merge(tx_ctx_t *txCtx) {
 
 static void format_manage_data_value(tx_ctx_t *txCtx) {
     char tmp[DETAIL_VALUE_MAX_LENGTH];
-    if (is_printable_string(txCtx->tx_details.op_details.manage_data_op.data_value,
+    if (is_printable_binary(txCtx->tx_details.op_details.manage_data_op.data_value,
                             txCtx->tx_details.op_details.manage_data_op.data_value_size)) {
         strcpy(G_ui_detail_caption, "Data Value");
         memcpy(tmp,

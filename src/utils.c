@@ -440,7 +440,7 @@ bool print_amount(uint64_t amount,
     return true;
 }
 
-bool is_printable_string(const uint8_t *str, size_t str_len) {
+bool is_printable_binary(const uint8_t *str, size_t str_len) {
     for (size_t i = 0; i < str_len; i++) {
         if (str[i] > 0x7e || str[i] < 0x20) {
             return false;
