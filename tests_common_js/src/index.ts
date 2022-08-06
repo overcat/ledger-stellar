@@ -515,6 +515,18 @@ export function opManageDataAdd() {
     .build();
 }
 
+export function opManageDataAddWithUnprintableData() {
+  return getCommonTransactionBuilder()
+    .addOperation(
+      Operation.manageData({
+        name: "Ledger Stellar App abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcda",
+        value: Buffer.from("这是一条测试消息 hey", "utf8"),
+        source: kp0.publicKey(),
+      })
+    )
+    .build();
+}
+
 export function opManageDataRemove() {
   return getCommonTransactionBuilder()
     .addOperation(
@@ -1143,13 +1155,34 @@ export function txMemoId() {
     .build();
 }
 
-// TODO: buffer memo
 export function txMemoText() {
   const account = new Account(kp0.publicKey(), "103720918407102567");
   return new TransactionBuilder(account, {
     fee: BASE_FEE,
     networkPassphrase: Networks.PUBLIC,
-    memo: Memo.text("hello world"),
+    memo: Memo.text("hello world 123456789 123456"),
+    timebounds: {
+      minTime: 0,
+      maxTime: 1670818332, // 2022-12-12T04:12:12+00:00
+    },
+  })
+    .addOperation(
+      Operation.payment({
+        destination: kp1.publicKey(),
+        asset: Asset.native(),
+        amount: "1",
+        source: kp0.publicKey(),
+      })
+    )
+    .build();
+}
+
+export function txMemoTextUnprintable() {
+  const account = new Account(kp0.publicKey(), "103720918407102567");
+  return new TransactionBuilder(account, {
+    fee: BASE_FEE,
+    networkPassphrase: Networks.PUBLIC,
+    memo: new Memo("text", Buffer.from("这是一条测试消息 hey", "utf8")),
     timebounds: {
       minTime: 0,
       maxTime: 1670818332, // 2022-12-12T04:12:12+00:00

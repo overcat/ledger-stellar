@@ -225,10 +225,7 @@ static void format_memo(tx_ctx_t *txCtx) {
                 strcpy(G_ui_detail_value, tmp);
             } else {
                 strcpy(G_ui_detail_caption, "Memo Text (base64)");
-                base64_encode(memo->text.text,
-                              memo->text.text_size,
-                              G_ui_detail_value,
-                              DETAIL_VALUE_MAX_LENGTH);
+                base64_encode(memo->text.text, memo->text.text_size, tmp, DETAIL_VALUE_MAX_LENGTH);
                 print_summary(tmp, G_ui_detail_value, DETAIL_VALUE_MAX_LENGTH, 12, 12);
             }
             break;
