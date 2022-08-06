@@ -1,8 +1,9 @@
-import Zemu, { DEFAULT_START_OPTIONS } from "@zondax/zemu";
+import { DEFAULT_START_OPTIONS } from "@zondax/zemu";
 import { APP_SEED, models } from "./common";
 import * as testCasesFunction from 'tests-common'
 import { Keypair } from 'stellar-base'
 import Str from '@ledgerhq/hw-app-str'
+import Zemu from './zemu'
 
 beforeAll(async () => {
   await Zemu.checkAndPullImage();
