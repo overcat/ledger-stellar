@@ -28,9 +28,9 @@
 #define BINARY_MAX_SIZE               36
 #define AMOUNT_WITH_COMMAS_MAX_LENGTH 24  // 922,337,203,685.4775807
 
-static const char base64Alphabet[] =
+static const char BASE64_ALPHABET[] =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-static int base64ModTable[] = {0, 2, 1};
+static int BASE64_MOD_TABLE[] = {0, 2, 1};
 
 bool base64_encode(const uint8_t *data, size_t in_len, char *out, size_t out_len) {
     size_t encoded_len = 4 * ((in_len + 2) / 3);
@@ -45,14 +45,14 @@ bool base64_encode(const uint8_t *data, size_t in_len, char *out, size_t out_len
 
         uint32_t triple = (octet_a << 0x10) + (octet_b << 0x08) + octet_c;
 
-        out[j++] = base64Alphabet[(triple >> 3 * 6) & 0x3F];
-        out[j++] = base64Alphabet[(triple >> 2 * 6) & 0x3F];
-        out[j++] = base64Alphabet[(triple >> 1 * 6) & 0x3F];
-        out[j++] = base64Alphabet[(triple >> 0 * 6) & 0x3F];
+        out[j++] = BASE64_ALPHABET[(triple >> 3 * 6) & 0x3F];
+        out[j++] = BASE64_ALPHABET[(triple >> 2 * 6) & 0x3F];
+        out[j++] = BASE64_ALPHABET[(triple >> 1 * 6) & 0x3F];
+        out[j++] = BASE64_ALPHABET[(triple >> 0 * 6) & 0x3F];
     }
 
     int i;
-    for (i = 0; i < base64ModTable[in_len % 3]; i++) {
+    for (i = 0; i < BASE64_MOD_TABLE[in_len % 3]; i++) {
         out[encoded_len - 1 - i] = '=';
     }
 

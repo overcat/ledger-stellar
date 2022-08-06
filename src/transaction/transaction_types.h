@@ -163,8 +163,8 @@ typedef struct {
 typedef enum { LIQUIDITY_POOL_CONSTANT_PRODUCT = 0 } liquidity_pool_type_t;
 
 typedef struct {
-    asset_t assetA;
-    asset_t assetB;
+    asset_t asset_a;
+    asset_t asset_b;
     int32_t fee;  // Fee is in basis points, so the actual rate is (fee/100)%
 } liquidity_pool_constant_product_parameters_t;
 
@@ -306,9 +306,9 @@ typedef struct {
 typedef struct {
     bool inflation_destination_present;
     account_id_t inflation_destination;
-    bool clear_flags_present;  // TODO: read
+    bool clear_flags_present;
     uint32_t clear_flags;
-    bool set_flags_present;  // TODO: read
+    bool set_flags_present;
     uint32_t set_flags;
     bool master_weight_present;
     uint32_t master_weight;
@@ -549,7 +549,7 @@ typedef struct {
     preconditions_t cond;               // validity conditions
     memo_t memo;
     operation_t op_details;
-    uint32_t fee;  // the fee the sourceAccount will pay
+    uint32_t fee;  // the fee the source_account will pay
     uint8_t operations_len;
     uint8_t operation_index;
 } transaction_details_t;

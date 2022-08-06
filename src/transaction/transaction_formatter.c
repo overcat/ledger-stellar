@@ -621,7 +621,7 @@ static void format_set_option_set_flags(tx_ctx_t *txCtx) {
 }
 
 static void format_set_option_set_flags_prepare(tx_ctx_t *txCtx) {
-    if (txCtx->tx_details.op_details.set_options_op.set_flags) {
+    if (txCtx->tx_details.op_details.set_options_op.set_flags_present) {
         push_to_formatter_stack(&format_set_option_set_flags);
     } else {
         format_set_option_master_weight_prepare(txCtx);
@@ -637,7 +637,7 @@ static void format_set_option_clear_flags(tx_ctx_t *txCtx) {
 }
 
 static void format_set_option_clear_flags_prepare(tx_ctx_t *txCtx) {
-    if (txCtx->tx_details.op_details.set_options_op.clear_flags) {
+    if (txCtx->tx_details.op_details.set_options_op.clear_flags_present) {
         push_to_formatter_stack(&format_set_option_clear_flags);
     } else {
         format_set_option_set_flags_prepare(txCtx);
@@ -722,7 +722,7 @@ static void format_change_trust_detail_liquidity_pool_fee(tx_ctx_t *txCtx) {
 static void format_change_trust_detail_liquidity_pool_asset_b(tx_ctx_t *txCtx) {
     strcpy(G_ui_detail_caption, "Asset B");
     print_asset(
-        &txCtx->tx_details.op_details.change_trust_op.line.liquidity_pool.constant_product.assetB,
+        &txCtx->tx_details.op_details.change_trust_op.line.liquidity_pool.constant_product.asset_b,
         txCtx->network,
         G_ui_detail_value,
         DETAIL_VALUE_MAX_LENGTH);
@@ -732,7 +732,7 @@ static void format_change_trust_detail_liquidity_pool_asset_b(tx_ctx_t *txCtx) {
 static void format_change_trust_detail_liquidity_pool_asset_a(tx_ctx_t *txCtx) {
     strcpy(G_ui_detail_caption, "Asset A");
     print_asset(
-        &txCtx->tx_details.op_details.change_trust_op.line.liquidity_pool.constant_product.assetA,
+        &txCtx->tx_details.op_details.change_trust_op.line.liquidity_pool.constant_product.asset_a,
         txCtx->network,
         G_ui_detail_value,
         DETAIL_VALUE_MAX_LENGTH);

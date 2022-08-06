@@ -117,12 +117,12 @@ bool read_string_ptr(buffer_t *buffer, const char **string, size_t *out_len, siz
 typedef bool (*xdr_type_reader)(buffer_t *, void *);
 
 bool read_optional_type(buffer_t *buffer, xdr_type_reader reader, void *dst, bool *opted) {
-    bool isPresent;
+    bool is_present;
 
-    if (!buffer_read_bool(buffer, &isPresent)) {
+    if (!buffer_read_bool(buffer, &is_present)) {
         return false;
     }
-    if (isPresent) {
+    if (is_present) {
         if (opted) {
             *opted = true;
         }
@@ -161,17 +161,17 @@ bool read_signer_key(buffer_t *buffer, signer_key_t *key) {
             READER_CHECK(buffer_can_read(buffer, 32))
             key->ed25519_signed_payload.ed25519 = buffer->ptr + buffer->offset;
             buffer_advance(buffer, 32);
-            uint32_t payloadLength;
-            READER_CHECK(buffer_read32(buffer, &payloadLength))
+            uint32_t payload_length;
+            READER_CHECK(buffer_read32(buffer, &payload_length))
             // valid length [1, 64]
-            if (payloadLength == 0 || payloadLength > 64) {
+            if (payload_length == 0 || payload_length > 64) {
                 return false;
             }
-            key->ed25519_signed_payload.payload_len = payloadLength;
-            payloadLength += (4 - payloadLength % 4) % 4;
-            READER_CHECK(buffer_can_read(buffer, payloadLength))
+            key->ed25519_signed_payload.payload_len = payload_length;
+            payload_length += (4 - payload_length % 4) % 4;
+            READER_CHECK(buffer_can_read(buffer, payload_length))
             key->ed25519_signed_payload.payload = buffer->ptr + buffer->offset;
-            buffer_advance(buffer, payloadLength);
+            buffer_advance(buffer, payload_length);
             return true;
         default:
             return false;
@@ -227,9 +227,9 @@ bool read_extra_signers(buffer_t *buffer) {
     if (length > 2) {  // maximum length is 2
         return false;
     }
-    signer_key_t signerKey;
+    signer_key_t signer_key;
     for (uint32_t i = 0; i < length; i++) {
-        READER_CHECK(read_signer_key(buffer, &signerKey))
+        READER_CHECK(read_signer_key(buffer, &signer_key))
     }
     return true;
 }
@@ -375,15 +375,16 @@ bool read_trust_line_asset(buffer_t *buffer, trust_line_asset_t *asset) {
 }
 
 bool read_liquidity_pool_parameters(buffer_t *buffer,
-                                    liquidity_pool_parameters_t *liquidityPoolParameters) {
+                                    liquidity_pool_parameters_t *liquidity_pool_parameters) {
     uint32_t liquidity_pool_type;
     READER_CHECK(buffer_read32(buffer, &liquidity_pool_type))
     switch (liquidity_pool_type) {
         case LIQUIDITY_POOL_CONSTANT_PRODUCT: {
-            READER_CHECK(read_asset(buffer, &liquidityPoolParameters->constant_product.assetA))
-            READER_CHECK(read_asset(buffer, &liquidityPoolParameters->constant_product.assetB))
+            READER_CHECK(read_asset(buffer, &liquidity_pool_parameters->constant_product.asset_a))
+            READER_CHECK(read_asset(buffer, &liquidity_pool_parameters->constant_product.asset_b))
             READER_CHECK(
-                buffer_read32(buffer, (uint32_t *) &liquidityPoolParameters->constant_product.fee))
+                buffer_read32(buffer,
+                              (uint32_t *) &liquidity_pool_parameters->constant_product.fee))
             return true;
         }
         default:
@@ -481,10 +482,10 @@ bool read_manage_data(buffer_t *buffer, manage_data_op_t *op) {
     READER_CHECK(read_string_ptr(buffer, (const char **) &op->data_name, &size, DATA_NAME_MAX_SIZE))
     op->data_name_size = size;
 
-    // TODO: DataValue* data_value;
-    bool hasValue;
-    READER_CHECK(buffer_read_bool(buffer, &hasValue))
-    if (hasValue) {
+    bool has_value;
+    READER_CHECK(buffer_read_bool(buffer, &has_value))
+    // TODO: read binary?
+    if (has_value) {
         READER_CHECK(
             read_string_ptr(buffer, (const char **) &op->data_value, &size, DATA_VALUE_MAX_SIZE))
         op->data_value_size = size;
@@ -539,61 +540,61 @@ bool read_signer(buffer_t *buffer, signer_t *signer) {
     return true;
 }
 
-bool read_set_options(buffer_t *buffer, set_options_op_t *setOptions) {
+bool read_set_options(buffer_t *buffer, set_options_op_t *set_options) {
     READER_CHECK(read_optional_type(buffer,
                                     (xdr_type_reader) read_account_id,
-                                    &setOptions->inflation_destination,
-                                    &setOptions->inflation_destination_present))
+                                    &set_options->inflation_destination,
+                                    &set_options->inflation_destination_present))
 
     READER_CHECK(read_optional_type(buffer,
                                     (xdr_type_reader) buffer_read32,
-                                    &setOptions->clear_flags,
-                                    &setOptions->clear_flags_present))
+                                    &set_options->clear_flags,
+                                    &set_options->clear_flags_present))
     READER_CHECK(read_optional_type(buffer,
                                     (xdr_type_reader) buffer_read32,
-                                    &setOptions->set_flags,
-                                    &setOptions->set_flags_present))
+                                    &set_options->set_flags,
+                                    &set_options->set_flags_present))
     READER_CHECK(read_optional_type(buffer,
                                     (xdr_type_reader) buffer_read32,
-                                    &setOptions->master_weight,
-                                    &setOptions->master_weight_present))
+                                    &set_options->master_weight,
+                                    &set_options->master_weight_present))
     READER_CHECK(read_optional_type(buffer,
                                     (xdr_type_reader) buffer_read32,
-                                    &setOptions->low_threshold,
-                                    &setOptions->low_threshold_present))
+                                    &set_options->low_threshold,
+                                    &set_options->low_threshold_present))
     READER_CHECK(read_optional_type(buffer,
                                     (xdr_type_reader) buffer_read32,
-                                    &setOptions->medium_threshold,
-                                    &setOptions->medium_threshold_present))
+                                    &set_options->medium_threshold,
+                                    &set_options->medium_threshold_present))
     READER_CHECK(read_optional_type(buffer,
                                     (xdr_type_reader) buffer_read32,
-                                    &setOptions->high_threshold,
-                                    &setOptions->high_threshold_present))
+                                    &set_options->high_threshold,
+                                    &set_options->high_threshold_present))
 
     uint32_t home_domain_present;
     READER_CHECK(buffer_read32(buffer, &home_domain_present))
-    setOptions->home_domain_present = home_domain_present ? true : false;
-    if (setOptions->home_domain_present) {
-        if (!buffer_read32(buffer, &setOptions->home_domain_size) ||
-            setOptions->home_domain_size > HOME_DOMAIN_MAX_SIZE) {
+    set_options->home_domain_present = home_domain_present ? true : false;
+    if (set_options->home_domain_present) {
+        if (!buffer_read32(buffer, &set_options->home_domain_size) ||
+            set_options->home_domain_size > HOME_DOMAIN_MAX_SIZE) {
             return false;
         }
-        if (buffer->size - buffer->offset < num_bytes(setOptions->home_domain_size)) {
+        if (buffer->size - buffer->offset < num_bytes(set_options->home_domain_size)) {
             return false;
         }
-        setOptions->home_domain = buffer->ptr + buffer->offset;
-        READER_CHECK(check_padding(setOptions->home_domain,
-                                   setOptions->home_domain_size,
-                                   num_bytes(setOptions->home_domain_size)))  // security check
-        buffer->offset += num_bytes(setOptions->home_domain_size);
+        set_options->home_domain = buffer->ptr + buffer->offset;
+        READER_CHECK(check_padding(set_options->home_domain,
+                                   set_options->home_domain_size,
+                                   num_bytes(set_options->home_domain_size)))  // security check
+        buffer->offset += num_bytes(set_options->home_domain_size);
     } else {
-        setOptions->home_domain_size = 0;
+        set_options->home_domain_size = 0;
     }
 
     return read_optional_type(buffer,
                               (xdr_type_reader) read_signer,
-                              &setOptions->signer,
-                              &setOptions->signer_present);
+                              &set_options->signer,
+                              &set_options->signer_present);
 }
 
 bool read_bump_sequence(buffer_t *buffer, bump_sequence_op_t *op) {
@@ -624,34 +625,34 @@ bool read_claimant_predicate(buffer_t *buffer) {
     // So here we will not store the parsed data, just to ensure that the data can be parsed
     // correctly.
     uint32_t claim_predicate_type;
-    uint32_t predicatesLen;
-    bool notPredicatePresent;
-    int64_t absBefore;
-    int64_t relBefore;
+    uint32_t predicates_len;
+    bool not_predicate_present;
+    int64_t abs_before;
+    int64_t rel_before;
     READER_CHECK(buffer_read32(buffer, &claim_predicate_type))
     switch (claim_predicate_type) {
         case CLAIM_PREDICATE_UNCONDITIONAL:
             return true;
         case CLAIM_PREDICATE_AND:
         case CLAIM_PREDICATE_OR:
-            READER_CHECK(buffer_read32(buffer, &predicatesLen))
-            if (predicatesLen != 2) {
+            READER_CHECK(buffer_read32(buffer, &predicates_len))
+            if (predicates_len != 2) {
                 return false;
             }
             READER_CHECK(read_claimant_predicate(buffer))
             READER_CHECK(read_claimant_predicate(buffer))
             return true;
         case CLAIM_PREDICATE_NOT:
-            READER_CHECK(buffer_read_bool(buffer, &notPredicatePresent))
-            if (notPredicatePresent) {
+            READER_CHECK(buffer_read_bool(buffer, &not_predicate_present))
+            if (not_predicate_present) {
                 READER_CHECK(read_claimant_predicate(buffer))
             }
             return true;
         case CLAIM_PREDICATE_BEFORE_ABSOLUTE_TIME:
-            READER_CHECK(buffer_read64(buffer, (uint64_t *) &absBefore))
+            READER_CHECK(buffer_read64(buffer, (uint64_t *) &abs_before))
             return true;
         case CLAIM_PREDICATE_BEFORE_RELATIVE_TIME:
-            READER_CHECK(buffer_read64(buffer, (uint64_t *) &relBefore))
+            READER_CHECK(buffer_read64(buffer, (uint64_t *) &rel_before))
             return true;
         default:
             return false;
@@ -687,14 +688,14 @@ bool read_create_claimable_balance(buffer_t *buffer, create_claimable_balance_op
     }
     return true;
 }
-bool read_claimable_balance_id(buffer_t *buffer, claimable_balance_id *claimableBalanceID) {
+bool read_claimable_balance_id(buffer_t *buffer, claimable_balance_id *claimable_balance_id) {
     uint32_t claimable_balance_id_type;
     READER_CHECK(buffer_read32(buffer, &claimable_balance_id_type))
-    claimableBalanceID->type = claimable_balance_id_type;
+    claimable_balance_id->type = claimable_balance_id_type;
 
-    switch (claimableBalanceID->type) {
+    switch (claimable_balance_id->type) {
         case CLAIMABLE_BALANCE_ID_TYPE_V0:
-            READER_CHECK(buffer_read_bytes(buffer, claimableBalanceID->v0, 32))
+            READER_CHECK(buffer_read_bytes(buffer, claimable_balance_id->v0, 32))
             return true;
         default:
             return false;
@@ -977,9 +978,9 @@ bool read_fee_bump_transaction_fee(buffer_t *buffer, int64_t *fee) {
 }
 
 bool read_fee_bump_transaction_details(buffer_t *buffer,
-                                       fee_bump_transaction_details_t *feeBumpTransaction) {
-    READER_CHECK(read_fee_bump_transaction_fee_source(buffer, &feeBumpTransaction->fee_source))
-    READER_CHECK(read_fee_bump_transaction_fee(buffer, &feeBumpTransaction->fee))
+                                       fee_bump_transaction_details_t *fee_bump_transaction) {
+    READER_CHECK(read_fee_bump_transaction_fee_source(buffer, &fee_bump_transaction->fee_source))
+    READER_CHECK(read_fee_bump_transaction_fee(buffer, &fee_bump_transaction->fee))
     return true;
 }
 
