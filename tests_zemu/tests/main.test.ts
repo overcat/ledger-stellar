@@ -178,7 +178,6 @@ describe('transactions', () => {
         const result = str.signTransaction("44'/148'/0'", tx.signatureBase())
         await sim.waitScreenChange(1000 * 60 * 60)
         await sim.navigateAndCompareUntilText(".", `${m.prefix.toLowerCase()}-${c.filePath}`, 'Finalize', 1000 * 60 * 60)
-        await sim.waitForText("is ready", 1000 * 60 * 60)
         const kp = Keypair.fromSecret("SAIYWGGWU2WMXYDSK33UBQBMBDKU4TTJVY3ZIFF24H2KQDR7RQW5KAEK")
         tx.sign(kp)
         expect((await result).signature).toStrictEqual(tx.signatures[0].signature());
