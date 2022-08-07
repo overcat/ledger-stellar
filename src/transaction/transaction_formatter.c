@@ -15,14 +15,18 @@
  *  limitations under the License.
  *****************************************************************************/
 
-#include <stdbool.h>     // bool
-#include <bsd/string.h>  // memset
+#include <stdbool.h>  // bool
 #include "common/format.h"
 #include "utils.h"
 #include "types.h"
 #include "transaction/transaction_parser.h"
 #include "transaction_formatter.h"
 #include "../globals.h"
+#ifdef TEST
+#include <bsd/string.h>  // memset
+#else
+#include <string.h>  // memset
+#endif               // TEST
 
 #ifdef TEST
 uint8_t G_ui_current_data_index;
