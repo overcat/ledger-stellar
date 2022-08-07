@@ -107,7 +107,7 @@ bool read_binary_string_ptr(buffer_t *buffer,
                        num_bytes(size))) {  // security check
         return false;
     }
-    *string = (char *) buffer->ptr + buffer->offset;
+    *string = (uint8_t *) buffer->ptr + buffer->offset;
     if (out_len) {
         *out_len = size;
     }
@@ -891,6 +891,7 @@ bool read_operation(buffer_t *buffer, operation_t *operation) {
         default:
             THROW(SW_UNKNOWN_OP);
     }
+    return false;
 }
 
 bool read_transaction_source(buffer_t *buffer, muxed_account_t *source) {

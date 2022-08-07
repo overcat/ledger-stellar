@@ -20,7 +20,7 @@
 #include "common/base32.h"
 #include "common/format.h"
 #include <stdint.h>
-#include <string.h>
+#include <bsd/string.h>
 #include <stdio.h>
 #include <time.h>
 

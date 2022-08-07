@@ -15,8 +15,8 @@
  *  limitations under the License.
  *****************************************************************************/
 
-#include <stdbool.h>  // bool
-#include <string.h>   // memset
+#include <stdbool.h>     // bool
+#include <bsd/string.h>  // memset
 #include "common/format.h"
 #include "utils.h"
 #include "types.h"
@@ -29,6 +29,8 @@ uint8_t G_ui_current_data_index;
 char G_ui_detail_caption[DETAIL_CAPTION_MAX_LENGTH];
 char G_ui_detail_value[DETAIL_VALUE_MAX_LENGTH];
 #endif  // TEST
+
+static const char *NETWORK_NAMES[3] = {"Public", "Testnet", "Unknown"};
 
 char op_caption[OPERATION_CAPTION_MAX_SIZE];
 format_function_t formatter_stack[MAX_FORMATTERS_PER_OPERATION];
@@ -1645,8 +1647,7 @@ static void format_fee_bump_transaction_details(tx_ctx_t *txCtx) {
 static format_function_t get_tx_details_formatter(tx_ctx_t *txCtx) {
     if (txCtx->envelope_type == ENVELOPE_TYPE_TX_FEE_BUMP) {
         return &format_fee_bump_transaction_details;
-    }
-    if (txCtx->envelope_type == ENVELOPE_TYPE_TX) {
+    } else if (txCtx->envelope_type == ENVELOPE_TYPE_TX) {
         if (txCtx->tx_details.memo.type != MEMO_NONE) {
             return &format_memo;
         } else {
@@ -1655,6 +1656,7 @@ static format_function_t get_tx_details_formatter(tx_ctx_t *txCtx) {
     } else {
         THROW(0x6125);
     }
+    // TODO: fix warning
 }
 
 static void format_network(tx_ctx_t *txCtx) {

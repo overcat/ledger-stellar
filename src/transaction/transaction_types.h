@@ -48,7 +48,6 @@
 #define NETWORK_TYPE_PUBLIC  0
 #define NETWORK_TYPE_TEST    1
 #define NETWORK_TYPE_UNKNOWN 2
-static const char *NETWORK_NAMES[3] = {"Public", "Testnet", "Unknown"};
 
 typedef enum {
     ASSET_TYPE_NATIVE = 0,
