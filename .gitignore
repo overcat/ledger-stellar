@@ -14,4 +14,6 @@ tests_zemu/elfs/stellar_*.elf
 tests_common_js/dist/
 tests_common_js/node_modules/
 fuzzing/build
+fuzzing/testcases/
+tests_generate_binary/node_modules/
 .DS_Store

@@ -154,10 +154,15 @@ listvariants:
 
 tests-unit:
 	cd tests_common_js && npm install && npm run build
-	cd tests_unit && npm install && npm run generate
+	cd tests_generate_binary && npm install && npm run generate unit
 	rm -rf tests_unit/build && cmake -Btests_unit/build -Htests_unit/ && make -C tests_unit/build/ && make -C tests_unit/build test
 
 tests-zemu:
 	./build_elfs.sh && rm -rf ./tests_zemu/elfs/stellar_nano*.elf && cp ./elfs/stellar_nano*.elf ./tests_zemu/elfs
 	cd tests_common_js && npm install && npm run build
 	cd tests_zemu && npm install && rm -rf snapshots-tmp && npm run test
+
+tests-fuzzing:
+	cd tests_common_js && npm install && npm run build
+	rm -rf fuzzing/testcases && mkdir -p fuzzing/testcases && cd tests_generate_binary && npm install && npm run generate fuzzing
+	cd fuzzing && rm -rf build && cmake -DCMAKE_C_COMPILER=/usr/bin/clang -DCMAKE_CXX_COMPILER=/usr/bin/clang++ -Bbuild -H. && make -C build && ./build/fuzz_tx testcases
