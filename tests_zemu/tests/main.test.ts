@@ -1,8 +1,9 @@
-import Zemu, { DEFAULT_START_OPTIONS } from "@zondax/zemu";
+import { DEFAULT_START_OPTIONS } from "@zondax/zemu";
 import { APP_SEED, models } from "./common";
 import * as testCasesFunction from 'tests-common'
 import { Keypair } from 'stellar-base'
 import Str from '@ledgerhq/hw-app-str'
+import Zemu from './zemu'
 
 beforeAll(async () => {
   await Zemu.checkAndPullImage();
@@ -177,7 +178,6 @@ describe('transactions', () => {
         const result = str.signTransaction("44'/148'/0'", tx.signatureBase())
         await sim.waitScreenChange(1000 * 60 * 60)
         await sim.navigateAndCompareUntilText(".", `${m.prefix.toLowerCase()}-${c.filePath}`, 'Finalize', 1000 * 60 * 60)
-        await sim.waitForText("is ready", 1000 * 60 * 60)
         const kp = Keypair.fromSecret("SAIYWGGWU2WMXYDSK33UBQBMBDKU4TTJVY3ZIFF24H2KQDR7RQW5KAEK")
         tx.sign(kp)
         expect((await result).signature).toStrictEqual(tx.signatures[0].signature());
