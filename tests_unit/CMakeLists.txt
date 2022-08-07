@@ -1,20 +1,20 @@
 cmake_minimum_required(VERSION 3.10)
 
-if(${CMAKE_VERSION} VERSION_LESS 3.10)
+if (${CMAKE_VERSION} VERSION_LESS 3.10)
     cmake_policy(VERSION ${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION})
-endif()
+endif ()
 
 # project information
 project(tests_unit
         VERSION 0.1
-	      DESCRIPTION "Unit tests for Ledger Nano application"
+        DESCRIPTION "Unit tests for Ledger Nano application"
         LANGUAGES C)
 
 
 # guard against bad build-type strings
 if (NOT CMAKE_BUILD_TYPE)
-  set(CMAKE_BUILD_TYPE "Debug")
-endif()
+    set(CMAKE_BUILD_TYPE "Debug")
+endif ()
 
 include(CTest)
 ENABLE_TESTING()
@@ -29,9 +29,9 @@ set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} ${GCC_COVERAGE_LINK_
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${GCC_COVERAGE_LINK_FLAGS}")
 
 # guard against in-source builds
-if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
-  message(FATAL_ERROR "In-source builds not allowed. Please make a new directory (called a build directory) and run CMake from there. You may need to remove CMakeCache.txt. ")
-endif()
+if (${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
+    message(FATAL_ERROR "In-source builds not allowed. Please make a new directory (called a build directory) and run CMake from there. You may need to remove CMakeCache.txt. ")
+endif ()
 
 add_compile_definitions(TEST)
 add_definitions("-DIO_SEPROXYHAL_BUFFER_SIZE_B=128") # cmake -DIO_SEPROXYHAL_BUFFER_SIZE_B=128
