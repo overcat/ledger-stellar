@@ -42,7 +42,7 @@ export default class StellarZemu extends Zemu {
       let currentScreen = await this.snapshot();
       while (currentScreen.data.equals(previousScreen.data)) {
         this.log("sleep");
-        // In GitHub, it is often encountered that the screen is only refreshed halfway 
+        // In GitHub Action, it is often encountered that the screen is only refreshed halfway 
         // before being snapshotted, which will cause the test to fail, so we made this change, 
         // which can greatly reduce the occurrence of this situation.
         await Zemu.delay(1000);
