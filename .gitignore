@@ -13,5 +13,5 @@ tests_zemu/snapshots-tmp/
 tests_zemu/elfs/stellar_*.elf
 tests_common_js/dist/
 tests_common_js/node_modules/
-
+fuzzing/build
 .DS_Store

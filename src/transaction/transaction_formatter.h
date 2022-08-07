@@ -23,9 +23,10 @@ extern char op_caption[OPERATION_CAPTION_MAX_SIZE];
 extern int8_t formatter_index;
 
 #ifdef TEST
-extern uint8_t G_ui_current_data_index;
-extern char G_ui_detail_caption[DETAIL_CAPTION_MAX_LENGTH];
-extern char G_ui_detail_value[DETAIL_VALUE_MAX_LENGTH];
+uint8_t G_ui_current_data_index;
+char G_ui_detail_caption[DETAIL_CAPTION_MAX_LENGTH];
+char G_ui_detail_value[DETAIL_VALUE_MAX_LENGTH];
+global_ctx_t G_context;
 #endif  // TEST
 
 void set_state_data(bool forward);
