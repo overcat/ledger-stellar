@@ -64,7 +64,6 @@ static bool buffer_read_bool(buffer_t *buffer, bool *b) {
 }
 
 static bool buffer_read_bytes(buffer_t *buffer, uint8_t *out, size_t size) {
-    // TODO: improve?
     if (buffer->size - buffer->offset < size) {
         return false;
     }
@@ -91,9 +90,11 @@ static bool check_padding(const uint8_t *buffer, size_t offset, size_t length) {
     return true;
 }
 
-bool read_string_ptr(buffer_t *buffer, const char **string, size_t *out_len, size_t max_length) {
-    /* TODO: max_length does not include terminal null character */
-
+bool read_binary_string_ptr(buffer_t *buffer,
+                            const uint8_t **string,
+                            size_t *out_len,
+                            size_t max_length) {
+    /* max_length does not include terminal null character */
     uint32_t size;
 
     if (!buffer_read32(buffer, &size)) {
@@ -289,10 +290,8 @@ bool read_memo(buffer_t *buffer, memo_t *memo) {
             return buffer_read64(buffer, &memo->id);
         case MEMO_TEXT: {
             size_t size;
-            READER_CHECK(read_string_ptr(buffer,
-                                         (const char **) &memo->text.text,
-                                         &size,
-                                         DATA_VALUE_MAX_SIZE))
+            READER_CHECK(
+                read_binary_string_ptr(buffer, (const uint8_t **) &memo->text.text, &size, 28))
             memo->text.text_size = size;
             return true;
         }
@@ -479,15 +478,13 @@ bool read_account_merge(buffer_t *buffer, account_merge_op_t *op) {
 bool read_manage_data(buffer_t *buffer, manage_data_op_t *op) {
     size_t size;
 
-    READER_CHECK(read_string_ptr(buffer, (const char **) &op->data_name, &size, DATA_NAME_MAX_SIZE))
+    READER_CHECK(read_binary_string_ptr(buffer, (const uint8_t **) &op->data_name, &size, 64))
     op->data_name_size = size;
 
     bool has_value;
     READER_CHECK(buffer_read_bool(buffer, &has_value))
-    // TODO: read binary?
     if (has_value) {
-        READER_CHECK(
-            read_string_ptr(buffer, (const char **) &op->data_value, &size, DATA_VALUE_MAX_SIZE))
+        READER_CHECK(read_binary_string_ptr(buffer, (const uint8_t **) &op->data_value, &size, 64))
         op->data_value_size = size;
     } else {
         op->data_value_size = 0;
@@ -731,10 +728,10 @@ bool read_ledger_key(buffer_t *buffer, ledger_key_t *ledger_key) {
             return true;
         case DATA:
             READER_CHECK(read_account_id(buffer, &ledger_key->data.account_id))
-            READER_CHECK(read_string_ptr(buffer,
-                                         (const char **) &ledger_key->data.data_name,
-                                         (size_t *) &ledger_key->data.data_name_size,
-                                         DATA_VALUE_MAX_SIZE))
+            READER_CHECK(read_binary_string_ptr(buffer,
+                                                (const uint8_t **) &ledger_key->data.data_name,
+                                                (size_t *) &ledger_key->data.data_name_size,
+                                                64))
             return true;
         case CLAIMABLE_BALANCE:
             READER_CHECK(
