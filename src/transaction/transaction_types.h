@@ -45,7 +45,6 @@
 #define DATA_VALUE_MAX_SIZE     64
 #define HOME_DOMAIN_MAX_SIZE    32
 
-// TODO: remove
 #define NETWORK_TYPE_PUBLIC  0
 #define NETWORK_TYPE_TEST    1
 #define NETWORK_TYPE_UNKNOWN 2

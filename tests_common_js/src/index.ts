@@ -1632,8 +1632,6 @@ export function txCondExtraSignersWithTwoSigners() {
     .build();
 }
 
-// TODO: timebounds is null
-
 export function txMultiOperations() {
   return getCommonTransactionBuilder()
     .addOperation(
