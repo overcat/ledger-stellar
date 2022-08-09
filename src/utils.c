@@ -68,7 +68,7 @@ uint16_t crc16(const uint8_t *input_str, int num_bytes) {
     int crc;
     crc = 0;
     while (--num_bytes >= 0) {
-        crc = crc ^ (int) *input_str++ << 8;
+        crc = crc ^ (uint32_t) *input_str++ << 8;
         int i = 8;
         do {
             if (crc & 0x8000)
