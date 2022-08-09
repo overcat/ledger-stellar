@@ -50,6 +50,11 @@ add_executable(test_tx_parser test_tx_parser.c)
 add_executable(test_tx_formatter test_tx_formatter.c)
 add_executable(test_swap test_swap.c)
 
+if (FUZZ)
+    add_library(bsd STATIC IMPORTED)
+    set_property(TARGET bsd PROPERTY IMPORTED_LOCATION /lib/x86_64-linux-gnu/libbsd.a)
+endif()
+
 add_library(base58 STATIC ../src/common/base58.c)
 add_library(base32 STATIC ../src/common/base32.c)
 add_library(bip32 STATIC ../src/common/bip32.c)
