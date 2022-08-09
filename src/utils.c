@@ -92,7 +92,7 @@ bool encode_key(const uint8_t *in, uint8_t version_byte, char *out, uint8_t out_
     uint16_t crc = crc16(buffer, 33);  // checksum
     buffer[33] = crc;
     buffer[34] = crc >> 8;
-    if (base32_encode(buffer, 35, out, 56) == -1) {
+    if (base32_encode(buffer, 35, (uint8_t *) out, 56) == -1) {
         return false;
     }
     out[56] = '\0';
@@ -135,7 +135,7 @@ bool encode_muxed_account(const muxed_account_t *raw_muxed_account, char *out, s
         buffer[42] = crc >> 8;
         if (base32_encode(buffer,
                           MUXED_ACCOUNT_MED_25519_SIZE,
-                          out,
+                          (uint8_t *) out,
                           ENCODED_MUXED_ACCOUNT_KEY_LENGTH) == -1) {
             return false;
         }

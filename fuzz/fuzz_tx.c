@@ -3,19 +3,17 @@
 #include <stdio.h>
 #include <string.h>
 
-extern "C" {
 #include "transaction/transaction_parser.h"
 #include "transaction/transaction_formatter.h"
-}
 
-extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
+int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size) {
     memset(&G_context, 0, sizeof(global_ctx_t));
-    if (size > sizeof(G_context.tx_info.raw)) {
+    if (Size > sizeof(G_context.tx_info.raw)) {
         return 0;
     }
-    memcpy(&G_context.tx_info.raw, data, size);
+    memcpy(&G_context.tx_info.raw, Data, Size);
     G_context.req_type = CONFIRM_TRANSACTION;
-    G_context.tx_info.raw_length = size;
+    G_context.tx_info.raw_length = Size;
     if (!parse_tx_xdr(G_context.tx_info.raw, G_context.tx_info.raw_length, &G_context.tx_info)) {
         return 0;
     }
