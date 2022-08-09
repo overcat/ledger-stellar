@@ -2,9 +2,6 @@
 
 # build fuzzers
 
-pushd fuzzing
-cmake -DCMAKE_C_COMPILER=/usr/bin/clang -DCMAKE_CXX_COMPILER=/usr/bin/clang++ -Bbuild -H.
-make -C build
-mv ./build/fuzz_tx $OUT/app-stellar-fuzz-tx
-popd
-
+cmake -Btests_unit/build -Htests_unit -DFUZZ=1 -DCMAKE_C_COMPILER=clang
+make -C tests_unit/build/
+mv ./tests_unit/build/fuzz_tx $OUT/app-stellar-fuzz-tx

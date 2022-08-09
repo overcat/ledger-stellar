@@ -50,7 +50,6 @@ add_executable(test_tx_parser test_tx_parser.c)
 add_executable(test_tx_formatter test_tx_formatter.c)
 add_executable(test_swap test_swap.c)
 
-
 add_library(base58 SHARED ../src/common/base58.c)
 add_library(base32 SHARED ../src/common/base32.c)
 add_library(bip32 SHARED ../src/common/bip32.c)
@@ -87,3 +86,25 @@ add_test(test_utils test_utils)
 add_test(test_tx_parser test_tx_parser)
 add_test(test_tx_formatter test_tx_formatter)
 add_test(test_swap test_swap)
+
+
+if (FUZZ)
+    if (NOT CMAKE_C_COMPILER_ID MATCHES "Clang")
+        message(FATAL_ERROR "Fuzzer needs to be built with Clang")
+    endif()
+
+    # compatible with ClusterFuzzLite
+    if (NOT DEFINED ENV{LIB_FUZZING_ENGINE})
+    set(COMPILATION_FLAGS_ "-fsanitize=address,fuzzer -g")
+    else()
+        set(COMPILATION_FLAGS_ "$ENV{LIB_FUZZING_ENGINE} $ENV{CXXFLAGS}")
+    endif()
+
+    string(REPLACE " " ";" COMPILATION_FLAGS ${COMPILATION_FLAGS_})
+    message(${COMPILATION_FLAGS})
+
+    add_executable(fuzz_tx fuzz_tx.c)
+    target_compile_options(fuzz_tx PRIVATE ${COMPILATION_FLAGS})
+    target_link_options(fuzz_tx PRIVATE ${COMPILATION_FLAGS})
+    target_link_libraries(fuzz_tx PRIVATE tx_parser buffer bip32 varint write read tx_formatter utils bsd base32 format bsd)
+endif()
