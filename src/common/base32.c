@@ -67,7 +67,7 @@ int base32_encode(const uint8_t *data, int length, uint8_t *result, int bufSize)
     }
     int count = 0;
     if (length > 0) {
-        int buffer = data[0];
+        uint32_t buffer = data[0];
         int next = 1;
         int bitsLeft = 8;
         while (count < bufSize && (bitsLeft > 0 || next < length)) {
