@@ -64,8 +64,8 @@ bool base64_encode(const uint8_t *data, size_t in_len, char *out, size_t out_len
     return true;
 }
 
-uint16_t crc16(const uint8_t *input_str, int num_bytes) {
-    int crc;
+uint16_t crc16(const uint8_t *input_str, uint8_t num_bytes) {
+    uint16_t crc;
     crc = 0;
     while (--num_bytes >= 0) {
         crc = crc ^ (uint32_t) *input_str++ << 8;
