@@ -16,8 +16,8 @@
  *****************************************************************************/
 
 #include "utils.h"
-#include "common/base58.h"
 #include "common/base32.h"
+#include "common/base58.h"
 #include "common/format.h"
 #include <stdint.h>
 #include <stdio.h>
@@ -32,6 +32,7 @@
 #define BINARY_MAX_SIZE               36
 #define AMOUNT_WITH_COMMAS_MAX_LENGTH 24  // 922,337,203,685.4775807
 
+static const char BASE32_ALPHABET[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
 static const char BASE64_ALPHABET[] =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 static int BASE64_MOD_TABLE[] = {0, 2, 1};
@@ -92,7 +93,7 @@ bool encode_key(const uint8_t *in, uint8_t version_byte, char *out, uint8_t out_
     uint16_t crc = crc16(buffer, 33);  // checksum
     buffer[33] = crc;
     buffer[34] = crc >> 8;
-    if (base32_encode(buffer, 35, (uint8_t *) out, 56) == -1) {
+    if (base32_encode(buffer, 35, out, 56) == -1) {
         return false;
     }
     out[56] = '\0';
@@ -135,7 +136,7 @@ bool encode_muxed_account(const muxed_account_t *raw_muxed_account, char *out, s
         buffer[42] = crc >> 8;
         if (base32_encode(buffer,
                           MUXED_ACCOUNT_MED_25519_SIZE,
-                          (uint8_t *) out,
+                          out,
                           ENCODED_MUXED_ACCOUNT_KEY_LENGTH) == -1) {
             return false;
         }
