@@ -162,7 +162,7 @@ tests-zemu:
 	cd tests_common_js && npm install && npm run build
 	cd tests_zemu && npm install && rm -rf snapshots-tmp && npm run test
 
-tests-fuzzing:
+fuzzing:
 	cd tests_common_js && npm install && npm run build
-	rm -rf fuzzing/testcases && mkdir -p fuzzing/testcases && cd tests_generate_binary && npm install && npm run generate fuzzing
-	cd fuzzing && rm -rf build && cmake -DCMAKE_C_COMPILER=/usr/bin/clang -DCMAKE_CXX_COMPILER=/usr/bin/clang++ -Bbuild -H. && make -C build && ./build/fuzz_tx testcases
+	rm -rf fuzz/testcases && mkdir -p fuzz/testcases && cd tests_generate_binary && npm install && npm run generate fuzz
+	cd fuzz && rm -rf build && cmake -DCMAKE_C_COMPILER=clang -Bbuild -H. && make -C build && ./build/fuzz_tx testcases

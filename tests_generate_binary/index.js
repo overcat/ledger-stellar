@@ -23,8 +23,8 @@ function main() {
         case "unit":
             dir = path.join(projectDir, "tests_unit", "testcases")
             break
-        case "fuzzing":
-            dir = path.join(projectDir, "fuzzing", "testcases")
+        case "fuzz":
+            dir = path.join(projectDir, "fuzz", "testcases")
             break
         default:
             throw new Error("Unknown type: " + type)
