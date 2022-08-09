@@ -2,7 +2,7 @@
 
 ## Compilation
 
-In `fuzzing` folder
+In `fuzz` folder
 
 ```
 cmake -DCMAKE_C_COMPILER=clang -Bbuild -H.
