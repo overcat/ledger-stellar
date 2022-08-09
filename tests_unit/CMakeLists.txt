@@ -1,20 +1,20 @@
 cmake_minimum_required(VERSION 3.10)
 
-if(${CMAKE_VERSION} VERSION_LESS 3.10)
+if (${CMAKE_VERSION} VERSION_LESS 3.10)
     cmake_policy(VERSION ${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION})
-endif()
+endif ()
 
 # project information
 project(tests_unit
         VERSION 0.1
-	      DESCRIPTION "Unit tests for Ledger Nano application"
+        DESCRIPTION "Unit tests for Ledger Nano application"
         LANGUAGES C)
 
 
 # guard against bad build-type strings
 if (NOT CMAKE_BUILD_TYPE)
-  set(CMAKE_BUILD_TYPE "Debug")
-endif()
+    set(CMAKE_BUILD_TYPE "Debug")
+endif ()
 
 include(CTest)
 ENABLE_TESTING()
@@ -29,9 +29,9 @@ set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} ${GCC_COVERAGE_LINK_
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${GCC_COVERAGE_LINK_FLAGS}")
 
 # guard against in-source builds
-if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
-  message(FATAL_ERROR "In-source builds not allowed. Please make a new directory (called a build directory) and run CMake from there. You may need to remove CMakeCache.txt. ")
-endif()
+if (${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
+    message(FATAL_ERROR "In-source builds not allowed. Please make a new directory (called a build directory) and run CMake from there. You may need to remove CMakeCache.txt. ")
+endif ()
 
 add_compile_definitions(TEST)
 add_definitions("-DIO_SEPROXYHAL_BUFFER_SIZE_B=128") # cmake -DIO_SEPROXYHAL_BUFFER_SIZE_B=128
@@ -50,19 +50,18 @@ add_executable(test_tx_parser test_tx_parser.c)
 add_executable(test_tx_formatter test_tx_formatter.c)
 add_executable(test_swap test_swap.c)
 
-
-add_library(base58 SHARED ../src/common/base58.c)
-add_library(base32 SHARED ../src/common/base32.c)
-add_library(bip32 SHARED ../src/common/bip32.c)
-add_library(buffer SHARED ../src/common/buffer.c)
-add_library(read SHARED ../src/common/read.c)
-add_library(write SHARED ../src/common/write.c)
-add_library(format SHARED ../src/common/format.c)
-add_library(varint SHARED ../src/common/varint.c)
-add_library(utils SHARED ../src/utils.c)
-add_library(tx_parser SHARED ../src/transaction/transaction_parser.c)
-add_library(tx_formatter SHARED ../src/transaction/transaction_formatter.c)
-add_library(swap SHARED ../src/swap/swap_lib_calls.c)
+add_library(base58 STATIC ../src/common/base58.c)
+add_library(base32 STATIC ../src/common/base32.c)
+add_library(bip32 STATIC ../src/common/bip32.c)
+add_library(buffer STATIC ../src/common/buffer.c)
+add_library(read STATIC ../src/common/read.c)
+add_library(write STATIC ../src/common/write.c)
+add_library(format STATIC ../src/common/format.c)
+add_library(varint STATIC ../src/common/varint.c)
+add_library(utils STATIC ../src/utils.c)
+add_library(tx_parser STATIC ../src/transaction/transaction_parser.c)
+add_library(tx_formatter STATIC ../src/transaction/transaction_formatter.c)
+add_library(swap STATIC ../src/swap/swap_lib_calls.c)
 
 
 target_link_libraries(test_base58 PUBLIC cmocka gcov base58)
@@ -75,7 +74,6 @@ target_link_libraries(test_utils PUBLIC cmocka gcov utils base58 base32 format b
 target_link_libraries(test_tx_parser PUBLIC cmocka gcov tx_parser buffer bip32 varint write read)
 target_link_libraries(test_tx_formatter PUBLIC cmocka gcov tx_parser buffer bip32 varint write read tx_formatter utils bsd base32 format)
 target_link_libraries(test_swap PUBLIC cmocka gcov swap tx_parser buffer bip32 varint write read tx_formatter utils bsd base32 format)
-
 
 add_test(test_base58 test_base58)
 # add_test(test_base32 test_base32)

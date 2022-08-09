@@ -1,8 +1,10 @@
 {
-  "name": "tests_unit",
+  "name": "tests_generate_binary",
   "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
   "scripts": {
-    "generate": "node generate_testcases.js"
+    "generate": "node index.js"
   },
   "repository": {
     "type": "git",

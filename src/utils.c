@@ -16,8 +16,8 @@
  *****************************************************************************/
 
 #include "utils.h"
-#include "common/base58.h"
 #include "common/base32.h"
+#include "common/base58.h"
 #include "common/format.h"
 #include <stdint.h>
 #include <stdio.h>
@@ -65,10 +65,10 @@ bool base64_encode(const uint8_t *data, size_t in_len, char *out, size_t out_len
 }
 
 uint16_t crc16(const uint8_t *input_str, int num_bytes) {
-    int crc;
+    uint16_t crc;
     crc = 0;
     while (--num_bytes >= 0) {
-        crc = crc ^ (int) *input_str++ << 8;
+        crc = crc ^ (uint32_t) *input_str++ << 8;
         int i = 8;
         do {
             if (crc & 0x8000)
@@ -390,18 +390,21 @@ bool print_amount(uint64_t amount,
                   char *out,
                   size_t out_len) {
     char buffer[AMOUNT_WITH_COMMAS_MAX_LENGTH] = {0};
-    uint64_t dVal = amount;
+    uint64_t d_val = amount;
     int i;
 
-    for (i = 0; dVal > 0 || i < 9; i++) {
+    for (i = 0; d_val > 0 || i < 9; i++) {
         // len('100.0000001') == 11
         if (i >= 11 && i < AMOUNT_WITH_COMMAS_MAX_LENGTH && (i - 11) % 4 == 0) {
             buffer[i] = ',';
-            i++;
+            i += 1;
         }
-        if (dVal > 0) {
-            buffer[i] = (dVal % 10) + '0';
-            dVal /= 10;
+        if (i >= AMOUNT_WITH_COMMAS_MAX_LENGTH) {
+            return false;
+        }
+        if (d_val > 0) {
+            buffer[i] = (d_val % 10) + '0';
+            d_val /= 10;
         } else {
             buffer[i] = '0';
         }

@@ -14,13 +14,26 @@ function getTestCases() {
     return cases;
 }
 
-
 function main() {
+    const projectDir = path.dirname(path.dirname(__filename))
+    const args = process.argv.slice(2);
+    const type = args[0];
+    console.log(`type: ${type}`);
+    switch (type) {
+        case "unit":
+            dir = path.join(projectDir, "tests_unit", "testcases")
+            break
+        case "fuzz":
+            dir = path.join(projectDir, "fuzz", "testcases")
+            break
+        default:
+            throw new Error("Unknown type: " + type)
+    }
     console.log("Generating test cases...");
     for (const testCase of getTestCases()) {
-        const outputPath = path.join(__dirname, "testcases", `${testCase.caseName}.raw`)
+        const outputPath = path.join(dir, `${testCase.caseName}.raw`)
         const buf = testCase.txFunction().signatureBase()
-        console.log(`"../testcases/${testCase.caseName}.raw",`)
+        console.log(outputPath)
         fs.writeFile(outputPath, buf, (err) => {
             if (err) {
                 console.log(`Failed to write to ${testCase.caseName}`)
@@ -31,7 +44,4 @@ function main() {
     }
     console.log("Finished.")
 }
-
-
 main()
-

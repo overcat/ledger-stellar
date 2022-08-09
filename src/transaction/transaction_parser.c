@@ -17,7 +17,7 @@
 
 #include <stdint.h>
 #include <string.h>
-#include "os.h"
+// #include "os.h"
 #include "../types.h"
 #include "../sw.h"
 #include "common/buffer.h"
@@ -889,7 +889,7 @@ bool read_operation(buffer_t *buffer, operation_t *operation) {
         case OPERATION_TYPE_LIQUIDITY_POOL_WITHDRAW:
             return read_liquidity_pool_withdraw(buffer, &operation->liquidity_pool_withdraw_op);
         default:
-            THROW(SW_UNKNOWN_OP);
+            return false;
     }
     return false;
 }

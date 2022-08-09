@@ -26,6 +26,7 @@ extern int8_t formatter_index;
 extern uint8_t G_ui_current_data_index;
 extern char G_ui_detail_caption[DETAIL_CAPTION_MAX_LENGTH];
 extern char G_ui_detail_value[DETAIL_VALUE_MAX_LENGTH];
+extern global_ctx_t G_context;
 #endif  // TEST
 
 void set_state_data(bool forward);
