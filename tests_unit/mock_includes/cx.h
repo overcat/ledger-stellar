@@ -1,128 +1,110 @@
 #pragma once
 
-/*******************************************************************************
- *   Ledger Nano S - Secure firmware
- *   (c) 2019 Ledger
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- ********************************************************************************/
-
-#ifndef CX_H
-#define CX_H
-
-#define CXCALL SYSCALL
-
+#include <stddef.h>
 #include <stdint.h>
 
-/* ======================================================================= */
-/*                                  CHIP/LIB3rd                            */
-/* ======================================================================= */
+typedef unsigned int cx_curve_t;
 
-/* ------------------------------ ST NEScrypt ----------------------------- */
+#define CX_CURVE_Ed25519 0x1234
 
-/* ======================================================================= */
-/*                                  COMMON                                 */
+/** Message Digest algorithm identifiers. */
+enum cx_md_e {
+    /** NONE Digest */
+    CX_NONE,
+    /** RIPEMD160 Digest */
+    CX_RIPEMD160,  // 20 bytes
+    /** SHA224 Digest */
+    CX_SHA224,  // 28 bytes
+    /** SHA256 Digest */
+    CX_SHA256,  // 32 bytes
+    /** SHA384 Digest */
+    CX_SHA384,  // 48 bytes
+    /** SHA512 Digest */
+    CX_SHA512,  // 64 bytes
+    /** Keccak (pre-SHA3) Digest */
+    CX_KECCAK,  // 28,32,48,64 bytes
+    /** SHA3 Digest */
+    CX_SHA3,  // 28,32,48,64 bytes
+    /** Groestl Digest */
+    CX_GROESTL,
+    /** Blake Digest */
+    CX_BLAKE2B,
+    /** SHAKE-128 Digest */
+    CX_SHAKE128,  // any bytes
+    /** SHAKE-128 Digest */
+    CX_SHAKE256,  // any bytes
+};
+/** Convenience type. See #cx_md_e. */
+typedef enum cx_md_e cx_md_t;
 
-#include "lcx_common.h"
+struct cx_hash_header_s {
+    /** Message digest identifier, See cx_md_e. */
+    cx_md_t algo;
+    /** Number of block already processed */
+    unsigned int counter;
+};
+typedef struct cx_hash_header_s cx_hash_t;
 
-/* ======================================================================= */
-/*                                   RAND                                  */
-/* ======================================================================= */
+struct cx_sha256_s {
+    /** @copydoc cx_ripemd160_s::header */
+    struct cx_hash_header_s header;
+    /** @internal @copydoc cx_ripemd160_s::blen */
+    unsigned int blen;
+    /** @internal @copydoc cx_ripemd160_s::block */
+    unsigned char block[64];
+    /** @copydoc cx_ripemd160_s::acc */
+    unsigned char acc[8 * 4];
+};
+/** Convenience type. See #cx_sha256_s. */
+typedef struct cx_sha256_s cx_sha256_t;
 
-// #include "lcx_rng.h"
+struct cx_ripemd160_s {
+    /** See #cx_hash_header_s */
+    struct cx_hash_header_s header;
+    /** @internal
+     * pending partial block length
+     */
+    unsigned int blen;
+    /** @internal
+     * pending partial block
+     */
+    unsigned char block[64];
+    /** Current digest state.
+     * After finishing the digest, contains the digest if correct parameters are
+     * passed.
+     */
+    unsigned char acc[5 * 4];
+};
+/** Convenience type. See #cx_ripemd160_s. */
+typedef struct cx_ripemd160_s cx_ripemd160_t;
 
-/* ======================================================================= */
-/*                                   HASH                                 */
-/* ======================================================================= */
+int cx_sha256_init(cx_sha256_t *hash);
+int cx_ripemd160_init(cx_ripemd160_t *hash);
+int cx_hash(cx_hash_t *hash,
+            int mode,
+            const unsigned char *in,
+            size_t len,
+            uint8_t *out,
+            size_t out_len);
 
-#include "lcx_hash.h"
+#define CX_LAST (1 << 0)
 
-// #include "lcx_ripemd160.h"
+struct cx_ecfp_256_public_key_s {
+    /** curve ID #cx_curve_e */
+    cx_curve_t curve;
+    /** Public key length in bytes */
+    unsigned int W_len;
+    /** Public key value starting at offset 0 */
+    unsigned char W[65];
+};
+typedef struct cx_ecfp_256_public_key_s cx_ecfp_public_key_t;
 
-// #include "lcx_sha256.h"
-// #include "lcx_sha3.h"
-// #include "lcx_sha512.h"
-
-// #include "lcx_blake2.h"
-
-// #include "lcx_groestl.h"
-
-/* ======================================================================= */
-/*                                 HASH MAC                                */
-/* ======================================================================= */
-
-// #include "lcx_hmac.h"
-
-/* ======================================================================= */
-/*                                  PKDF2                                  */
-/* ======================================================================= */
-
-// #include "lcx_pbkdf2.h"
-
-/* ======================================================================= */
-/*                                   DES                                   */
-/* ======================================================================= */
-
-// #include "lcx_des.h"
-
-/* ====================================================================== */
-/*                                   AES                                   */
-/* ======================================================================= */
-
-// #include "lcx_aes.h"
-
-/* ======================================================================= */
-/*                                     RSA                                 */
-/* ======================================================================= */
-
-// #include "lcx_rsa.h"
-
-/* ======================================================================= */
-/*                                     ECC                                 */
-/* ======================================================================= */
-
-#include "lcx_ecfp.h"
-
-// #include "lcx_ecdsa.h"
-// #include "lcx_ecschnorr.h"
-// #include "lcx_eddsa.h"
-
-/* ======================================================================= */
-/*                                    ECC-KA                               */
-/* ======================================================================= */
-
-// #include "lcx_ecdh.h"
-
-/* ======================================================================= */
-/*                                    CRC                                */
-/* ======================================================================= */
-
-// #include "lcx_crc.h"
-
-/* ======================================================================= */
-/*                                    MATH                                 */
-/* ======================================================================= */
-
-// #include "lcx_math.h"
-
-/* ======================================================================= */
-/*                                    DEBUG                                */
-/* ======================================================================= */
-
-/** @internal
- *  @private
- */
-int cx_selftest(void);
-
-#endif  // CX_H
-// #include "cx_compliance_141.h"
+struct cx_ecfp_256_private_key_s {
+    /** curve ID #cx_curve_e */
+    cx_curve_t curve;
+    /** Public key length in bytes */
+    unsigned int d_len;
+    /** Public key value starting at offset 0 */
+    unsigned char d[32];
+};
+typedef struct cx_ecfp_256_private_key_s cx_ecfp_private_key_t;
