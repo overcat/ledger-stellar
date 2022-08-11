@@ -15,18 +15,15 @@
  *  limitations under the License.
  *****************************************************************************/
 
+#include <stdio.h>
+#include <string.h>
+#include <time.h>
+#include <bolos_target.h>
+
 #include "utils.h"
 #include "common/base32.h"
 #include "common/base58.h"
 #include "common/format.h"
-#include <stdint.h>
-#include <stdio.h>
-#include <time.h>
-#ifdef TEST
-#include <bsd/string.h>  // memset
-#else
-#include <string.h>  // memset
-#endif
 
 #define MUXED_ACCOUNT_MED_25519_SIZE  43
 #define BINARY_MAX_SIZE               36

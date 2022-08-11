@@ -18,8 +18,8 @@
 #include <stdint.h>
 #include <string.h>
 // #include "os.h"
-#include "../types.h"
-#include "../sw.h"
+#include "types.h"
+#include "sw.h"
 #include "common/buffer.h"
 #include "transaction_parser.h"
 

@@ -48,13 +48,14 @@ file(GLOB src_common "../src/common/*.c")
 
 add_library(common STATIC ${src_common})
 add_library(utils STATIC ../src/utils.c)
+add_library(globals STATIC ../src/globals.c)
 add_library(tx_parser STATIC ../src/transaction/transaction_parser.c)
 add_library(tx_formatter STATIC ../src/transaction/transaction_formatter.c)
 add_library(swap STATIC ../src/swap/swap_lib_calls.c)
 
 target_link_libraries(test_utils PUBLIC cmocka gcov utils common bsd)
 target_link_libraries(test_tx_parser PUBLIC cmocka gcov tx_parser utils common bsd)
-target_link_libraries(test_tx_formatter PUBLIC cmocka gcov tx_parser tx_formatter utils common bsd)
+target_link_libraries(test_tx_formatter PUBLIC cmocka gcov tx_parser tx_formatter utils common globals bsd)
 target_link_libraries(test_swap PUBLIC cmocka gcov swap tx_formatter tx_parser utils common bsd)
 
 add_test(test_utils test_utils)

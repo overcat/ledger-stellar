@@ -15,9 +15,9 @@
  *  limitations under the License.
  *****************************************************************************/
 
+#include "send_response.h"
 #include "globals.h"
 #include "sw.h"
-#include "send_response.h"
 #include "common/buffer.h"
 
 int send_response_pubkey() {

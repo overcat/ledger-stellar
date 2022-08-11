@@ -5,6 +5,7 @@ ux_state_t G_ux;
 bolos_ux_params_t G_ux_params;
 io_state_e G_io_state;
 uint32_t G_output_len;
+
 global_ctx_t G_context;
 swap_values_t G_swap_values;
 bool G_called_from_swap;

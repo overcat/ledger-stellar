@@ -16,28 +16,27 @@
  *****************************************************************************/
 
 #include <stdbool.h>  // bool
+#include <stdio.h>
+#include <string.h>
+
+#include "os.h"
+#include "bolos_target.h"
+
 #include "common/format.h"
 #include "utils.h"
 #include "types.h"
 #include "transaction/transaction_parser.h"
 #include "transaction_formatter.h"
+#include "globals.h"
+#include "settings.h"
 
 #ifdef TEST
-#include <stdio.h>
-#include <bsd/string.h>  // memset
-uint8_t G_ui_current_data_index;
-char G_ui_detail_caption[DETAIL_CAPTION_MAX_LENGTH];
-char G_ui_detail_value[DETAIL_VALUE_MAX_LENGTH];
-global_ctx_t G_context;
 #define PRINTF(...)
 #define THROW(code)                \
     do {                           \
         printf("error: %d", code); \
     } while (0)
 #define PIC(code) code
-#else
-#include <string.h>  // memset
-#include "../globals.h"
 #endif  // TEST
 
 static const char *NETWORK_NAMES[3] = {"Public", "Testnet", "Unknown"};
