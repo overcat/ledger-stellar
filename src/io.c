@@ -16,8 +16,9 @@
  *****************************************************************************/
 
 #include <stdint.h>
+
 #include "io.h"
-#include "globals.h"
+
 #include "sw.h"
 #include "common/buffer.h"
 #include "common/write.h"

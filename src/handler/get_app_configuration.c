@@ -19,16 +19,11 @@
 #include <limits.h>  // UINT8_MAX
 #include <assert.h>  // _Static_assert
 
-#include <stdint.h>  // uint*_t
-#include <limits.h>  // UINT8_MAX
-#include <assert.h>  // _Static_assert
-
-#include "../globals.h"
-#include "../io.h"
-#include "../sw.h"
-#include "../types.h"
+#include "io.h"
+#include "sw.h"
+#include "types.h"
 #include "common/buffer.h"
-#include "../settings.h"
+#include "settings.h"
 
 int handler_get_app_configuration() {
     PRINTF("handler_get_app_configuration invoked\n");

@@ -38,7 +38,7 @@ global_ctx_t G_context;
 #else
 #include <string.h>  // memset
 #include "../globals.h"
-#include "../settings.h"
+#include "settings.h"
 #include "os.h"
 #endif  // TEST
 

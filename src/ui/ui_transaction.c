@@ -18,14 +18,13 @@
 #include <stdbool.h>  // bool
 #include <string.h>   // memset
 #include "ui.h"
-#include "../globals.h"
+#include "globals.h"
 #include "action/validate.h"
-#include "../common/format.h"
-#include "../utils.h"
+#include "utils.h"
 #include "transaction/transaction_parser.h"
 #include "transaction/transaction_formatter.h"
 #include "sw.h"
-#include "../io.h"
+#include "io.h"
 
 static uint8_t num_data;
 

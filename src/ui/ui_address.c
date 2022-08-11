@@ -19,12 +19,11 @@
 #include <string.h>   // memset
 
 #include "ui.h"
-#include "../globals.h"
-#include "../sw.h"
-#include "../utils.h"
+#include "globals.h"
+#include "sw.h"
+#include "utils.h"
 #include "action/validate.h"
-#include "../common/format.h"
-#include "../io.h"
+#include "io.h"
 
 // Step with icon and text
 UX_STEP_NOCB(ux_display_confirm_addr_step, pnn, {&C_icon_eye, "Confirm", "Address"});

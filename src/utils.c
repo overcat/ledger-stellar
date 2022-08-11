@@ -19,7 +19,6 @@
 #include "common/base32.h"
 #include "common/base58.h"
 #include "common/format.h"
-#include <stdint.h>
 #include <stdio.h>
 #include <time.h>
 #ifdef TEST

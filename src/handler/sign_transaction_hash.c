@@ -17,7 +17,7 @@
 
 #include "handler.h"
 #include "../globals.h"
-#include "../settings.h"
+#include "settings.h"
 #include "../sw.h"
 #include "../crypto.h"
 #include "../ui/ui.h"

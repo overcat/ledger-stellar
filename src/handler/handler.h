@@ -1,7 +1,7 @@
 #pragma once
 
 #include <stdbool.h>  // bool
-#include "../common/buffer.h"
+#include "common/buffer.h"
 
 /**
  * Handler for INS_INS_GET_APP_CONFIGURATION command. Send APDU response with version

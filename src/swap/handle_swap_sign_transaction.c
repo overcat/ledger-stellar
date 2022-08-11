@@ -1,8 +1,8 @@
 #include "os_io_seproxyhal.h"
 #include "swap_lib_calls.h"
 #include "ux.h"
-#include "../globals.h"
-#include "../types.h"
+#include "globals.h"
+#include "types.h"
 #include "os.h"
 
 bool copy_transaction_parameters(const create_transaction_parameters_t* params) {
