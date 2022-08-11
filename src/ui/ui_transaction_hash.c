@@ -24,6 +24,7 @@
 #include "../utils.h"
 #include "action/validate.h"
 #include "../common/format.h"
+#include "../io.h"
 
 static void display_next_state(bool is_upper_delimiter);
 

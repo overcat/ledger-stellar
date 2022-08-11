@@ -21,6 +21,7 @@
 #include "./ui/ui.h"
 #include "globals.h"
 #include "sw.h"
+#include "io.h"
 #include "types.h"
 #include "apdu/apdu_parser.h"
 #include "apdu/dispatcher.h"
@@ -29,6 +30,12 @@
 
 // The settings, stored in NVRAM.
 const internal_storage_t N_storage_real;
+
+uint8_t G_io_seproxyhal_spi_buffer[IO_SEPROXYHAL_BUFFER_SIZE_B];
+ux_state_t G_ux;
+bolos_ux_params_t G_ux_params;
+io_state_e G_io_state;
+uint32_t G_output_len;
 
 /**
  * Handle APDU command received and send back APDU response using handlers.

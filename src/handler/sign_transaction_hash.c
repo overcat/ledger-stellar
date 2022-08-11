@@ -21,6 +21,7 @@
 #include "../sw.h"
 #include "../crypto.h"
 #include "../ui/ui.h"
+#include "../io.h"
 
 int handler_sign_tx_hash(buffer_t *cdata) {
     PRINTF("handler_sign_tx_hash invoked\n");

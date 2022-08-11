@@ -18,9 +18,10 @@
 #include <stdbool.h>
 
 #include "dispatcher.h"
-#include "../globals.h"
-#include "../sw.h"
-#include "../handler/handler.h"
+#include "globals.h"
+#include "sw.h"
+#include "handler/handler.h"
+#include "io.h"
 
 int apdu_dispatcher(const command_t *cmd) {
     if (cmd->cla != CLA) {

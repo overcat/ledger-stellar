@@ -25,6 +25,7 @@
 #include "transaction/transaction_parser.h"
 #include "transaction/transaction_formatter.h"
 #include "sw.h"
+#include "../io.h"
 
 static uint8_t num_data;
 

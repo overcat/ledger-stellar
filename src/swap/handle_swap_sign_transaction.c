@@ -3,6 +3,7 @@
 #include "ux.h"
 #include "../globals.h"
 #include "../types.h"
+#include "os.h"
 
 bool copy_transaction_parameters(const create_transaction_parameters_t* params) {
     // first copy parameters to stack, and then to global data.

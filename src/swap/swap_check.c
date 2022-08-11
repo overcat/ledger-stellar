@@ -1,7 +1,6 @@
+#include <string.h>
 #include "../globals.h"
 #include "../utils.h"
-#include "../types.h"
-#include "../sw.h"
 
 bool swap_check() {
     PRINTF("swap_check invoked.\n");
