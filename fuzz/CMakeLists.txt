@@ -34,8 +34,10 @@ if (${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
 endif ()
 
 add_compile_definitions(TEST)
+add_definitions("-DIO_SEPROXYHAL_BUFFER_SIZE_B=128") # cmake -DIO_SEPROXYHAL_BUFFER_SIZE_B=128
 
 include_directories(../src)
+include_directories(../tests_unit/mock_includes)
 
 add_library(bsd STATIC IMPORTED)
 set_property(TARGET bsd PROPERTY IMPORTED_LOCATION /lib/x86_64-linux-gnu/libbsd.a)
@@ -44,6 +46,7 @@ file(GLOB src_common "../src/common/*.c")
 
 add_library(common STATIC ${src_common})
 add_library(utils STATIC ../src/utils.c)
+add_library(globals STATIC ../src/globals.c)
 add_library(tx_parser STATIC ../src/transaction/transaction_parser.c)
 add_library(tx_formatter STATIC ../src/transaction/transaction_formatter.c)
 
@@ -58,4 +61,4 @@ message(${COMPILATION_FLAGS})
 add_executable(fuzz_tx fuzz_tx.c)
 target_compile_options(fuzz_tx PRIVATE ${COMPILATION_FLAGS})
 target_link_options(fuzz_tx PRIVATE ${COMPILATION_FLAGS})
-target_link_libraries(fuzz_tx PRIVATE tx_parser tx_formatter utils common bsd)
+target_link_libraries(fuzz_tx PRIVATE tx_parser tx_formatter utils common globals bsd)
