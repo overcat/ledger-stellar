@@ -38,6 +38,7 @@ global_ctx_t G_context;
 #else
 #include <string.h>  // memset
 #include "../globals.h"
+#include "../settings.h"
 #endif  // TEST
 
 static const char *NETWORK_NAMES[3] = {"Public", "Testnet", "Unknown"};

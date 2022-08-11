@@ -25,6 +25,7 @@
 #include "apdu/apdu_parser.h"
 #include "apdu/dispatcher.h"
 #include "swap/swap_lib_calls.h"
+#include "settings.h"
 
 // The settings, stored in NVRAM.
 const internal_storage_t N_storage_real;
