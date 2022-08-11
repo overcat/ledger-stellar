@@ -23,7 +23,7 @@ int base32_decode(const uint8_t *encoded, uint8_t *result, int bufSize) {
     int buffer = 0;
     int bitsLeft = 0;
     int count = 0;
-    for (const uint8_t *ptr = encoded; count < bufSize && * ptr; ++ptr) {
+    for (const uint8_t *ptr = encoded; count < bufSize && *ptr; ++ptr) {
         uint8_t ch = *ptr;
         if (ch == ' ' || ch == '\t' || ch == '\r' || ch == '\n' || ch == '-') {
             continue;
