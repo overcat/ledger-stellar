@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdbool.h>  // bool
+#include "globals.h"
 
 /*
  * Longest string will be "Operation ii of nn"
@@ -21,12 +22,5 @@ extern format_function_t formatter_stack[MAX_FORMATTERS_PER_OPERATION];
 /* the current details printed by the formatter */
 extern char op_caption[OPERATION_CAPTION_MAX_SIZE];
 extern int8_t formatter_index;
-
-#ifdef TEST
-extern uint8_t G_ui_current_data_index;
-extern char G_ui_detail_caption[DETAIL_CAPTION_MAX_LENGTH];
-extern char G_ui_detail_value[DETAIL_VALUE_MAX_LENGTH];
-extern global_ctx_t G_context;
-#endif  // TEST
 
 void set_state_data(bool forward);

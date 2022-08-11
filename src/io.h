@@ -9,26 +9,6 @@
 #include "types.h"
 #include "common/buffer.h"
 
-/**
- * Global buffer for interactions between SE and MCU.
- */
-extern uint8_t G_io_seproxyhal_spi_buffer[IO_SEPROXYHAL_BUFFER_SIZE_B];
-
-/**
- * Global variable with the lenght of APDU response to send back.
- */
-extern uint32_t G_output_len;
-
-/**
- * Global structure with the parameters to exchange with the BOLOS UX application.
- */
-extern bolos_ux_params_t G_ux_params;
-
-/**
- * Global enumeration with the state of IO (READY, RECEIVING, WAITING).
- */
-extern io_state_e G_io_state;
-
 void io_seproxyhal_display(const bagl_element_t *element);
 
 /**

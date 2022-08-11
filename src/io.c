@@ -20,6 +20,7 @@
 #include "io.h"
 
 #include "sw.h"
+#include "globals.h"
 #include "common/buffer.h"
 #include "common/write.h"
 
