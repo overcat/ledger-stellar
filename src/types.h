@@ -12,6 +12,15 @@
 #define CLA 0xE0
 
 /**
+ *  Max transaction size.
+ */
+#ifdef TARGET_NANOS
+#define MAX_RAW_TX_SIZE 1120
+#else
+#define MAX_RAW_TX_SIZE 5120
+#endif
+
+/**
  * Maximum length of MAJOR_VERSION || MINOR_VERSION || PATCH_VERSION.
  */
 #define APP_VERSION_SIZE 3

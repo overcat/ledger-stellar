@@ -17,6 +17,7 @@
 
 #include "./handler.h"
 #include "../globals.h"
+#include "../types.h"
 #include "../sw.h"
 #include "../send_response.h"
 #include "../crypto.h"
@@ -27,6 +28,13 @@
 int handler_sign_tx(buffer_t *cdata, bool is_first_chunk, bool more) {
     if (is_first_chunk) {
         explicit_bzero(&G_context, sizeof(G_context));
+    }
+
+    if (G_context.tx_info.raw_length + cdata->size > MAX_RAW_TX_SIZE) {
+        return io_send_sw(SW_WRONG_TX_LENGTH);
+    }
+
+    if (is_first_chunk) {
         G_context.req_type = CONFIRM_TRANSACTION;
         G_context.state = STATE_NONE;
 
@@ -47,13 +55,10 @@ int handler_sign_tx(buffer_t *cdata, bool is_first_chunk, bool more) {
         G_context.tx_info.raw_length += cdata->size;
     }
 
-    if (G_context.tx_info.raw_length > RAW_TX_MAX_SIZE) {
-        return io_send_sw(SW_BAD_STATE);
-    }
-
     if (more) {
         return io_send_sw(SW_OK);
     }
+
     if (cx_hash_sha256(G_context.tx_info.raw,
                        G_context.tx_info.raw_length,
                        G_context.hash,
@@ -66,7 +71,7 @@ int handler_sign_tx(buffer_t *cdata, bool is_first_chunk, bool more) {
     }
 
     G_context.state = STATE_PARSED;
-    PRINTF("tx parsed\n");
+    PRINTF("tx parsed.\n");
 
     if (G_called_from_swap) {
         if (!swap_check()) {

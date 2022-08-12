@@ -1,21 +1,15 @@
 #pragma once
 
-// const SW_OK = 0x9000;
-// const SW_CANCEL = 0x6985;
-// const SW_UNKNOWN_STELLAR_OP = 0x6c24;
-// const SW_NOT_ALLOWED = 0x6c66; // hash model not enable
-// const SW_UNSUPPORTED = 0x6d00; // unknown ins
-// const SW_KEEP_ALIVE = 0x6e02;
-// const TX_MAX_SIZE = 1540;
-
 /**
  * Status word for success.
  */
 #define SW_OK 0x9000
+
 /**
  * Status word for denied by user.
  */
 #define SW_DENY 0x6985
+
 /**
  * Status word for incorrect P1 or P2.
  */
@@ -30,6 +24,7 @@
  * Status word for either wrong Lc or lenght of APDU command less than 5.
  */
 #define SW_WRONG_DATA_LENGTH 0x6A87
+
 /**
  * Status word for unknown command with this INS.
  */
@@ -39,6 +34,7 @@
  * Status word for instruction class is different than CLA.
  */
 #define SW_CLA_NOT_SUPPORTED 0x6E00
+
 /**
  * Status word for wrong reponse length (buffer too small or too big).
  */
@@ -48,30 +44,32 @@
  * Status word for fail to display address.
  */
 #define SW_DISPLAY_ADDRESS_FAIL 0xB002
+
 /**
  * Status word for fail to display transaction hash.
  */
 #define SW_DISPLAY_TRANSACTION_HASH_FAIL 0xB003
-/**
- * Status word for fail to display amount.
- */
-#define SW_DISPLAY_AMOUNT_FAIL 0xB003
+
 /**
  * Status word for wrong transaction length.
  */
 #define SW_WRONG_TX_LENGTH 0xB004
+
 /**
  * Status word for fail of transaction parsing.
  */
 #define SW_TX_PARSING_FAIL 0xB005
+
 /**
  * Status word for fail of transaction hash.
  */
 #define SW_TX_HASH_FAIL 0xB006
+
 /**
  * Status word for bad state.
  */
 #define SW_BAD_STATE 0xB007
+
 /**
  * Status word for signature fail.
  */

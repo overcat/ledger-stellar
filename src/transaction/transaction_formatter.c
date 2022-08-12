@@ -23,6 +23,7 @@
 #include "bolos_target.h"
 
 #include "./transaction_formatter.h"
+#include "../sw.h"
 #include "../utils.h"
 #include "../types.h"
 #include "../globals.h"
@@ -38,7 +39,7 @@ int8_t formatter_index;
 
 static void push_to_formatter_stack(format_function_t formatter) {
     if (formatter_index + 1 >= MAX_FORMATTERS_PER_OPERATION) {
-        THROW(0x6124);
+        THROW(SW_TX_FORMATTING_FAIL);
     }
     formatter_stack[formatter_index + 1] = formatter;
 }
@@ -152,7 +153,7 @@ static void format_time_bounds_max_time(tx_ctx_t *txCtx) {
     if (!print_time(txCtx->tx_details.cond.time_bounds.max_time,
                     G_ui_detail_value,
                     DETAIL_VALUE_MAX_LENGTH)) {
-        THROW(0x6126);
+        THROW(SW_TX_FORMATTING_FAIL);
     };
     push_to_formatter_stack(&format_ledger_bounds);
 }
@@ -162,7 +163,7 @@ static void format_time_bounds_min_time(tx_ctx_t *txCtx) {
     if (!print_time(txCtx->tx_details.cond.time_bounds.min_time,
                     G_ui_detail_value,
                     DETAIL_VALUE_MAX_LENGTH)) {
-        THROW(0x6126);
+        THROW(SW_TX_FORMATTING_FAIL);
     };
 
     if (txCtx->tx_details.cond.time_bounds.max_time != 0) {
@@ -242,8 +243,7 @@ static void format_memo(tx_ctx_t *txCtx) {
             break;
         }
         default:
-            // TODO: handle other memo types
-            THROW(0x6127);
+            THROW(SW_TX_FORMATTING_FAIL);
     }
     push_to_formatter_stack(&format_fee);
 }
@@ -1644,16 +1644,17 @@ static void format_fee_bump_transaction_details(tx_ctx_t *txCtx) {
 static format_function_t get_tx_details_formatter(tx_ctx_t *txCtx) {
     if (txCtx->envelope_type == ENVELOPE_TYPE_TX_FEE_BUMP) {
         return &format_fee_bump_transaction_details;
-    } else if (txCtx->envelope_type == ENVELOPE_TYPE_TX) {
+    }
+
+    if (txCtx->envelope_type == ENVELOPE_TYPE_TX) {
         if (txCtx->tx_details.memo.type != MEMO_NONE) {
             return &format_memo;
         } else {
             return &format_fee;
         }
-    } else {
-        THROW(0x6125);
     }
-    // TODO: fix warning
+
+    THROW(SW_TX_FORMATTING_FAIL);
     return NULL;
 }
 
