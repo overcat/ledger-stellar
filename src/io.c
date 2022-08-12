@@ -19,10 +19,10 @@
 
 #include "io.h"
 
-#include "sw.h"
-#include "globals.h"
-#include "common/buffer.h"
-#include "common/write.h"
+#include "./sw.h"
+#include "./globals.h"
+#include "./common/buffer.h"
+#include "./common/write.h"
 
 void io_seproxyhal_display(const bagl_element_t *element) {
     io_seproxyhal_display_default((bagl_element_t *) element);

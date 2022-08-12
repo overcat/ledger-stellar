@@ -1,9 +1,11 @@
 #pragma once
 
 #include <stdbool.h>  // bool
+
 #include "os.h"
 #include "ux.h"
-#include "glyphs.h"
+
+#include "../glyphs.h"
 
 #define INSIDE_BORDERS 0
 #define OUT_OF_BORDERS 1

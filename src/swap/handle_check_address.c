@@ -1,10 +1,11 @@
 #include <string.h>
 
-#include "swap_lib_calls.h"
 #include "os.h"
-#include "utils.h"
-#include "common/bip32.h"
-#include "crypto.h"
+
+#include "./swap_lib_calls.h"
+#include "../utils.h"
+#include "../crypto.h"
+#include "../common/bip32.h"
 
 int handle_check_address(const check_address_parameters_t* params) {
     PRINTF("Params on the address %d\n", (unsigned int) params);

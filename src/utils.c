@@ -20,10 +20,10 @@
 #include <time.h>
 #include <bolos_target.h>
 
-#include "utils.h"
-#include "common/base32.h"
-#include "common/base58.h"
-#include "common/format.h"
+#include "./utils.h"
+#include "./common/base32.h"
+#include "./common/base58.h"
+#include "./common/format.h"
 
 #define MUXED_ACCOUNT_MED_25519_SIZE  43
 #define BINARY_MAX_SIZE               36
@@ -438,15 +438,15 @@ bool print_amount(uint64_t amount,
     if (buffer[i] == '.') buffer[i] = 0;
     strlcpy(out, buffer, out_len);
 
-    char assetInfo[23];  // BANANANANANA@GBD..KHK4, 12 + 1 + 3 + 2 + 4 = 22
+    char asset_info[23];  // BANANANANANA@GBD..KHK4, 12 + 1 + 3 + 2 + 4 = 22
 
     if (asset) {
         // qualify amount
-        if (!print_asset(asset, network_id, assetInfo, 23)) {
+        if (!print_asset(asset, network_id, asset_info, 23)) {
             return false;
         };
         strlcat(out, " ", out_len);
-        strlcat(out, assetInfo, out_len);
+        strlcat(out, asset_info, out_len);
     }
     return true;
 }

@@ -1,8 +1,10 @@
 #pragma once
 
-#include "ux.h"
 #include <stdint.h>
-#include "types.h"
+
+#include "ux.h"
+
+#include "./types.h"
 
 /**
  * Global buffer for interactions between SE and MCU.
