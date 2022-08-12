@@ -24,7 +24,8 @@ export default class StellarZemu extends Zemu {
   async click(
     endpoint: string,
     filename?: string,
-    waitForScreenUpdate?: boolean
+    waitForScreenUpdate?: boolean,
+    waitBeforeSnapshot?: number
   ) {
     let previousScreen;
     if (waitForScreenUpdate) {
@@ -51,7 +52,13 @@ export default class StellarZemu extends Zemu {
     // In GitHub Action, it is often encountered that the screen is only refreshed halfway 
     // before being snapshotted, which will cause the test to fail, so we made this change, 
     // which can greatly reduce the occurrence of this situation.
-    await Zemu.delay(1000);
+    if (waitBeforeSnapshot) {
+      await Zemu.delay(waitBeforeSnapshot);
+    }
     return this.snapshot(filename);
+  }
+
+  async clickBoth(filename?: string, waitForScreenUpdate = true, waitBeforeSnapshot = 1000) {
+    return this.click('/button/both', filename, waitForScreenUpdate, waitBeforeSnapshot);
   }
 }
