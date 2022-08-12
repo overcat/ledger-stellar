@@ -122,8 +122,8 @@ describe('hash signing', () => {
 
       // enable hash signing
       await sim.clickRight()
-      await sim.clickBoth()
-      await sim.clickBoth()
+      await sim.clickBoth(undefined, false, 0)
+      await sim.clickBoth(undefined, false, 0)
 
       const hash = Buffer.from("3389e9f0f1a65f19736cacf544c2e825313e8447f569233bb8db39aa607c8889", "hex")
       const result = str.signHash("44'/148'/0'", hash)
@@ -145,8 +145,8 @@ describe('hash signing', () => {
 
       // enable hash signing
       await sim.clickRight()
-      await sim.clickBoth()
-      await sim.clickBoth()
+      await sim.clickBoth(undefined, false, 0)
+      await sim.clickBoth(undefined, false, 0)
 
       const hash = Buffer.from("3389e9f0f1a65f19736cacf544c2e825313e8447f569233bb8db39aa607c8889", "hex")
       expect(() => str.signHash("44'/148'/0'", hash)).rejects.toThrow(new Error("Transaction approval request was rejected"));
@@ -171,9 +171,9 @@ describe('transactions', () => {
 
         // display sequence
         await sim.clickRight()
-        await sim.clickBoth()
+        await sim.clickBoth(undefined, false, 0)
         await sim.clickRight()
-        await sim.clickBoth()
+        await sim.clickBoth(undefined, false, 0)
 
         const result = str.signTransaction("44'/148'/0'", tx.signatureBase())
         await sim.waitScreenChange(1000 * 60 * 60)
@@ -197,9 +197,9 @@ describe('transactions', () => {
 
       // display sequence
       await sim.clickRight()
-      await sim.clickBoth()
+      await sim.clickBoth(undefined, false, 0)
       await sim.clickRight()
-      await sim.clickBoth()
+      await sim.clickBoth(undefined, false, 0)
 
       expect(() => str.signTransaction("44'/148'/0'", tx.signatureBase())).rejects.toThrow(new Error("Transaction approval request was rejected"));
 
@@ -220,9 +220,9 @@ describe('transactions', () => {
 
       // display sequence
       await sim.clickRight()
-      await sim.clickBoth()
+      await sim.clickBoth(undefined, false, 0)
       await sim.clickRight()
-      await sim.clickBoth()
+      await sim.clickBoth(undefined, false, 0)
 
       expect(() => str.signTransaction("44'/148'/0'", tx.signatureBase())).rejects.toThrow(new Error("Transaction approval request was rejected"));
 
