@@ -55,6 +55,8 @@ int handler_sign_tx(buffer_t *cdata, bool is_first_chunk, bool more) {
         G_context.tx_info.raw_length += cdata->size;
     }
 
+    PRINTF("data size: %d\n", G_context.tx_info.raw_length);
+
     if (more) {
         return io_send_sw(SW_OK);
     }

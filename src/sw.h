@@ -1,14 +1,19 @@
 #pragma once
 
 /**
- * Status word for success.
+ * Status word for fail of transaction formatting.
  */
-#define SW_OK 0x9000
+#define SW_TX_FORMATTING_FAIL 0x6125
 
 /**
  * Status word for denied by user.
  */
 #define SW_DENY 0x6985
+
+/**
+ * Status word for either wrong Lc or minimum APDU lenght is incorrect.
+ */
+#define SW_WRONG_DATA_LENGTH 0x6A87
 
 /**
  * Status word for incorrect P1 or P2.
@@ -21,9 +26,9 @@
 #define SW_UNKNOWN_OP 0x6C24
 
 /**
- * Status word for either wrong Lc or lenght of APDU command less than 5.
+ * Status word for hash signing model not enabled.
  */
-#define SW_WRONG_DATA_LENGTH 0x6A87
+#define SW_TX_HASH_SIGNING_MODE_NOT_ENABLED 0x6C66
 
 /**
  * Status word for unknown command with this INS.
@@ -36,7 +41,7 @@
 #define SW_CLA_NOT_SUPPORTED 0x6E00
 
 /**
- * Status word for wrong reponse length (buffer too small or too big).
+ * Status word for wrong response length (buffer too small or too big).
  */
 #define SW_WRONG_RESPONSE_LENGTH 0xB000
 
@@ -76,16 +81,11 @@
 #define SW_SIGNATURE_FAIL 0xB008
 
 /**
- * Status word for fail of transaction formatting.
- */
-#define SW_TX_FORMATTING_FAIL 0x6125
-
-/**
- * Status word for hash signing model not enabled.
- */
-#define SW_TX_HASH_SIGNING_MODE_NOT_ENABLED 0x6C66
-
-/**
  * Status word for fail to check swap params
  */
 #define SW_SWAP_CHECKING_FAIL 0xB009
+
+/**
+ * Status word for success.
+ */
+#define SW_OK 0x9000
