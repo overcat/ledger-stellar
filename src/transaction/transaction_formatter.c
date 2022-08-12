@@ -22,22 +22,13 @@
 #include "os.h"
 #include "bolos_target.h"
 
-#include "common/format.h"
-#include "utils.h"
-#include "types.h"
-#include "transaction/transaction_parser.h"
-#include "transaction_formatter.h"
-#include "globals.h"
-#include "settings.h"
-
-#ifdef TEST
-#define PRINTF(...)
-#define THROW(code)                \
-    do {                           \
-        printf("error: %d", code); \
-    } while (0)
-#define PIC(code) code
-#endif  // TEST
+#include "./transaction_formatter.h"
+#include "../utils.h"
+#include "../types.h"
+#include "../globals.h"
+#include "../settings.h"
+#include "../common/format.h"
+#include "../transaction/transaction_parser.h"
 
 static const char *NETWORK_NAMES[3] = {"Public", "Testnet", "Unknown"};
 
@@ -60,7 +51,6 @@ static void format_next_step(tx_ctx_t *txCtx) {
 
 static void format_transaction_source(tx_ctx_t *txCtx) {
     strcpy(G_ui_detail_caption, "Tx Source");
-    // TODO: fix G_context.raw_public_key
     if (txCtx->envelope_type == ENVELOPE_TYPE_TX &&
         txCtx->tx_details.source_account.type == KEY_TYPE_ED25519 &&
         memcmp(txCtx->tx_details.source_account.ed25519,
@@ -251,11 +241,9 @@ static void format_memo(tx_ctx_t *txCtx) {
             print_binary(memo->hash, HASH_SIZE, G_ui_detail_value, DETAIL_VALUE_MAX_LENGTH, 6, 6);
             break;
         }
-        default: {
-            // TODO: remove the branch
-            strcpy(G_ui_detail_caption, "Memo");
-            strcpy(G_ui_detail_value, "[none]");
-        }
+        default:
+            // TODO: handle other memo types
+            THROW(0x6127);
     }
     push_to_formatter_stack(&format_fee);
 }

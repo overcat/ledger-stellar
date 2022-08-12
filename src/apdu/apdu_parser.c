@@ -19,7 +19,7 @@
 #include <stdint.h>   // uint*_t
 #include <stdbool.h>  // bool
 
-#include "apdu_parser.h"
+#include "./apdu_parser.h"
 
 /**
  * Offset of instruction class.

@@ -19,11 +19,11 @@
 
 #include "base32.h"
 
-int base32_decode(const uint8_t *encoded, uint8_t *result, int bufSize) {
+int base32_decode(const uint8_t *encoded, uint8_t *result, int buf_size) {
     int buffer = 0;
-    int bitsLeft = 0;
+    int bits_left = 0;
     int count = 0;
-    for (const uint8_t *ptr = encoded; count < bufSize && *ptr; ++ptr) {
+    for (const uint8_t *ptr = encoded; count < buf_size && *ptr; ++ptr) {
         uint8_t ch = *ptr;
         if (ch == ' ' || ch == '\t' || ch == '\r' || ch == '\n' || ch == '-') {
             continue;
@@ -49,19 +49,19 @@ int base32_decode(const uint8_t *encoded, uint8_t *result, int bufSize) {
         }
 
         buffer |= ch;
-        bitsLeft += 5;
-        if (bitsLeft >= 8) {
-            result[count++] = buffer >> (bitsLeft - 8);
-            bitsLeft -= 8;
+        bits_left += 5;
+        if (bits_left >= 8) {
+            result[count++] = buffer >> (bits_left - 8);
+            bits_left -= 8;
         }
     }
-    if (count < bufSize) {
+    if (count < buf_size) {
         result[count] = '\000';
     }
     return count;
 }
 
-int base32_encode(const uint8_t *data, int length, uint8_t *result, int bufSize) {
+int base32_encode(const uint8_t *data, int length, uint8_t *result, int buf_size) {
     if (length < 0 || length > (1 << 28)) {
         return -1;
     }
@@ -69,25 +69,25 @@ int base32_encode(const uint8_t *data, int length, uint8_t *result, int bufSize)
     if (length > 0) {
         uint32_t buffer = data[0];
         int next = 1;
-        int bitsLeft = 8;
-        while (count < bufSize && (bitsLeft > 0 || next < length)) {
-            if (bitsLeft < 5) {
+        int bits_left = 8;
+        while (count < buf_size && (bits_left > 0 || next < length)) {
+            if (bits_left < 5) {
                 if (next < length) {
                     buffer <<= 8;
                     buffer |= data[next++] & 0xFF;
-                    bitsLeft += 8;
+                    bits_left += 8;
                 } else {
-                    int pad = 5 - bitsLeft;
+                    int pad = 5 - bits_left;
                     buffer <<= pad;
-                    bitsLeft += pad;
+                    bits_left += pad;
                 }
             }
-            int index = 0x1F & (buffer >> (bitsLeft - 5));
-            bitsLeft -= 5;
+            int index = 0x1F & (buffer >> (bits_left - 5));
+            bits_left -= 5;
             result[count++] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567"[index];
         }
     }
-    if (count < bufSize) {
+    if (count < buf_size) {
         result[count] = '\000';
     }
     return count;

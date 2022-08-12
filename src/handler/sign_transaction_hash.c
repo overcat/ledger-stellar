@@ -15,13 +15,13 @@
  *  limitations under the License.
  *****************************************************************************/
 
-#include "handler.h"
-#include "globals.h"
-#include "settings.h"
-#include "sw.h"
-#include "crypto.h"
-#include "ui/ui.h"
-#include "io.h"
+#include "./handler.h"
+#include "../globals.h"
+#include "../settings.h"
+#include "../sw.h"
+#include "../crypto.h"
+#include "../io.h"
+#include "../ui/ui.h"
 
 int handler_sign_tx_hash(buffer_t *cdata) {
     PRINTF("handler_sign_tx_hash invoked\n");

@@ -4,7 +4,8 @@
 
 #include "os.h"
 #include "cx.h"
-#include "types.h"
+
+#include "./types.h"
 
 /**
  * Derive private key given BIP32 path.

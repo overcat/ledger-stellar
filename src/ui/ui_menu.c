@@ -15,9 +15,9 @@
  *  limitations under the License.
  *****************************************************************************/
 
-#include "ui.h"
-#include "globals.h"
-#include "settings.h"
+#include "../ui.h"
+#include "../globals.h"
+#include "../settings.h"
 
 void ui_idle(void);
 void display_settings(const ux_flow_step_t* const start_step);

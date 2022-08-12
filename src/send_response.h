@@ -1,6 +1,6 @@
 #pragma once
 
-#include "io.h"
+#include "./io.h"
 
 /**
  * Helper to send APDU response with public key.
