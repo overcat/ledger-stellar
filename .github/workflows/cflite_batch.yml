@@ -1,8 +1,12 @@
 name: ClusterFuzzLite batch fuzzing
 on:
-  schedule:
-    # - cron: '1 * * * 0' # Every sunday 
-    - cron: '0 0 * * *' # Every day
+  pull_request:
+    paths:
+      - '**'
+# on:
+#   schedule:
+#     # - cron: '1 * * * 0' # Every sunday 
+#     - cron: '0 0 * * *' # Every day
 permissions: read-all
 jobs:
   BatchFuzzing:

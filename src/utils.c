@@ -259,8 +259,15 @@ bool print_int(int64_t num, char *out, size_t out_len) {
         return false;
     }
     if (num < 0) {
+        uint64_t n;
+
         out[0] = '-';
-        return print_uint(-num, out + 1, out_len - 1);
+        if (num == INT64_MIN) {
+            n = (uint64_t) num;
+        } else {
+            n = -num;
+        }
+        return print_uint(n, out + 1, out_len - 1);
     }
     return print_uint(num, out, out_len);
 }
