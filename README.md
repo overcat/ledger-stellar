@@ -24,7 +24,7 @@ If not for development purposes, you should install this app via [Ledger Live](h
 
 To build and install the app on your Nano S, Nano S Plus or Nano X you must set up the Ledger build environments. Please follow the *load the application instructions* at the [Ledger developer portal](https://developers.ledger.com/docs/nano-app/load/).
 
-Additionaly, install this dependancy:
+Additionaly, install this dependency:
 
 ```shell
 sudo apt install libbsd-dev
