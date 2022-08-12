@@ -1,7 +1,8 @@
 #pragma once
 
 #include <stdbool.h>  // bool
-#include "globals.h"
+
+#include "../globals.h"
 
 /*
  * Longest string will be "Operation ii of nn"

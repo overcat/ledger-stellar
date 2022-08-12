@@ -15,14 +15,14 @@
  *  limitations under the License.
  *****************************************************************************/
 
-#include "handler.h"
-#include "globals.h"
-#include "sw.h"
-#include "transaction/transaction_parser.h"
-#include "send_response.h"
-#include "crypto.h"
-#include "ui/ui.h"
-#include "swap/swap_lib_calls.h"
+#include "./handler.h"
+#include "../globals.h"
+#include "../sw.h"
+#include "../send_response.h"
+#include "../crypto.h"
+#include "../ui/ui.h"
+#include "../swap/swap_lib_calls.h"
+#include "../transaction/transaction_parser.h"
 
 int handler_sign_tx(buffer_t *cdata, bool is_first_chunk, bool more) {
     if (is_first_chunk) {

@@ -18,15 +18,15 @@
 #include "os.h"
 #include "cx.h"
 
-#include "ui/ui.h"
-#include "globals.h"
-#include "sw.h"
-#include "io.h"
-#include "types.h"
-#include "apdu/apdu_parser.h"
-#include "apdu/dispatcher.h"
-#include "swap/swap_lib_calls.h"
-#include "settings.h"
+#include "./globals.h"
+#include "./sw.h"
+#include "./io.h"
+#include "./types.h"
+#include "./settings.h"
+#include "./apdu/apdu_parser.h"
+#include "./apdu/dispatcher.h"
+#include "./swap/swap_lib_calls.h"
+#include "./ui/ui.h"
 
 // The settings, stored in NVRAM.
 const internal_storage_t N_storage_real;

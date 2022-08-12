@@ -17,11 +17,13 @@
 
 #include <stdint.h>
 #include <string.h>
-// #include "os.h"
-#include "types.h"
-#include "sw.h"
-#include "common/buffer.h"
-#include "transaction_parser.h"
+
+#include "os.h"
+
+#include "./transaction_parser.h"
+#include "../types.h"
+#include "../sw.h"
+#include "../common/buffer.h"
 
 #define READER_CHECK(x)         \
     {                           \
@@ -1043,7 +1045,7 @@ bool parse_tx_xdr(const uint8_t *data, size_t size, tx_ctx_t *txCtx) {
                 READER_CHECK(read_transaction_details(&buffer, &txCtx->tx_details))
                 break;
             default:
-                return false;
+                THROW(SW_UNKNOWN_OP);
         }
     }
 

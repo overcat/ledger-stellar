@@ -17,12 +17,13 @@
 
 #include <stdbool.h>  // bool
 
-#include "validate.h"
-#include "send_response.h"
 #include "ui.h"
-#include "sw.h"
-#include "crypto.h"
-#include "globals.h"
+
+#include "./validate.h"
+#include "../../send_response.h"
+#include "../../sw.h"
+#include "../../crypto.h"
+#include "../../globals.h"
 
 void ui_action_validate_pubkey(bool choice) {
     if (choice) {

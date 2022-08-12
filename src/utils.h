@@ -1,6 +1,6 @@
 #pragma once
 
-#include "types.h"
+#include "./types.h"
 
 bool encode_ed25519_public_key(const uint8_t raw_public_key[static RAW_ED25519_PUBLIC_KEY_SIZE],
                                char *out,

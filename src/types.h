@@ -3,8 +3,8 @@
 #include <stddef.h>  // size_t
 #include <stdint.h>  // uint*_t
 
-#include "common/bip32.h"
-#include "transaction/transaction_types.h"
+#include "./common/bip32.h"
+#include "./transaction/transaction_types.h"
 
 /**
  * Instruction class of the Stellar application.

@@ -1,9 +1,10 @@
-#include "os_io_seproxyhal.h"
-#include "swap_lib_calls.h"
-#include "ux.h"
-#include "globals.h"
-#include "types.h"
 #include "os.h"
+#include "ux.h"
+#include "os_io_seproxyhal.h"
+
+#include "./swap_lib_calls.h"
+#include "../globals.h"
+#include "../types.h"
 
 bool copy_transaction_parameters(const create_transaction_parameters_t* params) {
     // first copy parameters to stack, and then to global data.

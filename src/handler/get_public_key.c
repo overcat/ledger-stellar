@@ -20,15 +20,15 @@
 #include <stddef.h>   // size_t
 #include <string.h>   // memset, explicit_bzero
 
-#include "handler.h"
-#include "globals.h"
-#include "types.h"
-#include "io.h"
-#include "sw.h"
-#include "crypto.h"
-#include "common/buffer.h"
-#include "ui/ui.h"
-#include "send_response.h"
+#include "./handler.h"
+#include "../globals.h"
+#include "../types.h"
+#include "../io.h"
+#include "../sw.h"
+#include "../crypto.h"
+#include "../send_response.h"
+#include "../common/buffer.h"
+#include "../ui/ui.h"
 
 int handler_get_public_key(buffer_t *cdata, bool display) {
     PRINTF("handler_get_public_key invoked\n");
