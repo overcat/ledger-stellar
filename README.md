@@ -76,3 +76,10 @@ To build and execute the tests, run the following commands:
 ```shell
 make tests-zemu
 ```
+
+To run a specific test first, please run the following commands:
+
+```shell
+cd tests_zemu
+npm run test -- -t "{testCaseName}"
+```
