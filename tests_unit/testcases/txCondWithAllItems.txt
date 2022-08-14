@@ -9,7 +9,6 @@ Min Seq Num; 1424
 Min Seq Age; 1649239999
 Min Seq Ledger Gap; 30
 Tx Source; GDUTHC..XM2FN7
-Operation Type; Payment
 Send; 1 XLM
 Destination; GDRMNAIPTNIJWJSL6JOF76CJORN47TDVMWERTXO2G2WKOMXGNHUFL5QX
 Op Source; GDUTHC..XM2FN7
