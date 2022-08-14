@@ -29,6 +29,8 @@ bool print_binary(const uint8_t *in,
 
 bool print_time(uint64_t seconds, char *out, size_t out_len);
 
+bool print_asset_name(const asset_t *asset, uint8_t network_id, char *out, size_t out_len);
+
 bool print_asset(const asset_t *asset, uint8_t network_id, char *out, size_t out_len);
 
 void print_flags(uint32_t flags, char *out, size_t out_len);

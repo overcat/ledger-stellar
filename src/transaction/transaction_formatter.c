@@ -779,16 +779,24 @@ static void format_manage_sell_offer_sell(tx_ctx_t *txCtx) {
 }
 
 static void format_manage_sell_offer_price(tx_ctx_t *txCtx) {
-    // TODO: we need to recheck it.
     strcpy(G_ui_detail_caption, "Price");
     uint64_t price =
         ((uint64_t) txCtx->tx_details.op_details.manage_sell_offer_op.price.n * 10000000) /
         txCtx->tx_details.op_details.manage_sell_offer_op.price.d;
-    print_amount(price,
-                 &txCtx->tx_details.op_details.manage_sell_offer_op.buying,
-                 txCtx->network,
-                 G_ui_detail_value,
-                 DETAIL_VALUE_MAX_LENGTH);
+    print_amount(price, NULL, txCtx->network, G_ui_detail_value, DETAIL_VALUE_MAX_LENGTH);
+    strlcat(G_ui_detail_value, " ", DETAIL_VALUE_MAX_LENGTH);
+    char tmp_asset_code[13] = {0};
+    print_asset_name(&txCtx->tx_details.op_details.manage_sell_offer_op.buying,
+                     txCtx->network,
+                     tmp_asset_code,
+                     sizeof(tmp_asset_code));
+    strlcat(G_ui_detail_value, tmp_asset_code, DETAIL_VALUE_MAX_LENGTH);
+    strlcat(G_ui_detail_value, "/", DETAIL_VALUE_MAX_LENGTH);
+    print_asset_name(&txCtx->tx_details.op_details.manage_sell_offer_op.selling,
+                     txCtx->network,
+                     tmp_asset_code,
+                     sizeof(tmp_asset_code));
+    strlcat(G_ui_detail_value, tmp_asset_code, DETAIL_VALUE_MAX_LENGTH);
     push_to_formatter_stack(&format_manage_sell_offer_sell);
 }
 
@@ -839,7 +847,20 @@ static void format_manage_buy_offer_price(tx_ctx_t *txCtx) {
 
     strcpy(G_ui_detail_caption, "Price");
     uint64_t price = ((uint64_t) op->price.n * 10000000) / op->price.d;
-    print_amount(price, &op->selling, txCtx->network, G_ui_detail_value, DETAIL_VALUE_MAX_LENGTH);
+    print_amount(price, NULL, txCtx->network, G_ui_detail_value, DETAIL_VALUE_MAX_LENGTH);
+    strlcat(G_ui_detail_value, " ", DETAIL_VALUE_MAX_LENGTH);
+    char tmp_asset_code[13] = {0};
+    print_asset_name(&txCtx->tx_details.op_details.manage_buy_offer_op.selling,
+                     txCtx->network,
+                     tmp_asset_code,
+                     sizeof(tmp_asset_code));
+    strlcat(G_ui_detail_value, tmp_asset_code, DETAIL_VALUE_MAX_LENGTH);
+    strlcat(G_ui_detail_value, "/", DETAIL_VALUE_MAX_LENGTH);
+    print_asset_name(&txCtx->tx_details.op_details.manage_buy_offer_op.buying,
+                     txCtx->network,
+                     tmp_asset_code,
+                     sizeof(tmp_asset_code));
+    strlcat(G_ui_detail_value, tmp_asset_code, DETAIL_VALUE_MAX_LENGTH);
     push_to_formatter_stack(&format_manage_buy_offer_buy);
 }
 
@@ -885,7 +906,20 @@ static void format_create_passive_sell_offer_price(tx_ctx_t *txCtx) {
 
     create_passive_sell_offer_op_t *op = &txCtx->tx_details.op_details.create_passive_sell_offer_op;
     uint64_t price = ((uint64_t) op->price.n * 10000000) / op->price.d;
-    print_amount(price, &op->buying, txCtx->network, G_ui_detail_value, DETAIL_VALUE_MAX_LENGTH);
+    print_amount(price, NULL, txCtx->network, G_ui_detail_value, DETAIL_VALUE_MAX_LENGTH);
+    strlcat(G_ui_detail_value, " ", DETAIL_VALUE_MAX_LENGTH);
+    char tmp_asset_code[13] = {0};
+    print_asset_name(&txCtx->tx_details.op_details.create_passive_sell_offer_op.buying,
+                     txCtx->network,
+                     tmp_asset_code,
+                     sizeof(tmp_asset_code));
+    strlcat(G_ui_detail_value, tmp_asset_code, DETAIL_VALUE_MAX_LENGTH);
+    strlcat(G_ui_detail_value, "/", DETAIL_VALUE_MAX_LENGTH);
+    print_asset_name(&txCtx->tx_details.op_details.create_passive_sell_offer_op.selling,
+                     txCtx->network,
+                     tmp_asset_code,
+                     sizeof(tmp_asset_code));
+    strlcat(G_ui_detail_value, tmp_asset_code, DETAIL_VALUE_MAX_LENGTH);
     push_to_formatter_stack(&format_create_passive_sell_offer_sell);
 }
 
