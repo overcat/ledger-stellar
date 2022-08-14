@@ -17,7 +17,7 @@ bool swap_check() {
     }
 
     // A XLM swap consist of only one "send" operation
-    if (txCtx->tx_details.operations_len != 1) {
+    if (txCtx->tx_details.operations_count != 1) {
         return false;
     }
 

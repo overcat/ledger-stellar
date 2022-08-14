@@ -163,7 +163,7 @@ int ui_approve_tx_init(void) {
     formatter_index = 0;
 
     explicit_bzero(formatter_stack, sizeof(formatter_stack));
-    num_data = G_context.tx_info.tx_details.operations_len;
+    num_data = G_context.tx_info.tx_details.operations_count;
     G_ui_validate_callback = &ui_action_validate_transaction;
     ux_flow_init(0, ux_confirm_flow, NULL);
     return 0;

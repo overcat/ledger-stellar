@@ -30,7 +30,7 @@ int handler_sign_tx(buffer_t *cdata, bool is_first_chunk, bool more) {
         explicit_bzero(&G_context, sizeof(G_context));
     }
 
-    if (G_context.tx_info.raw_length + cdata->size > MAX_RAW_TX_SIZE) {
+    if (G_context.tx_info.raw_length + cdata->size > RAW_TX_MAX_SIZE) {
         return io_send_sw(SW_WRONG_TX_LENGTH);
     }
 

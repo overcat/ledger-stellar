@@ -543,7 +543,7 @@ typedef struct {
     memo_t memo;
     operation_t op_details;
     uint32_t fee;  // the fee the source_account will pay
-    uint8_t operations_len;
+    uint8_t operations_count;
     uint8_t operation_index;
 } transaction_details_t;
 

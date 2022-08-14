@@ -289,7 +289,7 @@ static void format_operation_source(tx_ctx_t *txCtx) {
                             0);
     }
 
-    if (txCtx->tx_details.operation_index == txCtx->tx_details.operations_len) {
+    if (txCtx->tx_details.operation_index == txCtx->tx_details.operations_count) {
         // last operation
         push_to_formatter_stack(NULL);
     } else {
@@ -305,7 +305,7 @@ static void format_operation_source_prepare(tx_ctx_t *txCtx) {
         push_to_formatter_stack(&format_operation_source);
     } else {
         // If not, jump to the signing page or show the next operation.
-        if (txCtx->tx_details.operation_index == txCtx->tx_details.operations_len) {
+        if (txCtx->tx_details.operation_index == txCtx->tx_details.operations_count) {
             // last operation
             push_to_formatter_stack(NULL);
         } else {
@@ -1582,7 +1582,7 @@ static const format_function_t formatters[] = {&format_create_account,
                                                &format_liquidity_pool_withdraw};
 
 void format_confirm_operation(tx_ctx_t *txCtx) {
-    if (txCtx->tx_details.operations_len > 1) {
+    if (txCtx->tx_details.operations_count > 1) {
         size_t len;
         strcpy(op_caption, "Operation ");
         len = strlen(op_caption);
@@ -1591,7 +1591,7 @@ void format_confirm_operation(tx_ctx_t *txCtx) {
                    OPERATION_CAPTION_MAX_SIZE - len);
         strlcat(op_caption, " of ", sizeof(op_caption));
         len = strlen(op_caption);
-        print_uint(txCtx->tx_details.operations_len,
+        print_uint(txCtx->tx_details.operations_count,
                    op_caption + len,
                    OPERATION_CAPTION_MAX_SIZE - len);
         push_to_formatter_stack(

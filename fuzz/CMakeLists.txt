@@ -35,6 +35,7 @@ endif ()
 
 add_compile_definitions(TEST)
 add_definitions("-DIO_SEPROXYHAL_BUFFER_SIZE_B=128") # cmake -DIO_SEPROXYHAL_BUFFER_SIZE_B=128
+add_definitions("-DTARGET_NANOS=1")
 
 include_directories(../src)
 include_directories(../tests_unit/mock_includes)

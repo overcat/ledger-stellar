@@ -138,7 +138,7 @@ static void get_result_filename(const char *filename, char *path, size_t size) {
 static void check_transaction_results(const char *filename) {
     char path[1024];
     char line[4096];
-    uint8_t op_len = G_context.tx_info.tx_details.operations_len;
+    uint8_t op_cnt = G_context.tx_info.tx_details.operations_count;
     G_ui_current_data_index = 0;
     get_result_filename(filename, path, sizeof(path));
 
@@ -147,7 +147,7 @@ static void check_transaction_results(const char *filename) {
 
     set_state_data(true);
 
-    while ((op_len != 0 && G_ui_current_data_index < op_len) ||
+    while ((op_cnt != 0 && G_ui_current_data_index < op_cnt) ||
            formatter_stack[formatter_index] != NULL) {
         assert_non_null(fgets(line, sizeof(line), fp));
 

@@ -926,13 +926,13 @@ bool parse_transaction_memo(buffer_t *buffer, memo_t *memo) {
     return parse_memo(buffer, memo);
 }
 
-bool parse_transaction_operation_len(buffer_t *buffer, uint8_t *operations_len) {
+bool parse_transaction_operation_len(buffer_t *buffer, uint8_t *operations_count) {
     uint32_t len;
     PARSER_CHECK(buffer_read32(buffer, &len))
     if (len > MAX_OPS) {
         return false;
     }
-    *operations_len = len;
+    *operations_count = len;
     return true;
 }
 
@@ -950,7 +950,7 @@ bool parse_transaction_details(buffer_t *buffer, transaction_details_t *transact
     PARSER_CHECK(parse_transaction_preconditions(buffer, &transaction->cond))
 
     PARSER_CHECK(parse_transaction_memo(buffer, &transaction->memo))
-    PARSER_CHECK(parse_transaction_operation_len(buffer, &transaction->operations_len))
+    PARSER_CHECK(parse_transaction_operation_len(buffer, &transaction->operations_count))
     return true;
 }
 
