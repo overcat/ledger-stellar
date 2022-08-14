@@ -36,9 +36,9 @@
 /* max amount is max int64 scaled down: "922337203685.4775807" */
 #define AMOUNT_MAX_LENGTH 21
 
-#define HASH_SIZE              32
-#define LIQUIDITY_POOL_ID_SIZE 32
-#define CLAIMABLE_BALANCE_ID   32
+#define HASH_SIZE                 32
+#define LIQUIDITY_POOL_ID_SIZE    32
+#define CLAIMABLE_BALANCE_ID_SIZE 32
 
 #define PUBLIC_KEY_TYPE_ED25519 0
 #define MEMO_TEXT_MAX_SIZE      28

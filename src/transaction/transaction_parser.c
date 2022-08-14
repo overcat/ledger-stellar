@@ -697,9 +697,9 @@ bool parse_claimable_balance_id(buffer_t *buffer, claimable_balance_id *claimabl
 
     switch (claimable_balance_id->type) {
         case CLAIMABLE_BALANCE_ID_TYPE_V0:
-            PARSER_CHECK(buffer_can_read(buffer, CLAIMABLE_BALANCE_ID))
+            PARSER_CHECK(buffer_can_read(buffer, CLAIMABLE_BALANCE_ID_SIZE))
             claimable_balance_id->v0 = buffer->ptr + buffer->offset;
-            PARSER_CHECK(buffer_advance(buffer, CLAIMABLE_BALANCE_ID))
+            PARSER_CHECK(buffer_advance(buffer, CLAIMABLE_BALANCE_ID_SIZE))
             return true;
         default:
             return false;
