@@ -3,9 +3,8 @@ Max Fee; 0.00001 XLM
 Sequence Num; 103720918407102568
 Valid Before (UTC); 2022-12-12 04:12:12
 Tx Source; GDUTHC..XM2FN7
-Operation Type; Manage Sell Offer
 Create Offer; Type Active
 Buy; XLM
-Price; 0.0001234 XLM
+Price; 0.0001234 XLM/BTC
 Sell; 988,448,423.2134 BTC@GAT..MTCH
 Op Source; GDUTHC..XM2FN7
