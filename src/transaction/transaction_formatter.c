@@ -923,13 +923,20 @@ static void format_create_passive_sell_offer_price(tx_ctx_t *txCtx) {
     push_to_formatter_stack(&format_create_passive_sell_offer_sell);
 }
 
-static void format_create_passive_sell_offer(tx_ctx_t *txCtx) {
+static void format_create_passive_sell_offer_buy(tx_ctx_t *txCtx) {
     strcpy(G_ui_detail_caption, "Buy");
     print_asset(&txCtx->tx_details.op_details.create_passive_sell_offer_op.buying,
                 txCtx->network,
                 G_ui_detail_value,
                 DETAIL_VALUE_MAX_LENGTH);
     push_to_formatter_stack(&format_create_passive_sell_offer_price);
+}
+
+static void format_create_passive_sell_offer(tx_ctx_t *txCtx) {
+    (void) txCtx;
+    strcpy(G_ui_detail_caption, "Operation Type");
+    strcpy(G_ui_detail_value, "Create Passive Sell Offer");
+    push_to_formatter_stack(&format_create_passive_sell_offer_buy);
 }
 
 static void format_path_payment_strict_receive_path_via(tx_ctx_t *txCtx) {
