@@ -36,8 +36,9 @@
 /* max amount is max int64 scaled down: "922337203685.4775807" */
 #define AMOUNT_MAX_LENGTH 21
 
-#define HASH_SIZE              32
-#define LIQUIDITY_POOL_ID_SIZE 32
+#define HASH_SIZE                 32
+#define LIQUIDITY_POOL_ID_SIZE    32
+#define CLAIMABLE_BALANCE_ID_SIZE 32
 
 #define PUBLIC_KEY_TYPE_ED25519 0
 #define MEMO_TEXT_MAX_SIZE      28
@@ -188,7 +189,7 @@ typedef struct {
     union {
         alpha_num4_t alpha_num4;
         alpha_num12_t alpha_num12;
-        uint8_t liquidity_pool_id[LIQUIDITY_POOL_ID_SIZE];
+        const uint8_t *liquidity_pool_id;
     };
 } trust_line_asset_t;
 
@@ -366,7 +367,7 @@ typedef enum {
 
 typedef struct {
     claimable_balance_id_type_t type;
-    uint8_t v0[HASH_SIZE];
+    const uint8_t *v0;
 } claimable_balance_id;
 
 typedef struct {
@@ -414,7 +415,7 @@ typedef struct {
         } claimable_balance;  // type == CLAIMABLE_BALANCE
 
         struct {
-            uint8_t liquidity_pool_id[LIQUIDITY_POOL_ID_SIZE];
+            const uint8_t *liquidity_pool_id;
         } liquidity_pool;  // type == LIQUIDITY_POOL
     };
 
@@ -455,7 +456,7 @@ typedef struct {
 } set_trust_line_flags_op_t;
 
 typedef struct {
-    uint8_t liquidity_pool_id[LIQUIDITY_POOL_ID_SIZE];
+    const uint8_t *liquidity_pool_id;
     int64_t max_amount_a;  // maximum amount of first asset to deposit
     int64_t max_amount_b;  // maximum amount of second asset to deposit
     price_t min_price;     // minimum depositA/depositB
@@ -463,7 +464,7 @@ typedef struct {
 } liquidity_pool_deposit_op_t;
 
 typedef struct {
-    uint8_t liquidity_pool_id[LIQUIDITY_POOL_ID_SIZE];
+    const uint8_t *liquidity_pool_id;
     int64_t amount;        // amount of pool shares to withdraw
     int64_t min_amount_a;  // minimum amount of first asset to withdraw
     int64_t min_amount_b;  // minimum amount of second asset to withdraw
@@ -534,12 +535,6 @@ typedef struct {
     bool ledger_bounds_present;
     bool min_seq_num_present;
 } preconditions_t;
-
-typedef struct {
-    uint8_t signature_hint[4];
-    uint8_t signature[64];
-    uint8_t signature_size;
-} decorated_signature_t;
 
 typedef struct {
     muxed_account_t source_account;     // account used to run the transaction
