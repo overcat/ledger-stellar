@@ -146,24 +146,24 @@ bool parse_signer_key(buffer_t *buffer, signer_key_t *key) {
 
     switch (signer_type) {
         case SIGNER_KEY_TYPE_ED25519:
-            PARSER_CHECK(buffer_can_read(buffer, 32))
+            PARSER_CHECK(buffer_can_read(buffer, RAW_ED25519_PUBLIC_KEY_SIZE))
             key->ed25519 = buffer->ptr + buffer->offset;
-            PARSER_CHECK(buffer_advance(buffer, 32))
+            PARSER_CHECK(buffer_advance(buffer, RAW_ED25519_PUBLIC_KEY_SIZE))
             return true;
         case SIGNER_KEY_TYPE_PRE_AUTH_TX:
-            PARSER_CHECK(buffer_can_read(buffer, 32))
+            PARSER_CHECK(buffer_can_read(buffer, RAW_PRE_AUTH_TX_KEY_SIZE))
             key->pre_auth_tx = buffer->ptr + buffer->offset;
-            PARSER_CHECK(buffer_advance(buffer, 32))
+            PARSER_CHECK(buffer_advance(buffer, RAW_PRE_AUTH_TX_KEY_SIZE))
             return true;
         case SIGNER_KEY_TYPE_HASH_X:
-            PARSER_CHECK(buffer_can_read(buffer, 32))
+            PARSER_CHECK(buffer_can_read(buffer, RAW_HASH_X_KEY_SIZE))
             key->hash_x = buffer->ptr + buffer->offset;
-            PARSER_CHECK(buffer_advance(buffer, 32))
+            PARSER_CHECK(buffer_advance(buffer, RAW_HASH_X_KEY_SIZE))
             return true;
         case SIGNER_KEY_TYPE_ED25519_SIGNED_PAYLOAD:
-            PARSER_CHECK(buffer_can_read(buffer, 32))
+            PARSER_CHECK(buffer_can_read(buffer, RAW_ED25519_PUBLIC_KEY_SIZE))
             key->ed25519_signed_payload.ed25519 = buffer->ptr + buffer->offset;
-            PARSER_CHECK(buffer_advance(buffer, 32))
+            PARSER_CHECK(buffer_advance(buffer, RAW_ED25519_PUBLIC_KEY_SIZE))
             uint32_t payload_length;
             PARSER_CHECK(buffer_read32(buffer, &payload_length))
             // valid length [1, 64]
@@ -185,9 +185,9 @@ bool parse_account_id(buffer_t *buffer, const uint8_t **account_id) {
     uint32_t account_type;
 
     PARSER_CHECK(buffer_read32(buffer, &account_type) || account_type != PUBLIC_KEY_TYPE_ED25519)
-    PARSER_CHECK(buffer_can_read(buffer, 32))
+    PARSER_CHECK(buffer_can_read(buffer, RAW_ED25519_PUBLIC_KEY_SIZE))
     *account_id = buffer->ptr + buffer->offset;
-    PARSER_CHECK(buffer_advance(buffer, 32))
+    PARSER_CHECK(buffer_advance(buffer, RAW_ED25519_PUBLIC_KEY_SIZE))
     return true;
 }
 
@@ -198,15 +198,15 @@ bool parse_muxed_account(buffer_t *buffer, muxed_account_t *muxed_account) {
 
     switch (muxed_account->type) {
         case KEY_TYPE_ED25519:
-            PARSER_CHECK(buffer_can_read(buffer, 32))
+            PARSER_CHECK(buffer_can_read(buffer, RAW_ED25519_PUBLIC_KEY_SIZE))
             muxed_account->ed25519 = buffer->ptr + buffer->offset;
-            PARSER_CHECK(buffer_advance(buffer, 32))
+            PARSER_CHECK(buffer_advance(buffer, RAW_ED25519_PUBLIC_KEY_SIZE))
             return true;
         case KEY_TYPE_MUXED_ED25519:
             PARSER_CHECK(buffer_read64(buffer, &muxed_account->med25519.id))
-            PARSER_CHECK(buffer_can_read(buffer, 32))
+            PARSER_CHECK(buffer_can_read(buffer, RAW_ED25519_PUBLIC_KEY_SIZE))
             muxed_account->med25519.ed25519 = buffer->ptr + buffer->offset;
-            PARSER_CHECK(buffer_advance(buffer, 32))
+            PARSER_CHECK(buffer_advance(buffer, RAW_ED25519_PUBLIC_KEY_SIZE))
             return true;
         default:
             return false;
@@ -439,7 +439,7 @@ bool parse_path_payment_strict_receive(buffer_t *buffer, path_payment_strict_rec
 
     PARSER_CHECK(buffer_read32(buffer, (uint32_t *) &path_len))
     op->path_len = path_len;
-    if (op->path_len > 5) {
+    if (op->path_len > PATH_PAYMENT_MAX_PATH_LENGTH) {
         return false;
     }
     for (int i = 0; i < op->path_len; i++) {
@@ -479,13 +479,19 @@ bool parse_account_merge(buffer_t *buffer, account_merge_op_t *op) {
 bool parse_manage_data(buffer_t *buffer, manage_data_op_t *op) {
     size_t size;
 
-    PARSER_CHECK(parse_binary_string_ptr(buffer, (const uint8_t **) &op->data_name, &size, 64))
+    PARSER_CHECK(parse_binary_string_ptr(buffer,
+                                         (const uint8_t **) &op->data_name,
+                                         &size,
+                                         DATA_NAME_MAX_SIZE))
     op->data_name_size = size;
 
     bool has_value;
     PARSER_CHECK(buffer_read_bool(buffer, &has_value))
     if (has_value) {
-        PARSER_CHECK(parse_binary_string_ptr(buffer, (const uint8_t **) &op->data_value, &size, 64))
+        PARSER_CHECK(parse_binary_string_ptr(buffer,
+                                             (const uint8_t **) &op->data_value,
+                                             &size,
+                                             DATA_VALUE_MAX_SIZE))
         op->data_value_size = size;
     } else {
         op->data_value_size = 0;
@@ -607,7 +613,7 @@ bool parse_path_payment_strict_send(buffer_t *buffer, path_payment_strict_send_o
     PARSER_CHECK(buffer_read64(buffer, (uint64_t *) &op->dest_min))
     PARSER_CHECK(buffer_read32(buffer, (uint32_t *) &path_len))
     op->path_len = path_len;
-    if (op->path_len > 5) {
+    if (op->path_len > PATH_PAYMENT_MAX_PATH_LENGTH) {
         return false;
     }
     for (int i = 0; i < op->path_len; i++) {
@@ -675,7 +681,7 @@ bool parse_create_claimable_balance(buffer_t *buffer, create_claimable_balance_o
     PARSER_CHECK(parse_asset(buffer, &op->asset))
     PARSER_CHECK(buffer_read64(buffer, (uint64_t *) &op->amount))
     PARSER_CHECK(buffer_read32(buffer, (uint32_t *) &claimant_len))
-    if (claimant_len > 10) {
+    if (claimant_len > CLAIMANTS_MAX_LENGTH) {
         return false;
     }
     op->claimant_len = claimant_len;
@@ -732,7 +738,7 @@ bool parse_ledger_key(buffer_t *buffer, ledger_key_t *ledger_key) {
             PARSER_CHECK(parse_binary_string_ptr(buffer,
                                                  (const uint8_t **) &ledger_key->data.data_name,
                                                  (size_t *) &ledger_key->data.data_name_size,
-                                                 64))
+                                                 DATA_NAME_MAX_SIZE))
             return true;
         case CLAIMABLE_BALANCE:
             PARSER_CHECK(
