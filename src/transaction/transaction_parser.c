@@ -40,8 +40,8 @@ static const uint8_t NETWORK_ID_TEST_HASH[32] = {
     0xce, 0xe0, 0x30, 0x2d, 0x59, 0x84, 0x4d, 0x32, 0xbd, 0xca, 0x91, 0x5c, 0x82, 0x03, 0xdd, 0x44,
     0xb3, 0x3f, 0xbb, 0x7e, 0xdc, 0x19, 0x05, 0x1e, 0xa3, 0x7a, 0xbe, 0xdf, 0x28, 0xec, 0xd4, 0x72};
 
-static void buffer_advance(buffer_t *buffer, size_t num_bytes) {
-    buffer_seek_cur(buffer, num_bytes);
+static bool buffer_advance(buffer_t *buffer, size_t num_bytes) {
+    return buffer_seek_cur(buffer, num_bytes);
 }
 
 static bool buffer_read32(buffer_t *buffer, uint32_t *n) {
@@ -113,7 +113,7 @@ bool parse_binary_string_ptr(buffer_t *buffer,
     if (out_len) {
         *out_len = size;
     }
-    buffer_advance(buffer, num_bytes(size));
+    PARSER_CHECK(buffer_advance(buffer, num_bytes(size)))
     return true;
 }
 
@@ -148,22 +148,22 @@ bool parse_signer_key(buffer_t *buffer, signer_key_t *key) {
         case SIGNER_KEY_TYPE_ED25519:
             PARSER_CHECK(buffer_can_read(buffer, 32))
             key->ed25519 = buffer->ptr + buffer->offset;
-            buffer_advance(buffer, 32);
+            PARSER_CHECK(buffer_advance(buffer, 32))
             return true;
         case SIGNER_KEY_TYPE_PRE_AUTH_TX:
             PARSER_CHECK(buffer_can_read(buffer, 32))
             key->pre_auth_tx = buffer->ptr + buffer->offset;
-            buffer_advance(buffer, 32);
+            PARSER_CHECK(buffer_advance(buffer, 32))
             return true;
         case SIGNER_KEY_TYPE_HASH_X:
             PARSER_CHECK(buffer_can_read(buffer, 32))
             key->hash_x = buffer->ptr + buffer->offset;
-            buffer_advance(buffer, 32);
+            PARSER_CHECK(buffer_advance(buffer, 32))
             return true;
         case SIGNER_KEY_TYPE_ED25519_SIGNED_PAYLOAD:
             PARSER_CHECK(buffer_can_read(buffer, 32))
             key->ed25519_signed_payload.ed25519 = buffer->ptr + buffer->offset;
-            buffer_advance(buffer, 32);
+            PARSER_CHECK(buffer_advance(buffer, 32))
             uint32_t payload_length;
             PARSER_CHECK(buffer_read32(buffer, &payload_length))
             // valid length [1, 64]
@@ -174,7 +174,7 @@ bool parse_signer_key(buffer_t *buffer, signer_key_t *key) {
             payload_length += (4 - payload_length % 4) % 4;
             PARSER_CHECK(buffer_can_read(buffer, payload_length))
             key->ed25519_signed_payload.payload = buffer->ptr + buffer->offset;
-            buffer_advance(buffer, payload_length);
+            PARSER_CHECK(buffer_advance(buffer, payload_length))
             return true;
         default:
             return false;
@@ -187,7 +187,7 @@ bool parse_account_id(buffer_t *buffer, const uint8_t **account_id) {
     PARSER_CHECK(buffer_read32(buffer, &account_type) || account_type != PUBLIC_KEY_TYPE_ED25519)
     PARSER_CHECK(buffer_can_read(buffer, 32))
     *account_id = buffer->ptr + buffer->offset;
-    buffer_advance(buffer, 32);
+    PARSER_CHECK(buffer_advance(buffer, 32))
     return true;
 }
 
@@ -200,13 +200,13 @@ bool parse_muxed_account(buffer_t *buffer, muxed_account_t *muxed_account) {
         case KEY_TYPE_ED25519:
             PARSER_CHECK(buffer_can_read(buffer, 32))
             muxed_account->ed25519 = buffer->ptr + buffer->offset;
-            buffer_advance(buffer, 32);
+            PARSER_CHECK(buffer_advance(buffer, 32))
             return true;
         case KEY_TYPE_MUXED_ED25519:
             PARSER_CHECK(buffer_read64(buffer, &muxed_account->med25519.id))
             PARSER_CHECK(buffer_can_read(buffer, 32))
             muxed_account->med25519.ed25519 = buffer->ptr + buffer->offset;
-            buffer_advance(buffer, 32);
+            PARSER_CHECK(buffer_advance(buffer, 32))
             return true;
         default:
             return false;
@@ -298,16 +298,12 @@ bool parse_memo(buffer_t *buffer, memo_t *memo) {
             return true;
         }
         case MEMO_HASH:
-            if (buffer->size - buffer->offset < HASH_SIZE) {
-                return false;
-            }
+            PARSER_CHECK(buffer_can_read(buffer, HASH_SIZE))
             memo->hash = buffer->ptr + buffer->offset;
             buffer->offset += HASH_SIZE;
             return true;
         case MEMO_RETURN:
-            if (buffer->size - buffer->offset < HASH_SIZE) {
-                return false;
-            }
+            PARSER_CHECK(buffer_can_read(buffer, HASH_SIZE))
             memo->return_hash = buffer->ptr + buffer->offset;
             buffer->offset += HASH_SIZE;
             return true;
@@ -319,7 +315,7 @@ bool parse_memo(buffer_t *buffer, memo_t *memo) {
 bool parse_alpha_num4_asset(buffer_t *buffer, alpha_num4_t *asset) {
     PARSER_CHECK(buffer_can_read(buffer, 4))
     asset->asset_code = (const char *) buffer->ptr + buffer->offset;
-    buffer_advance(buffer, 4);
+    PARSER_CHECK(buffer_advance(buffer, 4))
     PARSER_CHECK(parse_account_id(buffer, &asset->issuer))
     return true;
 }
@@ -327,7 +323,7 @@ bool parse_alpha_num4_asset(buffer_t *buffer, alpha_num4_t *asset) {
 bool parse_alpha_num12_asset(buffer_t *buffer, alpha_num12_t *asset) {
     PARSER_CHECK(buffer_can_read(buffer, 12))
     asset->asset_code = (const char *) buffer->ptr + buffer->offset;
-    buffer_advance(buffer, 12);
+    PARSER_CHECK(buffer_advance(buffer, 12))
     PARSER_CHECK(parse_account_id(buffer, &asset->issuer))
     return true;
 }
@@ -368,7 +364,10 @@ bool parse_trust_line_asset(buffer_t *buffer, trust_line_asset_t *asset) {
             return parse_alpha_num12_asset(buffer, &asset->alpha_num12);
         }
         case ASSET_TYPE_POOL_SHARE: {
-            return buffer_read_bytes(buffer, asset->liquidity_pool_id, LIQUIDITY_POOL_ID_SIZE);
+            PARSER_CHECK(buffer_can_read(buffer, LIQUIDITY_POOL_ID_SIZE))
+            asset->liquidity_pool_id = buffer->ptr + buffer->offset;
+            PARSER_CHECK(buffer_advance(buffer, LIQUIDITY_POOL_ID_SIZE))
+            return true;
         }
         default:
             return false;  // unknown asset type
@@ -578,9 +577,7 @@ bool parse_set_options(buffer_t *buffer, set_options_op_t *set_options) {
             set_options->home_domain_size > HOME_DOMAIN_MAX_SIZE) {
             return false;
         }
-        if (buffer->size - buffer->offset < num_bytes(set_options->home_domain_size)) {
-            return false;
-        }
+        PARSER_CHECK(buffer_can_read(buffer, num_bytes(set_options->home_domain_size)))
         set_options->home_domain = buffer->ptr + buffer->offset;
         PARSER_CHECK(check_padding(set_options->home_domain,
                                    set_options->home_domain_size,
@@ -694,7 +691,9 @@ bool parse_claimable_balance_id(buffer_t *buffer, claimable_balance_id *claimabl
 
     switch (claimable_balance_id->type) {
         case CLAIMABLE_BALANCE_ID_TYPE_V0:
-            PARSER_CHECK(buffer_read_bytes(buffer, claimable_balance_id->v0, 32))
+            PARSER_CHECK(buffer_can_read(buffer, CLAIMABLE_BALANCE_ID))
+            claimable_balance_id->v0 = buffer->ptr + buffer->offset;
+            PARSER_CHECK(buffer_advance(buffer, CLAIMABLE_BALANCE_ID))
             return true;
         default:
             return false;
@@ -740,9 +739,9 @@ bool parse_ledger_key(buffer_t *buffer, ledger_key_t *ledger_key) {
                 parse_claimable_balance_id(buffer, &ledger_key->claimable_balance.balance_id))
             return true;
         case LIQUIDITY_POOL:
-            PARSER_CHECK(buffer_read_bytes(buffer,
-                                           ledger_key->liquidity_pool.liquidity_pool_id,
-                                           LIQUIDITY_POOL_ID_SIZE))
+            PARSER_CHECK(buffer_can_read(buffer, LIQUIDITY_POOL_ID_SIZE))
+            ledger_key->liquidity_pool.liquidity_pool_id = buffer->ptr + buffer->offset;
+            PARSER_CHECK(buffer_advance(buffer, LIQUIDITY_POOL_ID_SIZE))
             return true;
         default:
             return false;
@@ -788,7 +787,9 @@ bool parse_set_trust_line_flags(buffer_t *buffer, set_trust_line_flags_op_t *op)
 }
 
 bool parse_liquidity_pool_deposit(buffer_t *buffer, liquidity_pool_deposit_op_t *op) {
-    PARSER_CHECK(buffer_read_bytes(buffer, op->liquidity_pool_id, LIQUIDITY_POOL_ID_SIZE))
+    PARSER_CHECK(buffer_can_read(buffer, LIQUIDITY_POOL_ID_SIZE))
+    op->liquidity_pool_id = buffer->ptr + buffer->offset;
+    PARSER_CHECK(buffer_advance(buffer, LIQUIDITY_POOL_ID_SIZE))
     PARSER_CHECK(buffer_read64(buffer, (uint64_t *) &op->max_amount_a))
     PARSER_CHECK(buffer_read64(buffer, (uint64_t *) &op->max_amount_b))
     PARSER_CHECK(parse_price(buffer, &op->min_price))
@@ -797,7 +798,9 @@ bool parse_liquidity_pool_deposit(buffer_t *buffer, liquidity_pool_deposit_op_t 
 }
 
 bool parse_liquidity_pool_withdraw(buffer_t *buffer, liquidity_pool_withdraw_op_t *op) {
-    PARSER_CHECK(buffer_read_bytes(buffer, op->liquidity_pool_id, LIQUIDITY_POOL_ID_SIZE))
+    PARSER_CHECK(buffer_can_read(buffer, LIQUIDITY_POOL_ID_SIZE))
+    op->liquidity_pool_id = buffer->ptr + buffer->offset;
+    PARSER_CHECK(buffer_advance(buffer, LIQUIDITY_POOL_ID_SIZE))
     PARSER_CHECK(buffer_read64(buffer, (uint64_t *) &op->amount))
     PARSER_CHECK(buffer_read64(buffer, (uint64_t *) &op->min_amount_a))
     PARSER_CHECK(buffer_read64(buffer, (uint64_t *) &op->min_amount_b))
@@ -945,31 +948,6 @@ bool parse_transaction_details(buffer_t *buffer, transaction_details_t *transact
     return true;
 }
 
-bool parse_transaction_ext(buffer_t *buffer) {
-    uint32_t ext;
-    PARSER_CHECK(buffer_read32(buffer, &ext))
-    if (ext != 0) {
-        return false;
-    }
-    return true;
-}
-
-bool parse_decorated_signature_len(buffer_t *buffer, uint8_t *len) {
-    uint32_t slen;
-    PARSER_CHECK(buffer_read32(buffer, &slen))
-    *len = slen;
-    return true;
-}
-
-bool parse_decorated_signature(buffer_t *buffer, decorated_signature_t *decorated_signature) {
-    PARSER_CHECK(buffer_read_bytes(buffer, decorated_signature->signature_hint, 4))
-    uint32_t signature_len;
-    PARSER_CHECK(buffer_read32(buffer, &signature_len));
-    decorated_signature->signature_size = signature_len;
-    PARSER_CHECK(buffer_read_bytes(buffer, decorated_signature->signature, signature_len))
-    return true;
-}
-
 bool parse_fee_bump_transaction_fee_source(buffer_t *buffer, muxed_account_t *fee_source) {
     return parse_muxed_account(buffer, fee_source);
 }
@@ -1014,7 +992,7 @@ bool parse_network(buffer_t *buffer, uint8_t *network) {
     } else {
         *network = NETWORK_TYPE_UNKNOWN;
     }
-    buffer_advance(buffer, HASH_SIZE);
+    PARSER_CHECK(buffer_advance(buffer, HASH_SIZE))
     return true;
 }
 
