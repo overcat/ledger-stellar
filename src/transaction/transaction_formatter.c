@@ -768,16 +768,6 @@ static void format_change_trust(tx_ctx_t *txCtx) {
     }
 }
 
-static void format_manage_sell_offer_sell(tx_ctx_t *txCtx) {
-    strcpy(G_ui_detail_caption, "Sell");
-    print_amount(txCtx->tx_details.op_details.manage_sell_offer_op.amount,
-                 &txCtx->tx_details.op_details.manage_sell_offer_op.selling,
-                 txCtx->network,
-                 G_ui_detail_value,
-                 DETAIL_VALUE_MAX_LENGTH);
-    format_operation_source_prepare(txCtx);
-}
-
 static void format_manage_sell_offer_price(tx_ctx_t *txCtx) {
     strcpy(G_ui_detail_caption, "Price");
     uint64_t price =
@@ -797,7 +787,17 @@ static void format_manage_sell_offer_price(tx_ctx_t *txCtx) {
                      tmp_asset_code,
                      sizeof(tmp_asset_code));
     strlcat(G_ui_detail_value, tmp_asset_code, DETAIL_VALUE_MAX_LENGTH);
-    push_to_formatter_stack(&format_manage_sell_offer_sell);
+    format_operation_source_prepare(txCtx);
+}
+
+static void format_manage_sell_offer_sell(tx_ctx_t *txCtx) {
+    strcpy(G_ui_detail_caption, "Sell");
+    print_amount(txCtx->tx_details.op_details.manage_sell_offer_op.amount,
+                 &txCtx->tx_details.op_details.manage_sell_offer_op.selling,
+                 txCtx->network,
+                 G_ui_detail_value,
+                 DETAIL_VALUE_MAX_LENGTH);
+    push_to_formatter_stack(&format_manage_sell_offer_price);
 }
 
 static void format_manage_sell_offer_buy(tx_ctx_t *txCtx) {
@@ -806,7 +806,7 @@ static void format_manage_sell_offer_buy(tx_ctx_t *txCtx) {
                 txCtx->network,
                 G_ui_detail_value,
                 DETAIL_VALUE_MAX_LENGTH);
-    push_to_formatter_stack(&format_manage_sell_offer_price);
+    push_to_formatter_stack(&format_manage_sell_offer_sell);
 }
 
 static void format_manage_sell_offer(tx_ctx_t *txCtx) {
@@ -830,18 +830,6 @@ static void format_manage_sell_offer(tx_ctx_t *txCtx) {
     }
 }
 
-static void format_manage_buy_offer_buy(tx_ctx_t *txCtx) {
-    manage_buy_offer_op_t *op = &txCtx->tx_details.op_details.manage_buy_offer_op;
-
-    strcpy(G_ui_detail_caption, "Buy");
-    print_amount(op->buy_amount,
-                 &op->buying,
-                 txCtx->network,
-                 G_ui_detail_value,
-                 DETAIL_VALUE_MAX_LENGTH);
-    format_operation_source_prepare(txCtx);
-}
-
 static void format_manage_buy_offer_price(tx_ctx_t *txCtx) {
     manage_buy_offer_op_t *op = &txCtx->tx_details.op_details.manage_buy_offer_op;
 
@@ -861,7 +849,19 @@ static void format_manage_buy_offer_price(tx_ctx_t *txCtx) {
                      tmp_asset_code,
                      sizeof(tmp_asset_code));
     strlcat(G_ui_detail_value, tmp_asset_code, DETAIL_VALUE_MAX_LENGTH);
-    push_to_formatter_stack(&format_manage_buy_offer_buy);
+    format_operation_source_prepare(txCtx);
+}
+
+static void format_manage_buy_offer_buy(tx_ctx_t *txCtx) {
+    manage_buy_offer_op_t *op = &txCtx->tx_details.op_details.manage_buy_offer_op;
+
+    strcpy(G_ui_detail_caption, "Buy");
+    print_amount(op->buy_amount,
+                 &op->buying,
+                 txCtx->network,
+                 G_ui_detail_value,
+                 DETAIL_VALUE_MAX_LENGTH);
+    push_to_formatter_stack(&format_manage_buy_offer_price);
 }
 
 static void format_manage_buy_offer_sell(tx_ctx_t *txCtx) {
@@ -869,7 +869,7 @@ static void format_manage_buy_offer_sell(tx_ctx_t *txCtx) {
 
     strcpy(G_ui_detail_caption, "Sell");
     print_asset(&op->selling, txCtx->network, G_ui_detail_value, DETAIL_VALUE_MAX_LENGTH);
-    push_to_formatter_stack(&format_manage_buy_offer_price);
+    push_to_formatter_stack(&format_manage_buy_offer_buy);
 }
 
 static void format_manage_buy_offer(tx_ctx_t *txCtx) {
@@ -891,16 +891,6 @@ static void format_manage_buy_offer(tx_ctx_t *txCtx) {
     }
 }
 
-static void format_create_passive_sell_offer_sell(tx_ctx_t *txCtx) {
-    strcpy(G_ui_detail_caption, "Sell");
-    print_amount(txCtx->tx_details.op_details.create_passive_sell_offer_op.amount,
-                 &txCtx->tx_details.op_details.create_passive_sell_offer_op.selling,
-                 txCtx->network,
-                 G_ui_detail_value,
-                 DETAIL_VALUE_MAX_LENGTH);
-    format_operation_source_prepare(txCtx);
-}
-
 static void format_create_passive_sell_offer_price(tx_ctx_t *txCtx) {
     strcpy(G_ui_detail_caption, "Price");
 
@@ -920,7 +910,17 @@ static void format_create_passive_sell_offer_price(tx_ctx_t *txCtx) {
                      tmp_asset_code,
                      sizeof(tmp_asset_code));
     strlcat(G_ui_detail_value, tmp_asset_code, DETAIL_VALUE_MAX_LENGTH);
-    push_to_formatter_stack(&format_create_passive_sell_offer_sell);
+    format_operation_source_prepare(txCtx);
+}
+
+static void format_create_passive_sell_offer_sell(tx_ctx_t *txCtx) {
+    strcpy(G_ui_detail_caption, "Sell");
+    print_amount(txCtx->tx_details.op_details.create_passive_sell_offer_op.amount,
+                 &txCtx->tx_details.op_details.create_passive_sell_offer_op.selling,
+                 txCtx->network,
+                 G_ui_detail_value,
+                 DETAIL_VALUE_MAX_LENGTH);
+    push_to_formatter_stack(&format_create_passive_sell_offer_price);
 }
 
 static void format_create_passive_sell_offer_buy(tx_ctx_t *txCtx) {
@@ -929,7 +929,7 @@ static void format_create_passive_sell_offer_buy(tx_ctx_t *txCtx) {
                 txCtx->network,
                 G_ui_detail_value,
                 DETAIL_VALUE_MAX_LENGTH);
-    push_to_formatter_stack(&format_create_passive_sell_offer_price);
+    push_to_formatter_stack(&format_create_passive_sell_offer_sell);
 }
 
 static void format_create_passive_sell_offer(tx_ctx_t *txCtx) {
