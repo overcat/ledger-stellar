@@ -249,7 +249,7 @@ export function opManageSellOfferDelete() {
           "GATEMHCCKCY67ZUCKTROYN24ZYT5GK4EQZ65JJLDHKHRUZI3EUEKMTCH"
         ),
         buying: Asset.native(),
-        amount: "988448423.2134",
+        amount: "0",
         price: "0.0001234",
         offerId: "7123456",
         source: kp0.publicKey(),
