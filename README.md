@@ -1,7 +1,7 @@
 # Ledger Stellar App
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-[![Compilation & tests](https://github.com/overcat/ledger-stellar/actions/workflows/ci-workflow.yml/badge.svg)](https://github.com/overcat/ledger-stellar/actions/workflows/ci-workflow.yml)
+[![Compilation & tests](https://github.com/overcat/ledger-stellar/actions/workflows/ci-workflow.yml/badge.svg?branch=develop)](https://github.com/overcat/ledger-stellar/actions/workflows/ci-workflow.yml)
 
 ## Introduction
 
