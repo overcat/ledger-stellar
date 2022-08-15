@@ -943,13 +943,13 @@ static void format_path_payment_strict_receive_path_via(tx_ctx_t *txCtx) {
     strcpy(G_ui_detail_caption, "Via");
     uint8_t i;
     for (i = 0; i < txCtx->tx_details.op_details.path_payment_strict_receive_op.path_len; i++) {
-        char asset_name[12 + 1];
+        char asset_info[12 + 1 + 9 + 1];
         asset_t *asset = &txCtx->tx_details.op_details.path_payment_strict_receive_op.path[i];
         if (strlen(G_ui_detail_value) != 0) {
             strlcat(G_ui_detail_value, ", ", DETAIL_VALUE_MAX_LENGTH);
         }
-        print_asset(asset, txCtx->network, asset_name, sizeof(asset_name));
-        strlcat(G_ui_detail_value, asset_name, DETAIL_VALUE_MAX_LENGTH);
+        print_asset(asset, txCtx->network, asset_info, sizeof(asset_info));
+        strlcat(G_ui_detail_value, asset_info, DETAIL_VALUE_MAX_LENGTH);
     }
     format_operation_source_prepare(txCtx);
 }
@@ -992,13 +992,13 @@ static void format_path_payment_strict_send_path_via(tx_ctx_t *txCtx) {
     strcpy(G_ui_detail_caption, "Via");
     uint8_t i;
     for (i = 0; i < txCtx->tx_details.op_details.path_payment_strict_send_op.path_len; i++) {
-        char asset_name[12 + 1];
+        char asset_info[12 + 1 + 9 + 1];
         asset_t *asset = &txCtx->tx_details.op_details.path_payment_strict_send_op.path[i];
         if (strlen(G_ui_detail_value) != 0) {
             strlcat(G_ui_detail_value, ", ", DETAIL_VALUE_MAX_LENGTH);
         }
-        print_asset(asset, txCtx->network, asset_name, sizeof(asset_name));
-        strlcat(G_ui_detail_value, asset_name, DETAIL_VALUE_MAX_LENGTH);
+        print_asset(asset, txCtx->network, asset_info, sizeof(asset_info));
+        strlcat(G_ui_detail_value, asset_info, DETAIL_VALUE_MAX_LENGTH);
     }
     format_operation_source_prepare(txCtx);
 }
