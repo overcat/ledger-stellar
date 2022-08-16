@@ -939,21 +939,6 @@ static void format_create_passive_sell_offer(tx_ctx_t *txCtx) {
     push_to_formatter_stack(&format_create_passive_sell_offer_buy);
 }
 
-static void format_path_payment_strict_receive_path_via(tx_ctx_t *txCtx) {
-    strcpy(G_ui_detail_caption, "Via");
-    uint8_t i;
-    for (i = 0; i < txCtx->tx_details.op_details.path_payment_strict_receive_op.path_len; i++) {
-        char asset_info[12 + 1 + 9 + 1];
-        asset_t *asset = &txCtx->tx_details.op_details.path_payment_strict_receive_op.path[i];
-        if (strlen(G_ui_detail_value) != 0) {
-            strlcat(G_ui_detail_value, ", ", DETAIL_VALUE_MAX_LENGTH);
-        }
-        print_asset(asset, txCtx->network, asset_info, sizeof(asset_info));
-        strlcat(G_ui_detail_value, asset_info, DETAIL_VALUE_MAX_LENGTH);
-    }
-    format_operation_source_prepare(txCtx);
-}
-
 static void format_path_payment_strict_receive_receive(tx_ctx_t *txCtx) {
     strcpy(G_ui_detail_caption, "Receive");
     print_amount(txCtx->tx_details.op_details.path_payment_strict_receive_op.dest_amount,
@@ -961,11 +946,7 @@ static void format_path_payment_strict_receive_receive(tx_ctx_t *txCtx) {
                  txCtx->network,
                  G_ui_detail_value,
                  DETAIL_VALUE_MAX_LENGTH);
-    if (txCtx->tx_details.op_details.path_payment_strict_receive_op.path_len) {
-        push_to_formatter_stack(&format_path_payment_strict_receive_path_via);
-    } else {
-        format_operation_source_prepare(txCtx);
-    }
+    format_operation_source_prepare(txCtx);
 }
 
 static void format_path_payment_strict_receive_destination(tx_ctx_t *txCtx) {
@@ -988,21 +969,6 @@ static void format_path_payment_strict_receive(tx_ctx_t *txCtx) {
     push_to_formatter_stack(&format_path_payment_strict_receive_destination);
 }
 
-static void format_path_payment_strict_send_path_via(tx_ctx_t *txCtx) {
-    strcpy(G_ui_detail_caption, "Via");
-    uint8_t i;
-    for (i = 0; i < txCtx->tx_details.op_details.path_payment_strict_send_op.path_len; i++) {
-        char asset_info[12 + 1 + 9 + 1];
-        asset_t *asset = &txCtx->tx_details.op_details.path_payment_strict_send_op.path[i];
-        if (strlen(G_ui_detail_value) != 0) {
-            strlcat(G_ui_detail_value, ", ", DETAIL_VALUE_MAX_LENGTH);
-        }
-        print_asset(asset, txCtx->network, asset_info, sizeof(asset_info));
-        strlcat(G_ui_detail_value, asset_info, DETAIL_VALUE_MAX_LENGTH);
-    }
-    format_operation_source_prepare(txCtx);
-}
-
 static void format_path_payment_strict_send_receive(tx_ctx_t *txCtx) {
     strcpy(G_ui_detail_caption, "Receive Min");
     print_amount(txCtx->tx_details.op_details.path_payment_strict_send_op.dest_min,
@@ -1010,11 +976,7 @@ static void format_path_payment_strict_send_receive(tx_ctx_t *txCtx) {
                  txCtx->network,
                  G_ui_detail_value,
                  DETAIL_VALUE_MAX_LENGTH);
-    if (txCtx->tx_details.op_details.path_payment_strict_send_op.path_len) {
-        push_to_formatter_stack(&format_path_payment_strict_send_path_via);
-    } else {
-        format_operation_source_prepare(txCtx);
-    }
+    format_operation_source_prepare(txCtx);
 }
 
 static void format_path_payment_strict_send_destination(tx_ctx_t *txCtx) {

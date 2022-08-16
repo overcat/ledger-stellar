@@ -216,8 +216,6 @@ typedef struct {
     int64_t dest_amount;          // amount they end up with
     asset_t send_asset;           // asset we pay with
     asset_t dest_asset;           // what they end up with
-    asset_t path[PATH_PAYMENT_MAX_PATH_LENGTH];  // additional hops it must go through to get there
-    uint8_t path_len;
 } path_payment_strict_receive_op_t;
 
 typedef struct {
@@ -249,16 +247,14 @@ typedef struct {
 } manage_buy_offer_op_t;
 
 typedef struct {
-    muxed_account_t destination;                 // recipient of the payment_op
-    int64_t send_amount;                         // amount of send_asset to send (excluding fees)
-                                                 // The operation will fail if can't be met
-    int64_t dest_min;                            // the minimum amount of dest asset to
-                                                 // be received
-                                                 // The operation will fail if it can't be met
-    asset_t send_asset;                          // asset we pay with
-    asset_t dest_asset;                          // what they end up with
-    asset_t path[PATH_PAYMENT_MAX_PATH_LENGTH];  // additional hops it must go through to get there
-    uint8_t path_len;
+    muxed_account_t destination;  // recipient of the payment_op
+    int64_t send_amount;          // amount of send_asset to send (excluding fees)
+                                  // The operation will fail if can't be met
+    int64_t dest_min;             // the minimum amount of dest asset to
+                                  // be received
+                                  // The operation will fail if it can't be met
+    asset_t send_asset;           // asset we pay with
+    asset_t dest_asset;           // what they end up with
 } path_payment_strict_send_op_t;
 
 typedef struct {

@@ -438,12 +438,8 @@ bool parse_path_payment_strict_receive(buffer_t *buffer, path_payment_strict_rec
     PARSER_CHECK(buffer_read64(buffer, (uint64_t *) &op->dest_amount))
 
     PARSER_CHECK(buffer_read32(buffer, (uint32_t *) &path_len))
-    op->path_len = path_len;
-    if (op->path_len > PATH_PAYMENT_MAX_PATH_LENGTH) {
+    if (path_len > PATH_PAYMENT_MAX_PATH_LENGTH) {
         return false;
-    }
-    for (int i = 0; i < op->path_len; i++) {
-        PARSER_CHECK(parse_asset(buffer, &op->path[i]))
     }
     return true;
 }
@@ -612,12 +608,8 @@ bool parse_path_payment_strict_send(buffer_t *buffer, path_payment_strict_send_o
     PARSER_CHECK(parse_asset(buffer, &op->dest_asset))
     PARSER_CHECK(buffer_read64(buffer, (uint64_t *) &op->dest_min))
     PARSER_CHECK(buffer_read32(buffer, (uint32_t *) &path_len))
-    op->path_len = path_len;
-    if (op->path_len > PATH_PAYMENT_MAX_PATH_LENGTH) {
+    if (path_len > PATH_PAYMENT_MAX_PATH_LENGTH) {
         return false;
-    }
-    for (int i = 0; i < op->path_len; i++) {
-        PARSER_CHECK(parse_asset(buffer, &op->path[i]))
     }
     return true;
 }
