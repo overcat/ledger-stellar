@@ -1088,7 +1088,6 @@ export function opWithEmptySource() {
         destination: kp1.publicKey(),
         asset: Asset.native(),
         amount: "922337203685.4775807",
-        source: kp0.publicKey(),
       })
     )
     .build();
