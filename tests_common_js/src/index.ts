@@ -280,7 +280,7 @@ export function opSetOptions() {
     .addOperation(
       Operation.setOptions({
         inflationDest: kp1.publicKey(),
-        clearFlags: 8,
+        clearFlags: 8, // TODO: SDK do not support multiple flags
         setFlags: 1,
         masterWeight: 255,
         lowThreshold: 10,

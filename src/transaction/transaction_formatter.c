@@ -411,16 +411,9 @@ static void format_manage_data(tx_ctx_t *txCtx) {
 
 static void format_allow_trust_authorize(tx_ctx_t *txCtx) {
     strcpy(G_ui_detail_caption, "Authorize Flag");
-    if (txCtx->tx_details.op_details.allow_trust_op.authorize == AUTHORIZED_FLAG) {
-        strlcpy(G_ui_detail_value, "AUTHORIZED_FLAG", DETAIL_VALUE_MAX_LENGTH);
-    } else if (txCtx->tx_details.op_details.allow_trust_op.authorize ==
-               AUTHORIZED_TO_MAINTAIN_LIABILITIES_FLAG) {
-        strlcpy(G_ui_detail_value,
-                "AUTHORIZED_TO_MAINTAIN_LIABILITIES_FLAG",
-                DETAIL_VALUE_MAX_LENGTH);
-    } else {
-        strlcpy(G_ui_detail_value, "UNAUTHORIZED_FLAG", DETAIL_VALUE_MAX_LENGTH);
-    }
+    print_allow_trust_flags(txCtx->tx_details.op_details.allow_trust_op.authorize,
+                            G_ui_detail_value,
+                            DETAIL_VALUE_MAX_LENGTH);
     format_operation_source_prepare(txCtx);
 }
 
@@ -467,16 +460,12 @@ static void format_set_option_signer_detail(tx_ctx_t *txCtx) {
             break;
         }
         case SIGNER_KEY_TYPE_HASH_X: {
-            char tmp[57];
-            encode_hash_x_key(key->hash_x, tmp, DETAIL_VALUE_MAX_LENGTH);
-            print_summary(tmp, G_ui_detail_value, DETAIL_VALUE_MAX_LENGTH, 12, 12);
+            encode_hash_x_key(key->hash_x, G_ui_detail_value, DETAIL_VALUE_MAX_LENGTH);
             break;
         }
 
         case SIGNER_KEY_TYPE_PRE_AUTH_TX: {
-            char tmp[57];
-            encode_pre_auth_x_key(key->pre_auth_tx, tmp, DETAIL_VALUE_MAX_LENGTH);
-            print_summary(tmp, G_ui_detail_value, DETAIL_VALUE_MAX_LENGTH, 12, 12);
+            encode_pre_auth_x_key(key->pre_auth_tx, G_ui_detail_value, DETAIL_VALUE_MAX_LENGTH);
             break;
         }
         default:
@@ -606,9 +595,9 @@ static void format_set_option_master_weight_prepare(tx_ctx_t *txCtx) {
 
 static void format_set_option_set_flags(tx_ctx_t *txCtx) {
     strcpy(G_ui_detail_caption, "Set Flags");
-    print_flags(txCtx->tx_details.op_details.set_options_op.set_flags,
-                G_ui_detail_value,
-                DETAIL_VALUE_MAX_LENGTH);
+    print_account_flags(txCtx->tx_details.op_details.set_options_op.set_flags,
+                        G_ui_detail_value,
+                        DETAIL_VALUE_MAX_LENGTH);
     format_set_option_master_weight_prepare(txCtx);
 }
 
@@ -622,9 +611,9 @@ static void format_set_option_set_flags_prepare(tx_ctx_t *txCtx) {
 
 static void format_set_option_clear_flags(tx_ctx_t *txCtx) {
     strcpy(G_ui_detail_caption, "Clear Flags");
-    print_flags(txCtx->tx_details.op_details.set_options_op.clear_flags,
-                G_ui_detail_value,
-                DETAIL_VALUE_MAX_LENGTH);
+    print_account_flags(txCtx->tx_details.op_details.set_options_op.clear_flags,
+                        G_ui_detail_value,
+                        DETAIL_VALUE_MAX_LENGTH);
     format_set_option_set_flags_prepare(txCtx);
 }
 
@@ -731,14 +720,6 @@ static void format_change_trust_detail_liquidity_pool_asset_a(tx_ctx_t *txCtx) {
     push_to_formatter_stack(&format_change_trust_detail_liquidity_pool_asset_b);
 }
 
-static void format_change_trust_detail_liquidity_pool_asset(tx_ctx_t *txCtx) {
-    (void) txCtx;
-
-    strcpy(G_ui_detail_caption, "Liquidity Pool");
-    strcpy(G_ui_detail_value, "Asset");
-    push_to_formatter_stack(&format_change_trust_detail_liquidity_pool_asset_a);
-}
-
 static void format_change_trust(tx_ctx_t *txCtx) {
     if (txCtx->tx_details.op_details.change_trust_op.limit) {
         strcpy(G_ui_detail_caption, "Change Trust");
@@ -761,7 +742,8 @@ static void format_change_trust(tx_ctx_t *txCtx) {
             }
             break;
         case ASSET_TYPE_POOL_SHARE:
-            push_to_formatter_stack(&format_change_trust_detail_liquidity_pool_asset);
+            strcpy(G_ui_detail_value, "Liquidity Pool Asset");
+            push_to_formatter_stack(&format_change_trust_detail_liquidity_pool_asset_a);
             break;
         default:
             return;
@@ -1229,16 +1211,13 @@ static void format_revoke_sponsorship_claimable_signer_signer_key_detail(tx_ctx_
             break;
         }
         case SIGNER_KEY_TYPE_HASH_X: {
-            char tmp[57];
-            encode_hash_x_key(key->hash_x, tmp, DETAIL_VALUE_MAX_LENGTH);
-            print_summary(tmp, G_ui_detail_value, DETAIL_VALUE_MAX_LENGTH, 12, 12);
+            encode_hash_x_key(key->hash_x, G_ui_detail_value, DETAIL_VALUE_MAX_LENGTH);
             break;
         }
 
         case SIGNER_KEY_TYPE_PRE_AUTH_TX: {
             char tmp[57];
-            encode_pre_auth_x_key(key->pre_auth_tx, tmp, DETAIL_VALUE_MAX_LENGTH);
-            print_summary(tmp, G_ui_detail_value, DETAIL_VALUE_MAX_LENGTH, 12, 12);
+            encode_pre_auth_x_key(key->pre_auth_tx, G_ui_detail_value, DETAIL_VALUE_MAX_LENGTH);
             break;
         }
         default:

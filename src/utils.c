@@ -368,15 +368,18 @@ static void print_flag(char *flag, char *out, size_t out_len) {
     strlcat(out, flag, out_len);
 }
 
-void print_flags(uint32_t flags, char *out, size_t out_len) {
+void print_account_flags(uint32_t flags, char *out, size_t out_len) {
     if (flags & 0x01u) {
-        print_flag("Auth required", out, out_len);
+        print_flag("AUTH_REQUIRED", out, out_len);
     }
     if (flags & 0x02u) {
-        print_flag("Auth revocable", out, out_len);
+        print_flag("AUTH_REVOCABLE", out, out_len);
     }
     if (flags & 0x04u) {
-        print_flag("Auth immutable", out, out_len);
+        print_flag("AUTH_IMMUTABLE", out, out_len);
+    }
+    if (flags & 0x08u) {
+        print_flag("AUTH_CLAWBACK_ENABLED", out, out_len);
     }
 }
 
@@ -389,6 +392,16 @@ void print_trust_line_flags(uint32_t flags, char *out, size_t out_len) {
     }
     if (flags & TRUSTLINE_CLAWBACK_ENABLED_FLAG) {
         print_flag("TRUSTLINE_CLAWBACK_ENABLED", out, out_len);
+    }
+}
+
+void print_allow_trust_flags(uint32_t flag, char *out, size_t out_len) {
+    if (flag & AUTHORIZED_FLAG) {
+        strlcpy(out, "AUTHORIZED", out_len);
+    } else if (flag & AUTHORIZED_TO_MAINTAIN_LIABILITIES_FLAG) {
+        strlcpy(out, "AUTHORIZED_TO_MAINTAIN_LIABILITIES", out_len);
+    } else {
+        strlcpy(out, "UNAUTHORIZED", out_len);
     }
 }
 
