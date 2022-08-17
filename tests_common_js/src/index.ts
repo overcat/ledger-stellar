@@ -1251,9 +1251,7 @@ export function txCondWithAllItems() {
   return new TransactionBuilder(account, {
     fee: BASE_FEE,
     networkPassphrase: Networks.PUBLIC,
-    memo: Memo.return(
-      "573c10b148fc4bc7db97540ce49da22930f4bcd48a060dc7347be84ea9f52d9f"
-    ),
+    memo: Memo.text("hello world"),
     timebounds: {
       maxTime: 1670818332, // 2022-12-12T04:12:12+00:00
       minTime: 1657951297, // 2022-07-16T06:01:37+00:00
@@ -1292,9 +1290,7 @@ export function txCondTimeBounds() {
   return new TransactionBuilder(account, {
     fee: BASE_FEE,
     networkPassphrase: Networks.PUBLIC,
-    memo: Memo.return(
-      "573c10b148fc4bc7db97540ce49da22930f4bcd48a060dc7347be84ea9f52d9f"
-    ),
+    memo: Memo.text("hello world"),
     timebounds: {
       maxTime: 1670818332, // 2022-12-12T04:12:12+00:00
       minTime: 1657951297, // 2022-07-16T06:01:37+00:00
@@ -1316,9 +1312,7 @@ export function txCondTimeBoundsMaxIsZero() {
   return new TransactionBuilder(account, {
     fee: BASE_FEE,
     networkPassphrase: Networks.PUBLIC,
-    memo: Memo.return(
-      "573c10b148fc4bc7db97540ce49da22930f4bcd48a060dc7347be84ea9f52d9f"
-    ),
+    memo: Memo.text("hello world"),
     timebounds: {
       minTime: 1670818332, // 2022-12-12T04:12:12+00:00
       maxTime: 0,
@@ -1340,9 +1334,7 @@ export function txCondTimeBoundsMinIsZero() {
   return new TransactionBuilder(account, {
     fee: BASE_FEE,
     networkPassphrase: Networks.PUBLIC,
-    memo: Memo.return(
-      "573c10b148fc4bc7db97540ce49da22930f4bcd48a060dc7347be84ea9f52d9f"
-    ),
+    memo: Memo.text("hello world"),
     timebounds: {
       minTime: 0,
       maxTime: 1657951297, // 2022-07-16T06:01:37+00:00
@@ -1364,9 +1356,7 @@ export function txCondTimeBoundsAreZero() {
   return new TransactionBuilder(account, {
     fee: BASE_FEE,
     networkPassphrase: Networks.PUBLIC,
-    memo: Memo.return(
-      "573c10b148fc4bc7db97540ce49da22930f4bcd48a060dc7347be84ea9f52d9f"
-    ),
+    memo: Memo.text("hello world"),
     timebounds: {
       minTime: 0,
       maxTime: 0,
@@ -1394,9 +1384,7 @@ export function txCondLedgerBounds() {
   return new TransactionBuilder(account, {
     fee: BASE_FEE,
     networkPassphrase: Networks.PUBLIC,
-    memo: Memo.return(
-      "573c10b148fc4bc7db97540ce49da22930f4bcd48a060dc7347be84ea9f52d9f"
-    ),
+    memo: Memo.text("hello world"),
     timebounds: {
       minTime: 0,
       maxTime: 0,
@@ -1422,9 +1410,7 @@ export function txCondLedgerBoundsMaxIsZero() {
   return new TransactionBuilder(account, {
     fee: BASE_FEE,
     networkPassphrase: Networks.PUBLIC,
-    memo: Memo.return(
-      "573c10b148fc4bc7db97540ce49da22930f4bcd48a060dc7347be84ea9f52d9f"
-    ),
+    memo: Memo.text("hello world"),
     timebounds: {
       minTime: 0,
       maxTime: 0,
@@ -1450,9 +1436,7 @@ export function txCondLedgerBoundsMinIsZero() {
   return new TransactionBuilder(account, {
     fee: BASE_FEE,
     networkPassphrase: Networks.PUBLIC,
-    memo: Memo.return(
-      "573c10b148fc4bc7db97540ce49da22930f4bcd48a060dc7347be84ea9f52d9f"
-    ),
+    memo: Memo.text("hello world"),
     timebounds: {
       minTime: 0,
       maxTime: 0,
@@ -1478,9 +1462,7 @@ export function txCondLedgerBoundsAreZero() {
   return new TransactionBuilder(account, {
     fee: BASE_FEE,
     networkPassphrase: Networks.PUBLIC,
-    memo: Memo.return(
-      "573c10b148fc4bc7db97540ce49da22930f4bcd48a060dc7347be84ea9f52d9f"
-    ),
+    memo: Memo.text("hello world"),
     timebounds: {
       minTime: 0,
       maxTime: 0,
@@ -1506,9 +1488,7 @@ export function txCondMinAccountSequence() {
   return new TransactionBuilder(account, {
     fee: BASE_FEE,
     networkPassphrase: Networks.PUBLIC,
-    memo: Memo.return(
-      "573c10b148fc4bc7db97540ce49da22930f4bcd48a060dc7347be84ea9f52d9f"
-    ),
+    memo: Memo.text("hello world"),
     timebounds: {
       minTime: 0,
       maxTime: 0,
@@ -1531,9 +1511,7 @@ export function txCondMinAccountSequenceAge() {
   return new TransactionBuilder(account, {
     fee: BASE_FEE,
     networkPassphrase: Networks.PUBLIC,
-    memo: Memo.return(
-      "573c10b148fc4bc7db97540ce49da22930f4bcd48a060dc7347be84ea9f52d9f"
-    ),
+    memo: Memo.text("hello world"),
     timebounds: {
       minTime: 0,
       maxTime: 0,
@@ -1556,9 +1534,7 @@ export function txCondMinAccountSequenceLedgerGap() {
   return new TransactionBuilder(account, {
     fee: BASE_FEE,
     networkPassphrase: Networks.PUBLIC,
-    memo: Memo.return(
-      "573c10b148fc4bc7db97540ce49da22930f4bcd48a060dc7347be84ea9f52d9f"
-    ),
+    memo: Memo.text("hello world"),
     timebounds: {
       minTime: 0,
       maxTime: 0,
@@ -1581,9 +1557,7 @@ export function txCondExtraSignersWithOneSigner() {
   return new TransactionBuilder(account, {
     fee: BASE_FEE,
     networkPassphrase: Networks.PUBLIC,
-    memo: Memo.return(
-      "573c10b148fc4bc7db97540ce49da22930f4bcd48a060dc7347be84ea9f52d9f"
-    ),
+    memo: Memo.text("hello world"),
     timebounds: {
       minTime: 0,
       maxTime: 0,
@@ -1608,9 +1582,7 @@ export function txCondExtraSignersWithTwoSigners() {
   return new TransactionBuilder(account, {
     fee: BASE_FEE,
     networkPassphrase: Networks.PUBLIC,
-    memo: Memo.return(
-      "573c10b148fc4bc7db97540ce49da22930f4bcd48a060dc7347be84ea9f52d9f"
-    ),
+    memo: Memo.text("hello world"),
     timebounds: {
       minTime: 0,
       maxTime: 0,
