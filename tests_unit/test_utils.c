@@ -326,6 +326,27 @@ void test_is_printable_binary(void **state) {
     assert_false(is_printable_binary(data3, sizeof(data3)));
 }
 
+void test_print_account_flags(void **state) {
+    (void) state;
+    char out[89];
+    memset(out, 0, sizeof(out));
+    print_account_flags(1, out, sizeof(out));
+    assert_string_equal(out, "AUTH_REQUIRED");
+    memset(out, 0, sizeof(out));
+    print_account_flags(2, out, sizeof(out));
+    assert_string_equal(out, "AUTH_REVOCABLE");
+    memset(out, 0, sizeof(out));
+    print_account_flags(4, out, sizeof(out));
+    assert_string_equal(out, "AUTH_IMMUTABLE");
+    memset(out, 0, sizeof(out));
+    print_account_flags(8, out, sizeof(out));
+    assert_string_equal(out, "AUTH_CLAWBACK_ENABLED");
+    memset(out, 0, sizeof(out));
+    print_account_flags(15, out, sizeof(out));
+    assert_string_equal(out,
+                        "AUTH_REQUIRED, AUTH_REVOCABLE, AUTH_IMMUTABLE, AUTH_CLAWBACK_ENABLED");
+}
+
 int main() {
     const struct CMUnitTest tests[] = {
         cmocka_unit_test(test_encode_ed25519_public_key),
@@ -343,6 +364,7 @@ int main() {
         cmocka_unit_test(test_print_amount_asset_alphanum4),
         cmocka_unit_test(test_print_amount_asset_alphanum12),
         cmocka_unit_test(test_is_printable_binary),
+        cmocka_unit_test(test_print_account_flags),
     };
     return cmocka_run_group_tests(tests, NULL, NULL);
 }

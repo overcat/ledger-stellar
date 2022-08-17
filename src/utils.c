@@ -368,15 +368,18 @@ static void print_flag(char *flag, char *out, size_t out_len) {
     strlcat(out, flag, out_len);
 }
 
-void print_flags(uint32_t flags, char *out, size_t out_len) {
+void print_account_flags(uint32_t flags, char *out, size_t out_len) {
     if (flags & 0x01u) {
-        print_flag("Auth required", out, out_len);
+        print_flag("AUTH_REQUIRED", out, out_len);
     }
     if (flags & 0x02u) {
-        print_flag("Auth revocable", out, out_len);
+        print_flag("AUTH_REVOCABLE", out, out_len);
     }
     if (flags & 0x04u) {
-        print_flag("Auth immutable", out, out_len);
+        print_flag("AUTH_IMMUTABLE", out, out_len);
+    }
+    if (flags & 0x08u) {
+        print_flag("AUTH_CLAWBACK_ENABLED", out, out_len);
     }
 }
 

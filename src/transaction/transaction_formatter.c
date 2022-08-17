@@ -606,9 +606,9 @@ static void format_set_option_master_weight_prepare(tx_ctx_t *txCtx) {
 
 static void format_set_option_set_flags(tx_ctx_t *txCtx) {
     strcpy(G_ui_detail_caption, "Set Flags");
-    print_flags(txCtx->tx_details.op_details.set_options_op.set_flags,
-                G_ui_detail_value,
-                DETAIL_VALUE_MAX_LENGTH);
+    print_account_flags(txCtx->tx_details.op_details.set_options_op.set_flags,
+                        G_ui_detail_value,
+                        DETAIL_VALUE_MAX_LENGTH);
     format_set_option_master_weight_prepare(txCtx);
 }
 
@@ -622,9 +622,9 @@ static void format_set_option_set_flags_prepare(tx_ctx_t *txCtx) {
 
 static void format_set_option_clear_flags(tx_ctx_t *txCtx) {
     strcpy(G_ui_detail_caption, "Clear Flags");
-    print_flags(txCtx->tx_details.op_details.set_options_op.clear_flags,
-                G_ui_detail_value,
-                DETAIL_VALUE_MAX_LENGTH);
+    print_account_flags(txCtx->tx_details.op_details.set_options_op.clear_flags,
+                        G_ui_detail_value,
+                        DETAIL_VALUE_MAX_LENGTH);
     format_set_option_set_flags_prepare(txCtx);
 }
 
