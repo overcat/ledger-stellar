@@ -37,6 +37,8 @@ void print_account_flags(uint32_t flags, char *out, size_t out_len);
 
 void print_trust_line_flags(uint32_t flags, char *out, size_t out_len);
 
+void print_allow_trust_flags(uint32_t flag, char *out, size_t out_len);
+
 bool print_amount(uint64_t amount,
                   const asset_t *asset,
                   uint8_t network_id,

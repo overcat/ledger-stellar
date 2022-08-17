@@ -395,6 +395,16 @@ void print_trust_line_flags(uint32_t flags, char *out, size_t out_len) {
     }
 }
 
+void print_allow_trust_flags(uint32_t flag, char *out, size_t out_len) {
+    if (flag & AUTHORIZED_FLAG) {
+        strlcpy(out, "AUTHORIZED", out_len);
+    } else if (flag & AUTHORIZED_TO_MAINTAIN_LIABILITIES_FLAG) {
+        strlcpy(out, "AUTHORIZED_TO_MAINTAIN_LIABILITIES", out_len);
+    } else {
+        strlcpy(out, "UNAUTHORIZED", out_len);
+    }
+}
+
 bool print_amount(uint64_t amount,
                   const asset_t *asset,
                   uint8_t network_id,

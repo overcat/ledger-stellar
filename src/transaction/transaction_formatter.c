@@ -411,16 +411,9 @@ static void format_manage_data(tx_ctx_t *txCtx) {
 
 static void format_allow_trust_authorize(tx_ctx_t *txCtx) {
     strcpy(G_ui_detail_caption, "Authorize Flag");
-    if (txCtx->tx_details.op_details.allow_trust_op.authorize == AUTHORIZED_FLAG) {
-        strlcpy(G_ui_detail_value, "AUTHORIZED_FLAG", DETAIL_VALUE_MAX_LENGTH);
-    } else if (txCtx->tx_details.op_details.allow_trust_op.authorize ==
-               AUTHORIZED_TO_MAINTAIN_LIABILITIES_FLAG) {
-        strlcpy(G_ui_detail_value,
-                "AUTHORIZED_TO_MAINTAIN_LIABILITIES_FLAG",
-                DETAIL_VALUE_MAX_LENGTH);
-    } else {
-        strlcpy(G_ui_detail_value, "UNAUTHORIZED_FLAG", DETAIL_VALUE_MAX_LENGTH);
-    }
+    print_allow_trust_flags(txCtx->tx_details.op_details.allow_trust_op.authorize,
+                            G_ui_detail_value,
+                            DETAIL_VALUE_MAX_LENGTH);
     format_operation_source_prepare(txCtx);
 }
 
