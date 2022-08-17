@@ -724,14 +724,6 @@ static void format_change_trust_detail_liquidity_pool_asset_a(tx_ctx_t *txCtx) {
     push_to_formatter_stack(&format_change_trust_detail_liquidity_pool_asset_b);
 }
 
-static void format_change_trust_detail_liquidity_pool_asset(tx_ctx_t *txCtx) {
-    (void) txCtx;
-
-    strcpy(G_ui_detail_caption, "Liquidity Pool");
-    strcpy(G_ui_detail_value, "Asset");
-    push_to_formatter_stack(&format_change_trust_detail_liquidity_pool_asset_a);
-}
-
 static void format_change_trust(tx_ctx_t *txCtx) {
     if (txCtx->tx_details.op_details.change_trust_op.limit) {
         strcpy(G_ui_detail_caption, "Change Trust");
@@ -754,7 +746,8 @@ static void format_change_trust(tx_ctx_t *txCtx) {
             }
             break;
         case ASSET_TYPE_POOL_SHARE:
-            push_to_formatter_stack(&format_change_trust_detail_liquidity_pool_asset);
+            strcpy(G_ui_detail_value, "Liquidity Pool Asset");
+            push_to_formatter_stack(&format_change_trust_detail_liquidity_pool_asset_a);
             break;
         default:
             return;
