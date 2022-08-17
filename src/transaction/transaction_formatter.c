@@ -1214,9 +1214,7 @@ static void format_revoke_sponsorship_claimable_signer_signer_key_detail(tx_ctx_
             encode_hash_x_key(key->hash_x, G_ui_detail_value, DETAIL_VALUE_MAX_LENGTH);
             break;
         }
-
         case SIGNER_KEY_TYPE_PRE_AUTH_TX: {
-            char tmp[57];
             encode_pre_auth_x_key(key->pre_auth_tx, G_ui_detail_value, DETAIL_VALUE_MAX_LENGTH);
             break;
         }
