@@ -234,12 +234,12 @@ static void format_memo(tx_ctx_t *txCtx) {
         }
         case MEMO_HASH: {
             strcpy(G_ui_detail_caption, "Memo Hash");
-            print_binary(memo->hash, HASH_SIZE, G_ui_detail_value, DETAIL_VALUE_MAX_LENGTH, 6, 6);
+            print_binary(memo->hash, HASH_SIZE, G_ui_detail_value, DETAIL_VALUE_MAX_LENGTH, 0, 0);
             break;
         }
         case MEMO_RETURN: {
             strcpy(G_ui_detail_caption, "Memo Return");
-            print_binary(memo->hash, HASH_SIZE, G_ui_detail_value, DETAIL_VALUE_MAX_LENGTH, 6, 6);
+            print_binary(memo->hash, HASH_SIZE, G_ui_detail_value, DETAIL_VALUE_MAX_LENGTH, 0, 0);
             break;
         }
         default:
