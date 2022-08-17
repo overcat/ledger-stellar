@@ -460,16 +460,12 @@ static void format_set_option_signer_detail(tx_ctx_t *txCtx) {
             break;
         }
         case SIGNER_KEY_TYPE_HASH_X: {
-            char tmp[57];
-            encode_hash_x_key(key->hash_x, tmp, DETAIL_VALUE_MAX_LENGTH);
-            print_summary(tmp, G_ui_detail_value, DETAIL_VALUE_MAX_LENGTH, 12, 12);
+            encode_hash_x_key(key->hash_x, G_ui_detail_value, DETAIL_VALUE_MAX_LENGTH);
             break;
         }
 
         case SIGNER_KEY_TYPE_PRE_AUTH_TX: {
-            char tmp[57];
-            encode_pre_auth_x_key(key->pre_auth_tx, tmp, DETAIL_VALUE_MAX_LENGTH);
-            print_summary(tmp, G_ui_detail_value, DETAIL_VALUE_MAX_LENGTH, 12, 12);
+            encode_pre_auth_x_key(key->pre_auth_tx, G_ui_detail_value, DETAIL_VALUE_MAX_LENGTH);
             break;
         }
         default:
@@ -1215,16 +1211,13 @@ static void format_revoke_sponsorship_claimable_signer_signer_key_detail(tx_ctx_
             break;
         }
         case SIGNER_KEY_TYPE_HASH_X: {
-            char tmp[57];
-            encode_hash_x_key(key->hash_x, tmp, DETAIL_VALUE_MAX_LENGTH);
-            print_summary(tmp, G_ui_detail_value, DETAIL_VALUE_MAX_LENGTH, 12, 12);
+            encode_hash_x_key(key->hash_x, G_ui_detail_value, DETAIL_VALUE_MAX_LENGTH);
             break;
         }
 
         case SIGNER_KEY_TYPE_PRE_AUTH_TX: {
             char tmp[57];
-            encode_pre_auth_x_key(key->pre_auth_tx, tmp, DETAIL_VALUE_MAX_LENGTH);
-            print_summary(tmp, G_ui_detail_value, DETAIL_VALUE_MAX_LENGTH, 12, 12);
+            encode_pre_auth_x_key(key->pre_auth_tx, G_ui_detail_value, DETAIL_VALUE_MAX_LENGTH);
             break;
         }
         default:
