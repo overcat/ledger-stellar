@@ -9,7 +9,7 @@ This is the wallet app for the [Ledger Nano S](https://shop.ledger.com/products/
 
 ## Documentation
 
-This app follows the specification available in the [docs](./docs/) folder.
+This app follows the specification available in the [`./docs`](./docs/) folder.
 
 ## SDK
 
@@ -22,7 +22,7 @@ You can communicate with the app through the following libraries:
 
 If not for development purposes, you should install this app via [Ledger Live](https://www.ledger.com/ledger-live).
 
-To build and install the app on your Nano S or Nano S Plus you must set up the Ledger build environments. Please follow the *load the application instructions* at the [Ledger developer portal](https://developers.ledger.com/docs/nano-app/load/).
+To build and install the app on your Nano S or Nano S Plus you must set up the Ledger build environments. Please follow [the load the application instructions](https://developers.ledger.com/docs/nano-app/load/) at the Ledger developer portal.
 
 Additionaly, install this dependency:
 
@@ -44,7 +44,7 @@ make delete
 
 ## Testing
 
-This project provides unit tests, integration tests and end-to-end tests, unit tests are located under the `./tests_unit` folder, and the integration tests and end-to-end tests are located under the `./tests_zemu` folder. 
+This project provides unit tests, integration tests and end-to-end tests, unit tests are located under the [`./tests_unit`](./tests_unit) folder, and the integration tests and end-to-end tests are located under the [`./tests_zemu`](./tests_zemu) folder. 
 
 During development, we recommend that you run the unit test first, as it takes less time to run, and then run the other tests after the unit test has run successfully.
 
