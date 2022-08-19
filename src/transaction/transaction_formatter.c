@@ -33,7 +33,7 @@
 
 static const char *NETWORK_NAMES[3] = {"Public", "Testnet", "Unknown"};
 
-char op_caption[OPERATION_CAPTION_MAX_SIZE];
+char op_caption[OPERATION_CAPTION_MAX_LENGTH];
 format_function_t formatter_stack[MAX_FORMATTERS_PER_OPERATION];
 int8_t formatter_index;
 
@@ -1034,7 +1034,9 @@ void format_create_claimable_balance_warning(tx_ctx_t *txCtx) {
     // TODO: The claimant can be very complicated. I haven't figured out how to
     // display it for the time being, so let's display an WARNING here first.
     strlcpy(G_ui_detail_caption, "WARNING", DETAIL_CAPTION_MAX_LENGTH);
-    strlcpy(G_ui_detail_value, "Currently does not support displaying claimant details", DETAIL_VALUE_MAX_LENGTH);
+    strlcpy(G_ui_detail_value,
+            "Currently does not support displaying claimant details",
+            DETAIL_VALUE_MAX_LENGTH);
     format_operation_source_prepare(txCtx);
 }
 
@@ -1272,7 +1274,9 @@ static void format_revoke_sponsorship(tx_ctx_t *txCtx) {
                 push_to_formatter_stack(&format_revoke_sponsorship_offer_seller_id);
                 break;
             case TRUSTLINE:
-                strlcpy(G_ui_detail_value, "Revoke Sponsorship (TRUSTLINE)", DETAIL_VALUE_MAX_LENGTH);
+                strlcpy(G_ui_detail_value,
+                        "Revoke Sponsorship (TRUSTLINE)",
+                        DETAIL_VALUE_MAX_LENGTH);
                 push_to_formatter_stack(&format_revoke_sponsorship_trust_line_account);
                 break;
             case DATA:
@@ -1280,11 +1284,15 @@ static void format_revoke_sponsorship(tx_ctx_t *txCtx) {
                 push_to_formatter_stack(&format_revoke_sponsorship_data_account);
                 break;
             case CLAIMABLE_BALANCE:
-                strlcpy(G_ui_detail_value, "Revoke Sponsorship (CLAIMABLE_BALANCE)", DETAIL_VALUE_MAX_LENGTH);
+                strlcpy(G_ui_detail_value,
+                        "Revoke Sponsorship (CLAIMABLE_BALANCE)",
+                        DETAIL_VALUE_MAX_LENGTH);
                 push_to_formatter_stack(&format_revoke_sponsorship_claimable_balance);
                 break;
             case LIQUIDITY_POOL:
-                strlcpy(G_ui_detail_value, "Revoke Sponsorship (LIQUIDITY_POOL)", DETAIL_VALUE_MAX_LENGTH);
+                strlcpy(G_ui_detail_value,
+                        "Revoke Sponsorship (LIQUIDITY_POOL)",
+                        DETAIL_VALUE_MAX_LENGTH);
                 push_to_formatter_stack(&format_revoke_sponsorship_liquidity_pool);
                 break;
         }
@@ -1516,16 +1524,16 @@ static const format_function_t formatters[] = {&format_create_account,
 void format_confirm_operation(tx_ctx_t *txCtx) {
     if (txCtx->tx_details.operations_count > 1) {
         size_t len;
-        strlcpy(op_caption, "Operation ", OPERATION_CAPTION_MAX_SIZE);
+        strlcpy(op_caption, "Operation ", OPERATION_CAPTION_MAX_LENGTH);
         len = strlen(op_caption);
         print_uint(txCtx->tx_details.operation_index,
                    op_caption + len,
-                   OPERATION_CAPTION_MAX_SIZE - len);
+                   OPERATION_CAPTION_MAX_LENGTH - len);
         strlcat(op_caption, " of ", sizeof(op_caption));
         len = strlen(op_caption);
         print_uint(txCtx->tx_details.operations_count,
                    op_caption + len,
-                   OPERATION_CAPTION_MAX_SIZE - len);
+                   OPERATION_CAPTION_MAX_LENGTH - len);
         push_to_formatter_stack(
             ((format_function_t) PIC(formatters[txCtx->tx_details.op_details.type])));
     } else {
