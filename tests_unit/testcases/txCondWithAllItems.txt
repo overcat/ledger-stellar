@@ -5,7 +5,7 @@ Valid After (UTC); 2022-07-16 06:01:37
 Valid Before (UTC); 2022-12-12 04:12:12
 Ledger Bounds Min; 40351800
 Ledger Bounds Max; 40352000
-Min Seq Num; 1424
+Min Seq Num; 103420918407103888
 Min Seq Age; 1649239999
 Min Seq Ledger Gap; 30
 Tx Source; GDUTHC..XM2FN7

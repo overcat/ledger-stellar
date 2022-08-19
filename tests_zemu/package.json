@@ -15,7 +15,7 @@
     "@types/jest": "^27.4.1",
     "@zondax/zemu": "0.32.0",
     "jest": "^27.5.1",
-    "stellar-base": "^8.0.0",
+    "stellar-base": "^8.1.0",
     "tests-common": "file:../tests_common_js",
     "ts-jest": "^27.1.4",
     "typescript": "^4.6.3"
