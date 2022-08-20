@@ -26,6 +26,11 @@
 #define SW_UNKNOWN_OP 0x6C24
 
 /**
+ * Unknown stellar operation
+ */
+#define SW_UNKNOWN_ENVELOPE_TYPE 0x6C25
+
+/**
  * Status word for hash signing model not enabled.
  */
 #define SW_TX_HASH_SIGNING_MODE_NOT_ENABLED 0x6C66

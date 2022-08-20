@@ -974,6 +974,7 @@ bool parse_transaction_envelope_type(buffer_t *buffer, envelope_type_t *envelope
     uint32_t type;
     PARSER_CHECK(buffer_read32(buffer, &type))
     if (type != ENVELOPE_TYPE_TX && type != ENVELOPE_TYPE_TX_FEE_BUMP) {
+        THROW(SW_UNKNOWN_ENVELOPE_TYPE);
         return false;
     }
 
