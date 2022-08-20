@@ -16,9 +16,15 @@ bool copy_transaction_parameters(const create_transaction_parameters_t* params) 
         strlen(params->destination_address_extra_id) >= sizeof(stack_data.memo)) {
         return false;
     }
-    strlcpy(stack_data.destination, params->destination_address, sizeof(stack_data.destination));
-    strlcpy(stack_data.memo, params->destination_address_extra_id, sizeof(stack_data.memo));
-
+    if (strlcpy(stack_data.destination,
+                params->destination_address,
+                sizeof(stack_data.destination)) >= sizeof(stack_data.destination)) {
+        return false;
+    }
+    if (strlcpy(stack_data.memo, params->destination_address_extra_id, sizeof(stack_data.memo)) >=
+        sizeof(stack_data.memo)) {
+        return false;
+    }
     if (!swap_str_to_u64(params->amount, params->amount_length, &stack_data.amount)) {
         return false;
     }

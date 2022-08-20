@@ -887,7 +887,7 @@ static void format_manage_buy_offer(tx_ctx_t *txCtx) {
     if (op->buy_amount == 0) {
         strlcpy(G_ui_detail_caption, "Remove Offer", DETAIL_CAPTION_MAX_LENGTH);
         FORMATTER_CHECK(print_uint(op->offer_id, G_ui_detail_value, DETAIL_VALUE_MAX_LENGTH))
-        format_operation_source_prepare(txCtx);  // TODO
+        format_operation_source_prepare(txCtx);
     } else {
         if (op->offer_id) {
             strlcpy(G_ui_detail_caption, "Change Offer", DETAIL_CAPTION_MAX_LENGTH);
