@@ -1,16 +1,8 @@
 name: ClusterFuzzLite PR fuzzing
-# on:
-#   pull_request:
-#     paths:
-#       - '**'
 on:
-  workflow_dispatch:
-  push:
-    branches:
-    - develop
   pull_request:
-    branches:
-    - develop
+    paths:
+      - '**'
 permissions: read-all
 jobs:
   PR:
@@ -50,4 +42,3 @@ jobs:
         #storage-repo: https://${{ secrets.PERSONAL_ACCESS_TOKEN }}@github.com/LedgerHQ/fuzzers-corpus.git
         #storage-repo-branch: main   # Optional. Defaults to "main"
         #storage-repo-branch-coverage: gh-pages  # Optional. Defaults to "gh-pages".
-

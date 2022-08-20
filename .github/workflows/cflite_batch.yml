@@ -1,12 +1,7 @@
 name: ClusterFuzzLite batch fuzzing
 on:
-  pull_request:
-    paths:
-      - '**'
-# on:
-#   schedule:
-#     # - cron: '1 * * * 0' # Every sunday 
-#     - cron: '0 0 * * *' # Every day
+  schedule:
+    - cron: '1 * * * 0' # Every sunday 
 permissions: read-all
 jobs:
   BatchFuzzing:
@@ -35,4 +30,3 @@ jobs:
         #storage-repo: https://${{ secrets.PERSONAL_ACCESS_TOKEN }}@github.com/LedgerHQ/fuzzers-corpus.git
         #storage-repo-branch: main   # Optional. Defaults to "main"
         #storage-repo-branch-coverage: gh-pages  # Optional. Defaults to "gh-pages".
-
