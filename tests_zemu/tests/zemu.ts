@@ -16,7 +16,7 @@ export default class StellarZemu extends Zemu {
     host: string = "127.0.0.1",
     desiredTransportPort?: number
   ) {
-    const desiredSpeculosApiPort = getRandomInt(3000, 65535);
+    const desiredSpeculosApiPort = getRandomInt(3000, 65535);  // TODO: Check if it has been used
     super(elfPath, libElfs, host, desiredTransportPort, desiredSpeculosApiPort);
     this.stellarSpeculosApiPort = desiredSpeculosApiPort;
   }
