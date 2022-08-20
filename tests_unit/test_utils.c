@@ -213,23 +213,27 @@ void test_print_amount_asset_native(void **state) {
 
     char printed[28];
     const asset_t asset = {.type = ASSET_TYPE_NATIVE};
-    print_amount(1, &asset, NETWORK_TYPE_PUBLIC, printed, sizeof(printed));
+    assert_true(print_amount(1, &asset, NETWORK_TYPE_PUBLIC, printed, sizeof(printed)));
     assert_string_equal(printed, "0.0000001 XLM");
-    print_amount(10000000, &asset, NETWORK_TYPE_PUBLIC, printed, sizeof(printed));
+    assert_true(print_amount(10000000, &asset, NETWORK_TYPE_PUBLIC, printed, sizeof(printed)));
     assert_string_equal(printed, "1 XLM");
-    print_amount(1000000000, &asset, NETWORK_TYPE_PUBLIC, printed, sizeof(printed));
+    assert_true(print_amount(1000000000, &asset, NETWORK_TYPE_PUBLIC, printed, sizeof(printed)));
     assert_string_equal(printed, "100 XLM");
-    print_amount(1001000000, &asset, NETWORK_TYPE_PUBLIC, printed, sizeof(printed));
+    assert_true(print_amount(1001000000, &asset, NETWORK_TYPE_PUBLIC, printed, sizeof(printed)));
     assert_string_equal(printed, "100.1 XLM");
-    print_amount(10000000000001, &asset, NETWORK_TYPE_PUBLIC, printed, sizeof(printed));
+    assert_true(
+        print_amount(10000000000001, &asset, NETWORK_TYPE_PUBLIC, printed, sizeof(printed)));
     assert_string_equal(printed, "1,000,000.0000001 XLM");
-    print_amount(100000001, &asset, NETWORK_TYPE_PUBLIC, printed, sizeof(printed));
+    assert_true(print_amount(100000001, &asset, NETWORK_TYPE_PUBLIC, printed, sizeof(printed)));
     assert_string_equal(printed, "10.0000001 XLM");
-    print_amount(100000001000000, &asset, NETWORK_TYPE_PUBLIC, printed, sizeof(printed));
+    assert_true(
+        print_amount(100000001000000, &asset, NETWORK_TYPE_PUBLIC, printed, sizeof(printed)));
     assert_string_equal(printed, "10,000,000.1 XLM");
-    print_amount(9222036854775807, &asset, NETWORK_TYPE_PUBLIC, printed, sizeof(printed));
+    assert_true(
+        print_amount(9222036854775807, &asset, NETWORK_TYPE_PUBLIC, printed, sizeof(printed)));
     assert_string_equal(printed, "922,203,685.4775807 XLM");
-    print_amount(9223372036854775807, &asset, NETWORK_TYPE_PUBLIC, printed, sizeof(printed));
+    assert_true(
+        print_amount(9223372036854775807, &asset, NETWORK_TYPE_PUBLIC, printed, sizeof(printed)));
     assert_string_equal(printed, "922,337,203,685.4775807 XLM");
 }
 
@@ -243,23 +247,27 @@ void test_print_amount_asset_alphanum4(void **state) {
     const asset_t asset = {.type = ASSET_TYPE_CREDIT_ALPHANUM4,
                            .alpha_num4 = {.asset_code = "USDC", .issuer = issuer}};
 
-    print_amount(1, &asset, NETWORK_TYPE_PUBLIC, printed, sizeof(printed));
+    assert_true(print_amount(1, &asset, NETWORK_TYPE_PUBLIC, printed, sizeof(printed)));
     assert_string_equal(printed, "0.0000001 USDC@GA5..KZVN");
-    print_amount(10000000, &asset, NETWORK_TYPE_PUBLIC, printed, sizeof(printed));
+    assert_true(print_amount(10000000, &asset, NETWORK_TYPE_PUBLIC, printed, sizeof(printed)));
     assert_string_equal(printed, "1 USDC@GA5..KZVN");
-    print_amount(1000000000, &asset, NETWORK_TYPE_PUBLIC, printed, sizeof(printed));
+    assert_true(print_amount(1000000000, &asset, NETWORK_TYPE_PUBLIC, printed, sizeof(printed)));
     assert_string_equal(printed, "100 USDC@GA5..KZVN");
-    print_amount(1001000000, &asset, NETWORK_TYPE_PUBLIC, printed, sizeof(printed));
+    assert_true(print_amount(1001000000, &asset, NETWORK_TYPE_PUBLIC, printed, sizeof(printed)));
     assert_string_equal(printed, "100.1 USDC@GA5..KZVN");
-    print_amount(10000000000001, &asset, NETWORK_TYPE_PUBLIC, printed, sizeof(printed));
+    assert_true(
+        print_amount(10000000000001, &asset, NETWORK_TYPE_PUBLIC, printed, sizeof(printed)));
     assert_string_equal(printed, "1,000,000.0000001 USDC@GA5..KZVN");
-    print_amount(100000001, &asset, NETWORK_TYPE_PUBLIC, printed, sizeof(printed));
+    assert_true(print_amount(100000001, &asset, NETWORK_TYPE_PUBLIC, printed, sizeof(printed)));
     assert_string_equal(printed, "10.0000001 USDC@GA5..KZVN");
-    print_amount(100000001000000, &asset, NETWORK_TYPE_PUBLIC, printed, sizeof(printed));
+    assert_true(
+        print_amount(100000001000000, &asset, NETWORK_TYPE_PUBLIC, printed, sizeof(printed)));
     assert_string_equal(printed, "10,000,000.1 USDC@GA5..KZVN");
-    print_amount(9222036854775807, &asset, NETWORK_TYPE_PUBLIC, printed, sizeof(printed));
+    assert_true(
+        print_amount(9222036854775807, &asset, NETWORK_TYPE_PUBLIC, printed, sizeof(printed)));
     assert_string_equal(printed, "922,203,685.4775807 USDC@GA5..KZVN");
-    print_amount(9223372036854775807, &asset, NETWORK_TYPE_PUBLIC, printed, sizeof(printed));
+    assert_true(
+        print_amount(9223372036854775807, &asset, NETWORK_TYPE_PUBLIC, printed, sizeof(printed)));
     assert_string_equal(printed, "922,337,203,685.4775807 USDC@GA5..KZVN");
 }
 
@@ -273,23 +281,27 @@ void test_print_amount_asset_alphanum12(void **state) {
     const asset_t asset = {.type = ASSET_TYPE_CREDIT_ALPHANUM12,
                            .alpha_num12 = {.asset_code = "BANANANANANA", .issuer = issuer}};
 
-    print_amount(1, &asset, NETWORK_TYPE_PUBLIC, printed, sizeof(printed));
+    assert_true(print_amount(1, &asset, NETWORK_TYPE_PUBLIC, printed, sizeof(printed)));
     assert_string_equal(printed, "0.0000001 BANANANANANA@GA5..KZVN");
-    print_amount(10000000, &asset, NETWORK_TYPE_PUBLIC, printed, sizeof(printed));
+    assert_true(print_amount(10000000, &asset, NETWORK_TYPE_PUBLIC, printed, sizeof(printed)));
     assert_string_equal(printed, "1 BANANANANANA@GA5..KZVN");
-    print_amount(1000000000, &asset, NETWORK_TYPE_PUBLIC, printed, sizeof(printed));
+    assert_true(print_amount(1000000000, &asset, NETWORK_TYPE_PUBLIC, printed, sizeof(printed)));
     assert_string_equal(printed, "100 BANANANANANA@GA5..KZVN");
-    print_amount(1001000000, &asset, NETWORK_TYPE_PUBLIC, printed, sizeof(printed));
+    assert_true(print_amount(1001000000, &asset, NETWORK_TYPE_PUBLIC, printed, sizeof(printed)));
     assert_string_equal(printed, "100.1 BANANANANANA@GA5..KZVN");
-    print_amount(10000000000001, &asset, NETWORK_TYPE_PUBLIC, printed, sizeof(printed));
+    assert_true(
+        print_amount(10000000000001, &asset, NETWORK_TYPE_PUBLIC, printed, sizeof(printed)));
     assert_string_equal(printed, "1,000,000.0000001 BANANANANANA@GA5..KZVN");
-    print_amount(100000001, &asset, NETWORK_TYPE_PUBLIC, printed, sizeof(printed));
+    assert_true(print_amount(100000001, &asset, NETWORK_TYPE_PUBLIC, printed, sizeof(printed)));
     assert_string_equal(printed, "10.0000001 BANANANANANA@GA5..KZVN");
-    print_amount(100000001000000, &asset, NETWORK_TYPE_PUBLIC, printed, sizeof(printed));
+    assert_true(
+        print_amount(100000001000000, &asset, NETWORK_TYPE_PUBLIC, printed, sizeof(printed)));
     assert_string_equal(printed, "10,000,000.1 BANANANANANA@GA5..KZVN");
-    print_amount(9222036854775807, &asset, NETWORK_TYPE_PUBLIC, printed, sizeof(printed));
+    assert_true(
+        print_amount(9222036854775807, &asset, NETWORK_TYPE_PUBLIC, printed, sizeof(printed)));
     assert_string_equal(printed, "922,203,685.4775807 BANANANANANA@GA5..KZVN");
-    print_amount(9223372036854775807, &asset, NETWORK_TYPE_PUBLIC, printed, sizeof(printed));
+    assert_true(
+        print_amount(9223372036854775807, &asset, NETWORK_TYPE_PUBLIC, printed, sizeof(printed)));
     assert_string_equal(printed, "922,337,203,685.4775807 BANANANANANA@GA5..KZVN");
 }
 
@@ -330,19 +342,19 @@ void test_print_account_flags(void **state) {
     (void) state;
     char out[89];
     memset(out, 0, sizeof(out));
-    print_account_flags(1, out, sizeof(out));
+    assert_true(print_account_flags(1, out, sizeof(out)));
     assert_string_equal(out, "AUTH_REQUIRED");
     memset(out, 0, sizeof(out));
-    print_account_flags(2, out, sizeof(out));
+    assert_true(print_account_flags(2, out, sizeof(out)));
     assert_string_equal(out, "AUTH_REVOCABLE");
     memset(out, 0, sizeof(out));
-    print_account_flags(4, out, sizeof(out));
+    assert_true(print_account_flags(4, out, sizeof(out)));
     assert_string_equal(out, "AUTH_IMMUTABLE");
     memset(out, 0, sizeof(out));
-    print_account_flags(8, out, sizeof(out));
+    assert_true(print_account_flags(8, out, sizeof(out)));
     assert_string_equal(out, "AUTH_CLAWBACK_ENABLED");
     memset(out, 0, sizeof(out));
-    print_account_flags(15, out, sizeof(out));
+    assert_true(print_account_flags(15, out, sizeof(out)));
     assert_string_equal(out,
                         "AUTH_REQUIRED, AUTH_REVOCABLE, AUTH_IMMUTABLE, AUTH_CLAWBACK_ENABLED");
 }
