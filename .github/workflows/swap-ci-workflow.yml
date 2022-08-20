@@ -117,6 +117,7 @@ jobs:
           if-no-files-found: error
 
   e2e_tests:
+    name: e2e tests
     strategy:
       matrix:
         device: ["Nano S", "Nano X", "Nano SP"]
