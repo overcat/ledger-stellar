@@ -995,32 +995,32 @@ bool parse_network(buffer_t *buffer, uint8_t *network) {
     return true;
 }
 
-bool parse_tx_xdr(const uint8_t *data, size_t size, tx_ctx_t *txCtx) {
+bool parse_tx_xdr(const uint8_t *data, size_t size, tx_ctx_t *tx_ctx) {
     buffer_t buffer = {data, size, 0};
     uint32_t envelope_type;
 
-    uint16_t offset = txCtx->offset;
-    buffer.offset = txCtx->offset;
+    uint16_t offset = tx_ctx->offset;
+    buffer.offset = tx_ctx->offset;
 
     if (offset == 0) {
-        explicit_bzero(&txCtx->tx_details, sizeof(transaction_details_t));
-        explicit_bzero(&txCtx->fee_bump_tx_details, sizeof(fee_bump_transaction_details_t));
-        PARSER_CHECK(parse_network(&buffer, &txCtx->network))
+        explicit_bzero(&tx_ctx->tx_details, sizeof(transaction_details_t));
+        explicit_bzero(&tx_ctx->fee_bump_tx_details, sizeof(fee_bump_transaction_details_t));
+        PARSER_CHECK(parse_network(&buffer, &tx_ctx->network))
         PARSER_CHECK(buffer_read32(&buffer, &envelope_type))
-        txCtx->envelope_type = envelope_type;
+        tx_ctx->envelope_type = envelope_type;
         switch (envelope_type) {
             case ENVELOPE_TYPE_TX:
-                PARSER_CHECK(parse_transaction_details(&buffer, &txCtx->tx_details))
+                PARSER_CHECK(parse_transaction_details(&buffer, &tx_ctx->tx_details))
                 break;
             case ENVELOPE_TYPE_TX_FEE_BUMP:
                 PARSER_CHECK(
-                    parse_fee_bump_transaction_details(&buffer, &txCtx->fee_bump_tx_details))
+                    parse_fee_bump_transaction_details(&buffer, &tx_ctx->fee_bump_tx_details))
                 uint32_t inner_envelope_type;
                 PARSER_CHECK(buffer_read32(&buffer, &inner_envelope_type))
                 if (inner_envelope_type != ENVELOPE_TYPE_TX) {
                     return false;
                 }
-                PARSER_CHECK(parse_transaction_details(&buffer, &txCtx->tx_details))
+                PARSER_CHECK(parse_transaction_details(&buffer, &tx_ctx->tx_details))
                 break;
             default:
                 THROW(SW_UNKNOWN_OP);
@@ -1028,9 +1028,9 @@ bool parse_tx_xdr(const uint8_t *data, size_t size, tx_ctx_t *txCtx) {
         }
     }
 
-    PARSER_CHECK(parse_operation(&buffer, &txCtx->tx_details.op_details))
+    PARSER_CHECK(parse_operation(&buffer, &tx_ctx->tx_details.op_details))
     offset = buffer.offset;
-    txCtx->tx_details.operation_index += 1;
-    txCtx->offset = offset;
+    tx_ctx->tx_details.operation_index += 1;
+    tx_ctx->offset = offset;
     return true;
 }

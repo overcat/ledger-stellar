@@ -15,7 +15,7 @@
  *  limitations under the License.
  *****************************************************************************/
 
-#include "../ui.h"
+#include "./ui.h"
 #include "../globals.h"
 #include "../settings.h"
 

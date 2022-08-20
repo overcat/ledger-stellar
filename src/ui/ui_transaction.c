@@ -18,8 +18,7 @@
 #include <stdbool.h>  // bool
 #include <string.h>   // memset
 
-#include "ui.h"
-
+#include "./ui.h"
 #include "./action/validate.h"
 #include "../globals.h"
 #include "../utils.h"

@@ -13,7 +13,7 @@
  * the formatter prints the details and defines the order of the details
  * by setting the next formatter to be called
  */
-typedef void (*format_function_t)(tx_ctx_t *txCtx);
+typedef void (*format_function_t)(tx_ctx_t *tx_ctx);
 
 /* 16 formatters in a row ought to be enough for everybody*/
 #define MAX_FORMATTERS_PER_OPERATION 16
