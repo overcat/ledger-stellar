@@ -13,8 +13,8 @@
 - Refactored unit tests and added full e2e tests.
 
 ### Breaking Changes
+- Removed keypair validation in `GET_PUBLIC_KEY` command. If necessary, we recommend that you ask the user to confirm the address on the device.
 - Removed support for the `KEEP_ALIVE` command at the app layer.
-- Removed keypair validation in `GET_PUBLIC_KEY` command. If necessary, we recommend that developers verify by constructing a transaction that includes a `Manage Data Op`.
 
 ## v3.0 Multi-operation details support and U2F connection keep-alive
 
