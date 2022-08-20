@@ -118,12 +118,12 @@ static const char *testcases[] = {
     "../testcases/opSourceOmitTxMuxedSourceEqualOpSourceEqualSigner.raw",
 };
 
-static void load_transaction_data(const char *filename, tx_ctx_t *txCtx) {
+static void load_transaction_data(const char *filename, tx_ctx_t *tx_ctx) {
     FILE *f = fopen(filename, "rb");
     assert_non_null(f);
 
-    txCtx->raw_length = fread(txCtx->raw, 1, RAW_TX_MAX_SIZE, f);
-    assert_int_not_equal(txCtx->raw_length, 0);
+    tx_ctx->raw_length = fread(tx_ctx->raw, 1, RAW_TX_MAX_SIZE, f);
+    assert_int_not_equal(tx_ctx->raw_length, 0);
     fclose(f);
 }
 
