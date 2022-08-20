@@ -108,10 +108,10 @@ void ui_idle(void) {
 void display_settings(const ux_flow_step_t* const start_step) {
     strlcpy(G_ui_detail_value,
             (HAS_SETTING(S_HASH_SIGNING_ENABLED) ? "Enabled" : "NOT Enabled"),
-            DETAIL_VALUE_MAX_LENGTH);
+            12);
     strlcpy(G_ui_detail_value + 12,
             (HAS_SETTING(S_SEQUENCE_NUMBER_ENABLED) ? "Displayed" : "NOT Displayed"),
-            DETAIL_VALUE_MAX_LENGTH);
+            14);
     ux_flow_init(0, ux_settings_flow, start_step);
 }
 
