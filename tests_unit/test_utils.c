@@ -88,9 +88,11 @@ void test_print_claimable_balance_id() {
     claimable_balance_id id = {.type = CLAIMABLE_BALANCE_ID_TYPE_V0, .v0 = v0};
 
     char out[36 * 2 + 1];
-    assert_true(print_claimable_balance_id(&id, out, sizeof(out)));
+    assert_true(print_claimable_balance_id(&id, out, sizeof(out), 0, 0));
     assert_string_equal(out,
                         "00000000c9c4a9e3a46891a36015c317b3df17b42b0f2ad8a2eea6c934c9f7c8425da7ad");
+    assert_true(print_claimable_balance_id(&id, out, sizeof(out), 12, 12));
+    assert_string_equal(out, "00000000c9c4..f7c8425da7ad");
 }
 
 void test_print_time() {

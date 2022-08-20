@@ -9,7 +9,7 @@
 - In some common operations, the prompt for the operation type was removed.
 - Other UX improvements.
 - Other bugfixes.
-- Refactored this App based on [app-boilerplate](https://github.com/ledgerhq/app-boilerplate).
+- Refactored this app based on [app-boilerplate](https://github.com/ledgerhq/app-boilerplate).
 - Refactored unit tests and added full e2e tests.
 
 ### Breaking Changes

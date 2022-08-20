@@ -1119,7 +1119,9 @@ static void format_claim_claimable_balance_balance_id(tx_ctx_t *tx_ctx) {
     FORMATTER_CHECK(print_claimable_balance_id(
         &tx_ctx->tx_details.op_details.claim_claimable_balance_op.balance_id,
         G_ui_detail_value,
-        DETAIL_VALUE_MAX_LENGTH))
+        DETAIL_VALUE_MAX_LENGTH,
+        12,
+        12))
     format_operation_source_prepare(tx_ctx);
 }
 
@@ -1249,7 +1251,9 @@ static void format_revoke_sponsorship_claimable_balance(tx_ctx_t *tx_ctx) {
     FORMATTER_CHECK(print_claimable_balance_id(&tx_ctx->tx_details.op_details.revoke_sponsorship_op
                                                     .ledger_key.claimable_balance.balance_id,
                                                G_ui_detail_value,
-                                               DETAIL_VALUE_MAX_LENGTH))
+                                               DETAIL_VALUE_MAX_LENGTH,
+                                               0,
+                                               0))
     format_operation_source_prepare(tx_ctx);
 }
 
@@ -1402,7 +1406,9 @@ static void format_clawback_claimable_balance_balance_id(tx_ctx_t *tx_ctx) {
     FORMATTER_CHECK(print_claimable_balance_id(
         &tx_ctx->tx_details.op_details.clawback_claimable_balance_op.balance_id,
         G_ui_detail_value,
-        DETAIL_VALUE_MAX_LENGTH))
+        DETAIL_VALUE_MAX_LENGTH,
+        0,
+        0))
     format_operation_source_prepare(tx_ctx);
 }
 
