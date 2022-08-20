@@ -429,9 +429,9 @@ static void format_manage_data(tx_ctx_t *txCtx) {
 
 static void format_allow_trust_authorize(tx_ctx_t *txCtx) {
     strlcpy(G_ui_detail_caption, "Authorize Flag", DETAIL_CAPTION_MAX_LENGTH);
-    print_allow_trust_flags(txCtx->tx_details.op_details.allow_trust_op.authorize,
-                            G_ui_detail_value,
-                            DETAIL_VALUE_MAX_LENGTH);
+    FORMATTER_CHECK(print_allow_trust_flags(txCtx->tx_details.op_details.allow_trust_op.authorize,
+                                            G_ui_detail_value,
+                                            DETAIL_VALUE_MAX_LENGTH))
     format_operation_source_prepare(txCtx);
 }
 
@@ -616,9 +616,9 @@ static void format_set_option_master_weight_prepare(tx_ctx_t *txCtx) {
 
 static void format_set_option_set_flags(tx_ctx_t *txCtx) {
     strlcpy(G_ui_detail_caption, "Set Flags", DETAIL_CAPTION_MAX_LENGTH);
-    print_account_flags(txCtx->tx_details.op_details.set_options_op.set_flags,
-                        G_ui_detail_value,
-                        DETAIL_VALUE_MAX_LENGTH);
+    FORMATTER_CHECK(print_account_flags(txCtx->tx_details.op_details.set_options_op.set_flags,
+                                        G_ui_detail_value,
+                                        DETAIL_VALUE_MAX_LENGTH))
     format_set_option_master_weight_prepare(txCtx);
 }
 
@@ -632,9 +632,9 @@ static void format_set_option_set_flags_prepare(tx_ctx_t *txCtx) {
 
 static void format_set_option_clear_flags(tx_ctx_t *txCtx) {
     strlcpy(G_ui_detail_caption, "Clear Flags", DETAIL_CAPTION_MAX_LENGTH);
-    print_account_flags(txCtx->tx_details.op_details.set_options_op.clear_flags,
-                        G_ui_detail_value,
-                        DETAIL_VALUE_MAX_LENGTH);
+    FORMATTER_CHECK(print_account_flags(txCtx->tx_details.op_details.set_options_op.clear_flags,
+                                        G_ui_detail_value,
+                                        DETAIL_VALUE_MAX_LENGTH))
     format_set_option_set_flags_prepare(txCtx);
 }
 
@@ -1390,9 +1390,10 @@ static void format_clawback_claimable_balance(tx_ctx_t *txCtx) {
 static void format_set_trust_line_set_flags(tx_ctx_t *txCtx) {
     strlcpy(G_ui_detail_caption, "Set Flags", DETAIL_CAPTION_MAX_LENGTH);
     if (txCtx->tx_details.op_details.set_trust_line_flags_op.set_flags) {
-        print_trust_line_flags(txCtx->tx_details.op_details.set_trust_line_flags_op.set_flags,
-                               G_ui_detail_value,
-                               DETAIL_VALUE_MAX_LENGTH);
+        FORMATTER_CHECK(
+            print_trust_line_flags(txCtx->tx_details.op_details.set_trust_line_flags_op.set_flags,
+                                   G_ui_detail_value,
+                                   DETAIL_VALUE_MAX_LENGTH))
     } else {
         strlcpy(G_ui_detail_value, "[none]", DETAIL_VALUE_MAX_LENGTH);
     }
@@ -1402,9 +1403,10 @@ static void format_set_trust_line_set_flags(tx_ctx_t *txCtx) {
 static void format_set_trust_line_clear_flags(tx_ctx_t *txCtx) {
     strlcpy(G_ui_detail_caption, "Clear Flags", DETAIL_CAPTION_MAX_LENGTH);
     if (txCtx->tx_details.op_details.set_trust_line_flags_op.clear_flags) {
-        print_trust_line_flags(txCtx->tx_details.op_details.set_trust_line_flags_op.clear_flags,
-                               G_ui_detail_value,
-                               DETAIL_VALUE_MAX_LENGTH);
+        FORMATTER_CHECK(
+            print_trust_line_flags(txCtx->tx_details.op_details.set_trust_line_flags_op.clear_flags,
+                                   G_ui_detail_value,
+                                   DETAIL_VALUE_MAX_LENGTH))
     } else {
         strlcpy(G_ui_detail_value, "[none]", DETAIL_VALUE_MAX_LENGTH);
     }

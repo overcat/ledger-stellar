@@ -52,8 +52,7 @@ bool base64_encode(const uint8_t *data, size_t in_len, char *out, size_t out_len
         out[j++] = BASE64_ALPHABET[(triple >> 0 * 6) & 0x3F];
     }
 
-    int i;
-    for (i = 0; i < BASE64_MOD_TABLE[in_len % 3]; i++) {
+    for (int i = 0; i < BASE64_MOD_TABLE[in_len % 3]; i++) {
         out[encoded_len - 1 - i] = '=';
     }
 
@@ -235,7 +234,9 @@ bool print_uint(uint64_t num, char *out, size_t out_len) {
         if (out_len < 2) {
             return false;
         }
-        strlcpy(out, "0", out_len);
+        if (strlcpy(out, "0", out_len) >= out_len) {
+            return false;
+        }
         return true;
     }
 
@@ -302,7 +303,9 @@ bool print_time(uint64_t seconds, char *out, size_t out_len) {
                  tm.tm_sec) < 0) {
         return false;
     };
-    strlcpy(out, time_str, out_len);
+    if (strlcpy(out, time_str, out_len) >= out_len) {
+        return false;
+    }
     return true;
 }
 
@@ -310,9 +313,13 @@ bool print_asset_name(const asset_t *asset, uint8_t network_id, char *out, size_
     switch (asset->type) {
         case ASSET_TYPE_NATIVE:
             if (network_id == NETWORK_TYPE_UNKNOWN) {
-                strlcpy(out, "native", out_len);
+                if (strlcpy(out, "native", out_len) >= out_len) {
+                    return false;
+                }
             } else {
-                strlcpy(out, "XLM", out_len);
+                if (strlcpy(out, "XLM", out_len) >= out_len) {
+                    return false;
+                }
             }
             return true;
         case ASSET_TYPE_CREDIT_ALPHANUM4:
@@ -353,7 +360,9 @@ bool print_asset(const asset_t *asset, uint8_t network_id, char *out, size_t out
         default:
             break;
     }
-    strlcpy(out, asset_code, out_len);
+    if (strlcpy(out, asset_code, out_len) >= out_len) {
+        return false;
+    }
     if (asset->type != ASSET_TYPE_NATIVE) {
         strlcat(out, "@", out_len);
         strlcat(out, asset_issuer, out_len);
@@ -361,48 +370,76 @@ bool print_asset(const asset_t *asset, uint8_t network_id, char *out, size_t out
     return true;
 }
 
-static void print_flag(char *flag, char *out, size_t out_len) {
+bool print_flag(char *flag, char *out, size_t out_len) {
     if (out[0]) {
-        strlcat(out, ", ", out_len);
+        if (strlcat(out, ", ", out_len) >= out_len) {
+            return false;
+        }
     }
-    strlcat(out, flag, out_len);
+    if (strlcat(out, flag, out_len) >= out_len) {
+        return false;
+    }
+    return true;
 }
 
-void print_account_flags(uint32_t flags, char *out, size_t out_len) {
+bool print_account_flags(uint32_t flags, char *out, size_t out_len) {
     if (flags & 0x01u) {
-        print_flag("AUTH_REQUIRED", out, out_len);
+        if (!print_flag("AUTH_REQUIRED", out, out_len)) {
+            return false;
+        }
     }
     if (flags & 0x02u) {
-        print_flag("AUTH_REVOCABLE", out, out_len);
+        if (!print_flag("AUTH_REVOCABLE", out, out_len)) {
+            return false;
+        }
     }
     if (flags & 0x04u) {
-        print_flag("AUTH_IMMUTABLE", out, out_len);
+        if (!print_flag("AUTH_IMMUTABLE", out, out_len)) {
+            return false;
+        }
     }
     if (flags & 0x08u) {
-        print_flag("AUTH_CLAWBACK_ENABLED", out, out_len);
+        if (!print_flag("AUTH_CLAWBACK_ENABLED", out, out_len)) {
+            return false;
+        }
     }
+    return true;
 }
 
-void print_trust_line_flags(uint32_t flags, char *out, size_t out_len) {
+bool print_trust_line_flags(uint32_t flags, char *out, size_t out_len) {
     if (flags & AUTHORIZED_FLAG) {
-        print_flag("AUTHORIZED", out, out_len);
+        if (!print_flag("AUTHORIZED", out, out_len)) {
+            return false;
+        }
     }
     if (flags & AUTHORIZED_TO_MAINTAIN_LIABILITIES_FLAG) {
-        print_flag("AUTHORIZED_TO_MAINTAIN_LIABILITIES", out, out_len);
+        if (!print_flag("AUTHORIZED_TO_MAINTAIN_LIABILITIES", out, out_len)) {
+            return false;
+        }
     }
     if (flags & TRUSTLINE_CLAWBACK_ENABLED_FLAG) {
-        print_flag("TRUSTLINE_CLAWBACK_ENABLED", out, out_len);
+        if (!print_flag("TRUSTLINE_CLAWBACK_ENABLED", out, out_len)) {
+            return false;
+        }
     }
+    return true;
 }
 
-void print_allow_trust_flags(uint32_t flag, char *out, size_t out_len) {
+bool print_allow_trust_flags(uint32_t flag, char *out, size_t out_len) {
     if (flag & AUTHORIZED_FLAG) {
-        strlcpy(out, "AUTHORIZED", out_len);
+        if (strlcpy(out, "AUTHORIZED", out_len) >= out_len) {
+            return false;
+        }
     } else if (flag & AUTHORIZED_TO_MAINTAIN_LIABILITIES_FLAG) {
-        strlcpy(out, "AUTHORIZED_TO_MAINTAIN_LIABILITIES", out_len);
+        if (strlcpy(out, "AUTHORIZED_TO_MAINTAIN_LIABILITIES", out_len) >= out_len) {
+            return false;
+        }
     } else {
-        strlcpy(out, "UNAUTHORIZED", out_len);
+        if (strlcpy(out, "UNAUTHORIZED", out_len) >= out_len) {
+            return false;
+        }
     }
+    return true;
 }
 
 bool print_amount(uint64_t amount,
@@ -453,7 +490,9 @@ bool print_amount(uint64_t amount,
     }
     // strip trailing .
     if (buffer[i] == '.') buffer[i] = 0;
-    strlcpy(out, buffer, out_len);
+    if (strlcpy(out, buffer, out_len) >= out_len) {
+        return false;
+    }
 
     char asset_info[23];  // BANANANANANA@GBD..KHK4, 12 + 1 + 3 + 2 + 4 = 22
 
