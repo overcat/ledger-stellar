@@ -33,6 +33,7 @@ bool print_asset_name(const asset_t *asset, uint8_t network_id, char *out, size_
 
 bool print_asset(const asset_t *asset, uint8_t network_id, char *out, size_t out_len);
 
+// TODO
 void print_account_flags(uint32_t flags, char *out, size_t out_len);
 
 void print_trust_line_flags(uint32_t flags, char *out, size_t out_len);

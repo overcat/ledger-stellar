@@ -31,6 +31,11 @@
 #include "../common/format.h"
 #include "../transaction/transaction_parser.h"
 
+#define FORMATTER_CHECK(x)                      \
+    {                                           \
+        if (!(x)) THROW(SW_TX_FORMATTING_FAIL); \
+    }
+
 static const char *NETWORK_NAMES[3] = {"Public", "Testnet", "Unknown"};
 
 char op_caption[OPERATION_CAPTION_MAX_LENGTH];
@@ -57,26 +62,26 @@ static void format_transaction_source(tx_ctx_t *txCtx) {
         memcmp(txCtx->tx_details.source_account.ed25519,
                G_context.raw_public_key,
                RAW_ED25519_PUBLIC_KEY_SIZE) == 0) {
-        print_muxed_account(&txCtx->tx_details.source_account,
-                            G_ui_detail_value,
-                            DETAIL_VALUE_MAX_LENGTH,
-                            6,
-                            6);
+        FORMATTER_CHECK(print_muxed_account(&txCtx->tx_details.source_account,
+                                            G_ui_detail_value,
+                                            DETAIL_VALUE_MAX_LENGTH,
+                                            6,
+                                            6))
     } else {
-        print_muxed_account(&txCtx->tx_details.source_account,
-                            G_ui_detail_value,
-                            DETAIL_VALUE_MAX_LENGTH,
-                            0,
-                            0);
+        FORMATTER_CHECK(print_muxed_account(&txCtx->tx_details.source_account,
+                                            G_ui_detail_value,
+                                            DETAIL_VALUE_MAX_LENGTH,
+                                            0,
+                                            0))
     }
     push_to_formatter_stack(format_next_step);
 }
 
 static void format_min_seq_ledger_gap(tx_ctx_t *txCtx) {
     strlcpy(G_ui_detail_caption, "Min Seq Ledger Gap", DETAIL_CAPTION_MAX_LENGTH);
-    print_uint(txCtx->tx_details.cond.min_seq_ledger_gap,
-               G_ui_detail_value,
-               DETAIL_VALUE_MAX_LENGTH);
+    FORMATTER_CHECK(print_uint(txCtx->tx_details.cond.min_seq_ledger_gap,
+                               G_ui_detail_value,
+                               DETAIL_VALUE_MAX_LENGTH))
     push_to_formatter_stack(&format_transaction_source);
 }
 
@@ -90,7 +95,8 @@ static void format_min_seq_ledger_gap_prepare(tx_ctx_t *txCtx) {
 
 static void format_min_seq_age(tx_ctx_t *txCtx) {
     strlcpy(G_ui_detail_caption, "Min Seq Age", DETAIL_CAPTION_MAX_LENGTH);
-    print_uint(txCtx->tx_details.cond.min_seq_age, G_ui_detail_value, DETAIL_VALUE_MAX_LENGTH);
+    FORMATTER_CHECK(
+        print_uint(txCtx->tx_details.cond.min_seq_age, G_ui_detail_value, DETAIL_VALUE_MAX_LENGTH))
     push_to_formatter_stack(&format_min_seq_ledger_gap_prepare);
 }
 
@@ -104,7 +110,8 @@ static void format_min_seq_age_prepare(tx_ctx_t *txCtx) {
 
 static void format_min_seq_num(tx_ctx_t *txCtx) {
     strlcpy(G_ui_detail_caption, "Min Seq Num", DETAIL_CAPTION_MAX_LENGTH);
-    print_uint(txCtx->tx_details.cond.min_seq_num, G_ui_detail_value, DETAIL_VALUE_MAX_LENGTH);
+    FORMATTER_CHECK(
+        print_uint(txCtx->tx_details.cond.min_seq_num, G_ui_detail_value, DETAIL_VALUE_MAX_LENGTH))
     push_to_formatter_stack(&format_min_seq_age_prepare);
 }
 
@@ -118,17 +125,17 @@ static void format_min_seq_num_prepare(tx_ctx_t *txCtx) {
 
 static void format_ledger_bounds_max_ledger(tx_ctx_t *txCtx) {
     strlcpy(G_ui_detail_caption, "Ledger Bounds Max", DETAIL_CAPTION_MAX_LENGTH);
-    print_uint(txCtx->tx_details.cond.ledger_bounds.max_ledger,
-               G_ui_detail_value,
-               DETAIL_VALUE_MAX_LENGTH);
+    FORMATTER_CHECK(print_uint(txCtx->tx_details.cond.ledger_bounds.max_ledger,
+                               G_ui_detail_value,
+                               DETAIL_VALUE_MAX_LENGTH))
     push_to_formatter_stack(&format_min_seq_num_prepare);
 }
 
 static void format_ledger_bounds_min_ledger(tx_ctx_t *txCtx) {
     strlcpy(G_ui_detail_caption, "Ledger Bounds Min", DETAIL_CAPTION_MAX_LENGTH);
-    print_uint(txCtx->tx_details.cond.ledger_bounds.min_ledger,
-               G_ui_detail_value,
-               DETAIL_VALUE_MAX_LENGTH);
+    FORMATTER_CHECK(print_uint(txCtx->tx_details.cond.ledger_bounds.min_ledger,
+                               G_ui_detail_value,
+                               DETAIL_VALUE_MAX_LENGTH))
     if (txCtx->tx_details.cond.ledger_bounds.max_ledger != 0) {
         push_to_formatter_stack(&format_ledger_bounds_max_ledger);
     } else {
@@ -150,21 +157,17 @@ static void format_ledger_bounds(tx_ctx_t *txCtx) {
 
 static void format_time_bounds_max_time(tx_ctx_t *txCtx) {
     strlcpy(G_ui_detail_caption, "Valid Before (UTC)", DETAIL_CAPTION_MAX_LENGTH);
-    if (!print_time(txCtx->tx_details.cond.time_bounds.max_time,
-                    G_ui_detail_value,
-                    DETAIL_VALUE_MAX_LENGTH)) {
-        THROW(SW_TX_FORMATTING_FAIL);
-    };
+    FORMATTER_CHECK(print_time(txCtx->tx_details.cond.time_bounds.max_time,
+                               G_ui_detail_value,
+                               DETAIL_VALUE_MAX_LENGTH))
     push_to_formatter_stack(&format_ledger_bounds);
 }
 
 static void format_time_bounds_min_time(tx_ctx_t *txCtx) {
     strlcpy(G_ui_detail_caption, "Valid After (UTC)", DETAIL_CAPTION_MAX_LENGTH);
-    if (!print_time(txCtx->tx_details.cond.time_bounds.min_time,
-                    G_ui_detail_value,
-                    DETAIL_VALUE_MAX_LENGTH)) {
-        THROW(SW_TX_FORMATTING_FAIL);
-    };
+    FORMATTER_CHECK(print_time(txCtx->tx_details.cond.time_bounds.min_time,
+                               G_ui_detail_value,
+                               DETAIL_VALUE_MAX_LENGTH))
 
     if (txCtx->tx_details.cond.time_bounds.max_time != 0) {
         push_to_formatter_stack(&format_time_bounds_max_time);
@@ -187,18 +190,19 @@ static void format_time_bounds(tx_ctx_t *txCtx) {
 
 static void format_sequence(tx_ctx_t *txCtx) {
     strlcpy(G_ui_detail_caption, "Sequence Num", DETAIL_CAPTION_MAX_LENGTH);
-    print_uint(txCtx->tx_details.sequence_number, G_ui_detail_value, DETAIL_VALUE_MAX_LENGTH);
+    FORMATTER_CHECK(
+        print_uint(txCtx->tx_details.sequence_number, G_ui_detail_value, DETAIL_VALUE_MAX_LENGTH))
     push_to_formatter_stack(&format_time_bounds);
 }
 
 static void format_fee(tx_ctx_t *txCtx) {
     strlcpy(G_ui_detail_caption, "Max Fee", DETAIL_CAPTION_MAX_LENGTH);
     asset_t asset = {.type = ASSET_TYPE_NATIVE};
-    print_amount(txCtx->tx_details.fee,
-                 &asset,
-                 txCtx->network,
-                 G_ui_detail_value,
-                 DETAIL_VALUE_MAX_LENGTH);
+    FORMATTER_CHECK(print_amount(txCtx->tx_details.fee,
+                                 &asset,
+                                 txCtx->network,
+                                 G_ui_detail_value,
+                                 DETAIL_VALUE_MAX_LENGTH))
 #ifdef TEST
     push_to_formatter_stack(&format_sequence);
 #else
@@ -215,7 +219,7 @@ static void format_memo(tx_ctx_t *txCtx) {
     switch (memo->type) {
         case MEMO_ID: {
             strlcpy(G_ui_detail_caption, "Memo ID", DETAIL_CAPTION_MAX_LENGTH);
-            print_uint(memo->id, G_ui_detail_value, DETAIL_VALUE_MAX_LENGTH);
+            FORMATTER_CHECK(print_uint(memo->id, G_ui_detail_value, DETAIL_VALUE_MAX_LENGTH))
             break;
         }
         case MEMO_TEXT: {
@@ -227,19 +231,33 @@ static void format_memo(tx_ctx_t *txCtx) {
                 strlcpy(G_ui_detail_value, tmp, DETAIL_VALUE_MAX_LENGTH);
             } else {
                 strlcpy(G_ui_detail_caption, "Memo Text (base64)", DETAIL_CAPTION_MAX_LENGTH);
-                base64_encode(memo->text.text, memo->text.text_size, tmp, DETAIL_VALUE_MAX_LENGTH);
-                print_summary(tmp, G_ui_detail_value, DETAIL_VALUE_MAX_LENGTH, 6, 6);
+                FORMATTER_CHECK(base64_encode(memo->text.text,
+                                              memo->text.text_size,
+                                              tmp,
+                                              DETAIL_VALUE_MAX_LENGTH))
+                FORMATTER_CHECK(
+                    print_summary(tmp, G_ui_detail_value, DETAIL_VALUE_MAX_LENGTH, 6, 6))
             }
             break;
         }
         case MEMO_HASH: {
             strlcpy(G_ui_detail_caption, "Memo Hash", DETAIL_CAPTION_MAX_LENGTH);
-            print_binary(memo->hash, HASH_SIZE, G_ui_detail_value, DETAIL_VALUE_MAX_LENGTH, 0, 0);
+            FORMATTER_CHECK(print_binary(memo->hash,
+                                         HASH_SIZE,
+                                         G_ui_detail_value,
+                                         DETAIL_VALUE_MAX_LENGTH,
+                                         0,
+                                         0))
             break;
         }
         case MEMO_RETURN: {
             strlcpy(G_ui_detail_caption, "Memo Return", DETAIL_CAPTION_MAX_LENGTH);
-            print_binary(memo->hash, HASH_SIZE, G_ui_detail_value, DETAIL_VALUE_MAX_LENGTH, 0, 0);
+            FORMATTER_CHECK(print_binary(memo->hash,
+                                         HASH_SIZE,
+                                         G_ui_detail_value,
+                                         DETAIL_VALUE_MAX_LENGTH,
+                                         0,
+                                         0))
             break;
         }
         default:
@@ -276,17 +294,17 @@ static void format_operation_source(tx_ctx_t *txCtx) {
         memcmp(txCtx->tx_details.op_details.source_account.ed25519,
                G_context.raw_public_key,
                RAW_ED25519_PUBLIC_KEY_SIZE) == 0) {
-        print_muxed_account(&txCtx->tx_details.op_details.source_account,
-                            G_ui_detail_value,
-                            DETAIL_VALUE_MAX_LENGTH,
-                            6,
-                            6);
+        FORMATTER_CHECK(print_muxed_account(&txCtx->tx_details.op_details.source_account,
+                                            G_ui_detail_value,
+                                            DETAIL_VALUE_MAX_LENGTH,
+                                            6,
+                                            6))
     } else {
-        print_muxed_account(&txCtx->tx_details.op_details.source_account,
-                            G_ui_detail_value,
-                            DETAIL_VALUE_MAX_LENGTH,
-                            0,
-                            0);
+        FORMATTER_CHECK(print_muxed_account(&txCtx->tx_details.op_details.source_account,
+                                            G_ui_detail_value,
+                                            DETAIL_VALUE_MAX_LENGTH,
+                                            0,
+                                            0))
     }
 
     if (txCtx->tx_details.operation_index == txCtx->tx_details.operations_count) {
@@ -317,9 +335,9 @@ static void format_operation_source_prepare(tx_ctx_t *txCtx) {
 
 static void format_bump_sequence_bump_to(tx_ctx_t *txCtx) {
     strlcpy(G_ui_detail_caption, "Bump To", DETAIL_CAPTION_MAX_LENGTH);
-    print_int(txCtx->tx_details.op_details.bump_sequence_op.bump_to,
-              G_ui_detail_value,
-              DETAIL_VALUE_MAX_LENGTH);
+    FORMATTER_CHECK(print_int(txCtx->tx_details.op_details.bump_sequence_op.bump_to,
+                              G_ui_detail_value,
+                              DETAIL_VALUE_MAX_LENGTH))
     format_operation_source_prepare(txCtx);
 }
 
@@ -339,28 +357,28 @@ static void format_inflation(tx_ctx_t *txCtx) {
 
 static void format_account_merge_destination(tx_ctx_t *txCtx) {
     strlcpy(G_ui_detail_caption, "Destination", DETAIL_CAPTION_MAX_LENGTH);
-    print_muxed_account(&txCtx->tx_details.op_details.account_merge_op.destination,
-                        G_ui_detail_value,
-                        DETAIL_VALUE_MAX_LENGTH,
-                        0,
-                        0);
+    FORMATTER_CHECK(print_muxed_account(&txCtx->tx_details.op_details.account_merge_op.destination,
+                                        G_ui_detail_value,
+                                        DETAIL_VALUE_MAX_LENGTH,
+                                        0,
+                                        0))
     format_operation_source_prepare(txCtx);
 }
 
 static void format_account_merge_detail(tx_ctx_t *txCtx) {
     strlcpy(G_ui_detail_caption, "Merge Account", DETAIL_CAPTION_MAX_LENGTH);
     if (txCtx->tx_details.op_details.source_account_present) {
-        print_muxed_account(&txCtx->tx_details.op_details.source_account,
-                            G_ui_detail_value,
-                            DETAIL_VALUE_MAX_LENGTH,
-                            0,
-                            0);
+        FORMATTER_CHECK(print_muxed_account(&txCtx->tx_details.op_details.source_account,
+                                            G_ui_detail_value,
+                                            DETAIL_VALUE_MAX_LENGTH,
+                                            0,
+                                            0))
     } else {
-        print_muxed_account(&txCtx->tx_details.source_account,
-                            G_ui_detail_value,
-                            DETAIL_VALUE_MAX_LENGTH,
-                            0,
-                            0);
+        FORMATTER_CHECK(print_muxed_account(&txCtx->tx_details.source_account,
+                                            G_ui_detail_value,
+                                            DETAIL_VALUE_MAX_LENGTH,
+                                            0,
+                                            0))
     }
     push_to_formatter_stack(&format_account_merge_destination);
 }
@@ -384,11 +402,11 @@ static void format_manage_data_value(tx_ctx_t *txCtx) {
         strlcpy(G_ui_detail_value, tmp, DETAIL_VALUE_MAX_LENGTH);
     } else {
         strlcpy(G_ui_detail_caption, "Data Value (base64)", DETAIL_CAPTION_MAX_LENGTH);
-        base64_encode(txCtx->tx_details.op_details.manage_data_op.data_value,
-                      txCtx->tx_details.op_details.manage_data_op.data_value_size,
-                      tmp,
-                      sizeof(tmp));
-        print_summary(tmp, G_ui_detail_value, DETAIL_VALUE_MAX_LENGTH, 6, 6);
+        FORMATTER_CHECK(base64_encode(txCtx->tx_details.op_details.manage_data_op.data_value,
+                                      txCtx->tx_details.op_details.manage_data_op.data_value_size,
+                                      tmp,
+                                      sizeof(tmp)))
+        FORMATTER_CHECK(print_summary(tmp, G_ui_detail_value, DETAIL_VALUE_MAX_LENGTH, 6, 6))
     }
     format_operation_source_prepare(txCtx);
 }
@@ -427,11 +445,11 @@ static void format_allow_trust_asset_code(tx_ctx_t *txCtx) {
 
 static void format_allow_trust_trustor(tx_ctx_t *txCtx) {
     strlcpy(G_ui_detail_caption, "Trustor", DETAIL_CAPTION_MAX_LENGTH);
-    print_account_id(txCtx->tx_details.op_details.allow_trust_op.trustor,
-                     G_ui_detail_value,
-                     DETAIL_VALUE_MAX_LENGTH,
-                     0,
-                     0);
+    FORMATTER_CHECK(print_account_id(txCtx->tx_details.op_details.allow_trust_op.trustor,
+                                     G_ui_detail_value,
+                                     DETAIL_VALUE_MAX_LENGTH,
+                                     0,
+                                     0))
     push_to_formatter_stack(&format_allow_trust_asset_code);
 }
 
@@ -444,9 +462,9 @@ static void format_allow_trust(tx_ctx_t *txCtx) {
 
 static void format_set_option_signer_weight(tx_ctx_t *txCtx) {
     strlcpy(G_ui_detail_caption, "Weight", DETAIL_CAPTION_MAX_LENGTH);
-    print_uint(txCtx->tx_details.op_details.set_options_op.signer.weight,
-               G_ui_detail_value,
-               DETAIL_VALUE_MAX_LENGTH);
+    FORMATTER_CHECK(print_uint(txCtx->tx_details.op_details.set_options_op.signer.weight,
+                               G_ui_detail_value,
+                               DETAIL_VALUE_MAX_LENGTH))
     format_operation_source_prepare(txCtx);
 }
 
@@ -456,16 +474,19 @@ static void format_set_option_signer_detail(tx_ctx_t *txCtx) {
 
     switch (key->type) {
         case SIGNER_KEY_TYPE_ED25519: {
-            print_account_id(key->ed25519, G_ui_detail_value, DETAIL_VALUE_MAX_LENGTH, 0, 0);
+            FORMATTER_CHECK(
+                print_account_id(key->ed25519, G_ui_detail_value, DETAIL_VALUE_MAX_LENGTH, 0, 0))
             break;
         }
         case SIGNER_KEY_TYPE_HASH_X: {
-            encode_hash_x_key(key->hash_x, G_ui_detail_value, DETAIL_VALUE_MAX_LENGTH);
+            FORMATTER_CHECK(
+                encode_hash_x_key(key->hash_x, G_ui_detail_value, DETAIL_VALUE_MAX_LENGTH))
             break;
         }
 
         case SIGNER_KEY_TYPE_PRE_AUTH_TX: {
-            encode_pre_auth_x_key(key->pre_auth_tx, G_ui_detail_value, DETAIL_VALUE_MAX_LENGTH);
+            FORMATTER_CHECK(
+                encode_pre_auth_x_key(key->pre_auth_tx, G_ui_detail_value, DETAIL_VALUE_MAX_LENGTH))
             break;
         }
         default:
@@ -531,9 +552,9 @@ static void format_set_option_home_domain_prepare(tx_ctx_t *txCtx) {
 
 static void format_set_option_high_threshold(tx_ctx_t *txCtx) {
     strlcpy(G_ui_detail_caption, "High Threshold", DETAIL_CAPTION_MAX_LENGTH);
-    print_uint(txCtx->tx_details.op_details.set_options_op.high_threshold,
-               G_ui_detail_value,
-               DETAIL_VALUE_MAX_LENGTH);
+    FORMATTER_CHECK(print_uint(txCtx->tx_details.op_details.set_options_op.high_threshold,
+                               G_ui_detail_value,
+                               DETAIL_VALUE_MAX_LENGTH))
     format_set_option_home_domain_prepare(txCtx);
 }
 
@@ -547,9 +568,9 @@ static void format_set_option_high_threshold_prepare(tx_ctx_t *txCtx) {
 
 static void format_set_option_medium_threshold(tx_ctx_t *txCtx) {
     strlcpy(G_ui_detail_caption, "Medium Threshold", DETAIL_CAPTION_MAX_LENGTH);
-    print_uint(txCtx->tx_details.op_details.set_options_op.medium_threshold,
-               G_ui_detail_value,
-               DETAIL_VALUE_MAX_LENGTH);
+    FORMATTER_CHECK(print_uint(txCtx->tx_details.op_details.set_options_op.medium_threshold,
+                               G_ui_detail_value,
+                               DETAIL_VALUE_MAX_LENGTH))
     format_set_option_high_threshold_prepare(txCtx);
 }
 
@@ -563,9 +584,9 @@ static void format_set_option_medium_threshold_prepare(tx_ctx_t *txCtx) {
 
 static void format_set_option_low_threshold(tx_ctx_t *txCtx) {
     strlcpy(G_ui_detail_caption, "Low Threshold", DETAIL_CAPTION_MAX_LENGTH);
-    print_uint(txCtx->tx_details.op_details.set_options_op.low_threshold,
-               G_ui_detail_value,
-               DETAIL_VALUE_MAX_LENGTH);
+    FORMATTER_CHECK(print_uint(txCtx->tx_details.op_details.set_options_op.low_threshold,
+                               G_ui_detail_value,
+                               DETAIL_VALUE_MAX_LENGTH))
     format_set_option_medium_threshold_prepare(txCtx);
 }
 
@@ -579,9 +600,9 @@ static void format_set_option_low_threshold_prepare(tx_ctx_t *txCtx) {
 
 static void format_set_option_master_weight(tx_ctx_t *txCtx) {
     strlcpy(G_ui_detail_caption, "Master Weight", DETAIL_CAPTION_MAX_LENGTH);
-    print_uint(txCtx->tx_details.op_details.set_options_op.master_weight,
-               G_ui_detail_value,
-               DETAIL_VALUE_MAX_LENGTH);
+    FORMATTER_CHECK(print_uint(txCtx->tx_details.op_details.set_options_op.master_weight,
+                               G_ui_detail_value,
+                               DETAIL_VALUE_MAX_LENGTH))
     format_set_option_low_threshold_prepare(txCtx);
 }
 
@@ -627,11 +648,12 @@ static void format_set_option_clear_flags_prepare(tx_ctx_t *txCtx) {
 
 static void format_set_option_inflation_destination(tx_ctx_t *txCtx) {
     strlcpy(G_ui_detail_caption, "Inflation Dest", DETAIL_CAPTION_MAX_LENGTH);
-    print_account_id(txCtx->tx_details.op_details.set_options_op.inflation_destination,
-                     G_ui_detail_value,
-                     DETAIL_VALUE_MAX_LENGTH,
-                     0,
-                     0);
+    FORMATTER_CHECK(
+        print_account_id(txCtx->tx_details.op_details.set_options_op.inflation_destination,
+                         G_ui_detail_value,
+                         DETAIL_VALUE_MAX_LENGTH,
+                         0,
+                         0))
     format_set_option_clear_flags_prepare(txCtx);
 }
 
@@ -675,11 +697,11 @@ static void format_set_options(tx_ctx_t *txCtx) {
 
 static void format_change_trust_limit(tx_ctx_t *txCtx) {
     strlcpy(G_ui_detail_caption, "Trust Limit", DETAIL_CAPTION_MAX_LENGTH);
-    print_amount(txCtx->tx_details.op_details.change_trust_op.limit,
-                 NULL,
-                 txCtx->network,
-                 G_ui_detail_value,
-                 DETAIL_VALUE_MAX_LENGTH);
+    FORMATTER_CHECK(print_amount(txCtx->tx_details.op_details.change_trust_op.limit,
+                                 NULL,
+                                 txCtx->network,
+                                 G_ui_detail_value,
+                                 DETAIL_VALUE_MAX_LENGTH))
     format_operation_source_prepare(txCtx);
 }
 
@@ -690,7 +712,8 @@ static void format_change_trust_detail_liquidity_pool_fee(tx_ctx_t *txCtx) {
              txCtx->tx_details.op_details.change_trust_op.line.liquidity_pool.constant_product.fee *
          10000000) /
         100;
-    print_amount(fee, NULL, txCtx->network, G_ui_detail_value, DETAIL_VALUE_MAX_LENGTH);
+    FORMATTER_CHECK(
+        print_amount(fee, NULL, txCtx->network, G_ui_detail_value, DETAIL_VALUE_MAX_LENGTH))
     strlcat(G_ui_detail_value, "%", DETAIL_VALUE_MAX_LENGTH);
     if (txCtx->tx_details.op_details.change_trust_op.limit &&
         txCtx->tx_details.op_details.change_trust_op.limit != INT64_MAX) {
@@ -702,21 +725,21 @@ static void format_change_trust_detail_liquidity_pool_fee(tx_ctx_t *txCtx) {
 
 static void format_change_trust_detail_liquidity_pool_asset_b(tx_ctx_t *txCtx) {
     strlcpy(G_ui_detail_caption, "Asset B", DETAIL_CAPTION_MAX_LENGTH);
-    print_asset(
+    FORMATTER_CHECK(print_asset(
         &txCtx->tx_details.op_details.change_trust_op.line.liquidity_pool.constant_product.asset_b,
         txCtx->network,
         G_ui_detail_value,
-        DETAIL_VALUE_MAX_LENGTH);
+        DETAIL_VALUE_MAX_LENGTH))
     push_to_formatter_stack(&format_change_trust_detail_liquidity_pool_fee);
 }
 
 static void format_change_trust_detail_liquidity_pool_asset_a(tx_ctx_t *txCtx) {
     strlcpy(G_ui_detail_caption, "Asset A", DETAIL_CAPTION_MAX_LENGTH);
-    print_asset(
+    FORMATTER_CHECK(print_asset(
         &txCtx->tx_details.op_details.change_trust_op.line.liquidity_pool.constant_product.asset_a,
         txCtx->network,
         G_ui_detail_value,
-        DETAIL_VALUE_MAX_LENGTH);
+        DETAIL_VALUE_MAX_LENGTH))
     push_to_formatter_stack(&format_change_trust_detail_liquidity_pool_asset_b);
 }
 
@@ -730,10 +753,11 @@ static void format_change_trust(tx_ctx_t *txCtx) {
     switch (asset_type) {
         case ASSET_TYPE_CREDIT_ALPHANUM4:
         case ASSET_TYPE_CREDIT_ALPHANUM12:
-            print_asset((asset_t *) &txCtx->tx_details.op_details.change_trust_op.line,
-                        txCtx->network,
-                        G_ui_detail_value,
-                        DETAIL_VALUE_MAX_LENGTH);
+            FORMATTER_CHECK(
+                print_asset((asset_t *) &txCtx->tx_details.op_details.change_trust_op.line,
+                            txCtx->network,
+                            G_ui_detail_value,
+                            DETAIL_VALUE_MAX_LENGTH))
             if (txCtx->tx_details.op_details.change_trust_op.limit &&
                 txCtx->tx_details.op_details.change_trust_op.limit != INT64_MAX) {
                 push_to_formatter_stack(&format_change_trust_limit);
@@ -755,55 +779,56 @@ static void format_manage_sell_offer_price(tx_ctx_t *txCtx) {
     uint64_t price =
         ((uint64_t) txCtx->tx_details.op_details.manage_sell_offer_op.price.n * 10000000) /
         txCtx->tx_details.op_details.manage_sell_offer_op.price.d;
-    print_amount(price, NULL, txCtx->network, G_ui_detail_value, DETAIL_VALUE_MAX_LENGTH);
+    FORMATTER_CHECK(
+        print_amount(price, NULL, txCtx->network, G_ui_detail_value, DETAIL_VALUE_MAX_LENGTH))
     strlcat(G_ui_detail_value, " ", DETAIL_VALUE_MAX_LENGTH);
     char tmp_asset_code[13] = {0};
-    print_asset_name(&txCtx->tx_details.op_details.manage_sell_offer_op.buying,
-                     txCtx->network,
-                     tmp_asset_code,
-                     sizeof(tmp_asset_code));
+    FORMATTER_CHECK(print_asset_name(&txCtx->tx_details.op_details.manage_sell_offer_op.buying,
+                                     txCtx->network,
+                                     tmp_asset_code,
+                                     sizeof(tmp_asset_code)))
     strlcat(G_ui_detail_value, tmp_asset_code, DETAIL_VALUE_MAX_LENGTH);
     strlcat(G_ui_detail_value, "/", DETAIL_VALUE_MAX_LENGTH);
-    print_asset_name(&txCtx->tx_details.op_details.manage_sell_offer_op.selling,
-                     txCtx->network,
-                     tmp_asset_code,
-                     sizeof(tmp_asset_code));
+    FORMATTER_CHECK(print_asset_name(&txCtx->tx_details.op_details.manage_sell_offer_op.selling,
+                                     txCtx->network,
+                                     tmp_asset_code,
+                                     sizeof(tmp_asset_code)))
     strlcat(G_ui_detail_value, tmp_asset_code, DETAIL_VALUE_MAX_LENGTH);
     format_operation_source_prepare(txCtx);
 }
 
 static void format_manage_sell_offer_sell(tx_ctx_t *txCtx) {
     strlcpy(G_ui_detail_caption, "Sell", DETAIL_CAPTION_MAX_LENGTH);
-    print_amount(txCtx->tx_details.op_details.manage_sell_offer_op.amount,
-                 &txCtx->tx_details.op_details.manage_sell_offer_op.selling,
-                 txCtx->network,
-                 G_ui_detail_value,
-                 DETAIL_VALUE_MAX_LENGTH);
+    FORMATTER_CHECK(print_amount(txCtx->tx_details.op_details.manage_sell_offer_op.amount,
+                                 &txCtx->tx_details.op_details.manage_sell_offer_op.selling,
+                                 txCtx->network,
+                                 G_ui_detail_value,
+                                 DETAIL_VALUE_MAX_LENGTH))
     push_to_formatter_stack(&format_manage_sell_offer_price);
 }
 
 static void format_manage_sell_offer_buy(tx_ctx_t *txCtx) {
     strlcpy(G_ui_detail_caption, "Buy", DETAIL_CAPTION_MAX_LENGTH);
-    print_asset(&txCtx->tx_details.op_details.manage_sell_offer_op.buying,
-                txCtx->network,
-                G_ui_detail_value,
-                DETAIL_VALUE_MAX_LENGTH);
+    FORMATTER_CHECK(print_asset(&txCtx->tx_details.op_details.manage_sell_offer_op.buying,
+                                txCtx->network,
+                                G_ui_detail_value,
+                                DETAIL_VALUE_MAX_LENGTH))
     push_to_formatter_stack(&format_manage_sell_offer_sell);
 }
 
 static void format_manage_sell_offer(tx_ctx_t *txCtx) {
     if (!txCtx->tx_details.op_details.manage_sell_offer_op.amount) {
         strlcpy(G_ui_detail_caption, "Remove Offer", DETAIL_CAPTION_MAX_LENGTH);
-        print_uint(txCtx->tx_details.op_details.manage_sell_offer_op.offer_id,
-                   G_ui_detail_value,
-                   DETAIL_VALUE_MAX_LENGTH);
+        FORMATTER_CHECK(print_uint(txCtx->tx_details.op_details.manage_sell_offer_op.offer_id,
+                                   G_ui_detail_value,
+                                   DETAIL_VALUE_MAX_LENGTH))
         format_operation_source_prepare(txCtx);
     } else {
         if (txCtx->tx_details.op_details.manage_sell_offer_op.offer_id) {
             strlcpy(G_ui_detail_caption, "Change Offer", DETAIL_CAPTION_MAX_LENGTH);
-            print_uint(txCtx->tx_details.op_details.manage_sell_offer_op.offer_id,
-                       G_ui_detail_value,
-                       DETAIL_VALUE_MAX_LENGTH);
+            FORMATTER_CHECK(print_uint(txCtx->tx_details.op_details.manage_sell_offer_op.offer_id,
+                                       G_ui_detail_value,
+                                       DETAIL_VALUE_MAX_LENGTH))
         } else {
             strlcpy(G_ui_detail_caption, "Create Offer", DETAIL_CAPTION_MAX_LENGTH);
             strlcpy(G_ui_detail_value, "Type Active", DETAIL_VALUE_MAX_LENGTH);
@@ -817,19 +842,20 @@ static void format_manage_buy_offer_price(tx_ctx_t *txCtx) {
 
     strlcpy(G_ui_detail_caption, "Price", DETAIL_CAPTION_MAX_LENGTH);
     uint64_t price = ((uint64_t) op->price.n * 10000000) / op->price.d;
-    print_amount(price, NULL, txCtx->network, G_ui_detail_value, DETAIL_VALUE_MAX_LENGTH);
+    FORMATTER_CHECK(
+        print_amount(price, NULL, txCtx->network, G_ui_detail_value, DETAIL_VALUE_MAX_LENGTH))
     strlcat(G_ui_detail_value, " ", DETAIL_VALUE_MAX_LENGTH);
     char tmp_asset_code[13] = {0};
-    print_asset_name(&txCtx->tx_details.op_details.manage_buy_offer_op.selling,
-                     txCtx->network,
-                     tmp_asset_code,
-                     sizeof(tmp_asset_code));
+    FORMATTER_CHECK(print_asset_name(&txCtx->tx_details.op_details.manage_buy_offer_op.selling,
+                                     txCtx->network,
+                                     tmp_asset_code,
+                                     sizeof(tmp_asset_code)))
     strlcat(G_ui_detail_value, tmp_asset_code, DETAIL_VALUE_MAX_LENGTH);
     strlcat(G_ui_detail_value, "/", DETAIL_VALUE_MAX_LENGTH);
-    print_asset_name(&txCtx->tx_details.op_details.manage_buy_offer_op.buying,
-                     txCtx->network,
-                     tmp_asset_code,
-                     sizeof(tmp_asset_code));
+    FORMATTER_CHECK(print_asset_name(&txCtx->tx_details.op_details.manage_buy_offer_op.buying,
+                                     txCtx->network,
+                                     tmp_asset_code,
+                                     sizeof(tmp_asset_code)))
     strlcat(G_ui_detail_value, tmp_asset_code, DETAIL_VALUE_MAX_LENGTH);
     format_operation_source_prepare(txCtx);
 }
@@ -838,11 +864,11 @@ static void format_manage_buy_offer_buy(tx_ctx_t *txCtx) {
     manage_buy_offer_op_t *op = &txCtx->tx_details.op_details.manage_buy_offer_op;
 
     strlcpy(G_ui_detail_caption, "Buy", DETAIL_CAPTION_MAX_LENGTH);
-    print_amount(op->buy_amount,
-                 &op->buying,
-                 txCtx->network,
-                 G_ui_detail_value,
-                 DETAIL_VALUE_MAX_LENGTH);
+    FORMATTER_CHECK(print_amount(op->buy_amount,
+                                 &op->buying,
+                                 txCtx->network,
+                                 G_ui_detail_value,
+                                 DETAIL_VALUE_MAX_LENGTH))
     push_to_formatter_stack(&format_manage_buy_offer_price);
 }
 
@@ -850,7 +876,8 @@ static void format_manage_buy_offer_sell(tx_ctx_t *txCtx) {
     manage_buy_offer_op_t *op = &txCtx->tx_details.op_details.manage_buy_offer_op;
 
     strlcpy(G_ui_detail_caption, "Sell", DETAIL_CAPTION_MAX_LENGTH);
-    print_asset(&op->selling, txCtx->network, G_ui_detail_value, DETAIL_VALUE_MAX_LENGTH);
+    FORMATTER_CHECK(
+        print_asset(&op->selling, txCtx->network, G_ui_detail_value, DETAIL_VALUE_MAX_LENGTH))
     push_to_formatter_stack(&format_manage_buy_offer_buy);
 }
 
@@ -859,12 +886,12 @@ static void format_manage_buy_offer(tx_ctx_t *txCtx) {
 
     if (op->buy_amount == 0) {
         strlcpy(G_ui_detail_caption, "Remove Offer", DETAIL_CAPTION_MAX_LENGTH);
-        print_uint(op->offer_id, G_ui_detail_value, DETAIL_VALUE_MAX_LENGTH);
+        FORMATTER_CHECK(print_uint(op->offer_id, G_ui_detail_value, DETAIL_VALUE_MAX_LENGTH))
         format_operation_source_prepare(txCtx);  // TODO
     } else {
         if (op->offer_id) {
             strlcpy(G_ui_detail_caption, "Change Offer", DETAIL_CAPTION_MAX_LENGTH);
-            print_uint(op->offer_id, G_ui_detail_value, DETAIL_VALUE_MAX_LENGTH);
+            FORMATTER_CHECK(print_uint(op->offer_id, G_ui_detail_value, DETAIL_VALUE_MAX_LENGTH))
         } else {
             strlcpy(G_ui_detail_caption, "Create Offer", DETAIL_CAPTION_MAX_LENGTH);
             strlcpy(G_ui_detail_value, "Type Active", DETAIL_VALUE_MAX_LENGTH);
@@ -878,39 +905,42 @@ static void format_create_passive_sell_offer_price(tx_ctx_t *txCtx) {
 
     create_passive_sell_offer_op_t *op = &txCtx->tx_details.op_details.create_passive_sell_offer_op;
     uint64_t price = ((uint64_t) op->price.n * 10000000) / op->price.d;
-    print_amount(price, NULL, txCtx->network, G_ui_detail_value, DETAIL_VALUE_MAX_LENGTH);
+    FORMATTER_CHECK(
+        print_amount(price, NULL, txCtx->network, G_ui_detail_value, DETAIL_VALUE_MAX_LENGTH))
     strlcat(G_ui_detail_value, " ", DETAIL_VALUE_MAX_LENGTH);
     char tmp_asset_code[13] = {0};
-    print_asset_name(&txCtx->tx_details.op_details.create_passive_sell_offer_op.buying,
-                     txCtx->network,
-                     tmp_asset_code,
-                     sizeof(tmp_asset_code));
+    FORMATTER_CHECK(
+        print_asset_name(&txCtx->tx_details.op_details.create_passive_sell_offer_op.buying,
+                         txCtx->network,
+                         tmp_asset_code,
+                         sizeof(tmp_asset_code)))
     strlcat(G_ui_detail_value, tmp_asset_code, DETAIL_VALUE_MAX_LENGTH);
     strlcat(G_ui_detail_value, "/", DETAIL_VALUE_MAX_LENGTH);
-    print_asset_name(&txCtx->tx_details.op_details.create_passive_sell_offer_op.selling,
-                     txCtx->network,
-                     tmp_asset_code,
-                     sizeof(tmp_asset_code));
+    FORMATTER_CHECK(
+        print_asset_name(&txCtx->tx_details.op_details.create_passive_sell_offer_op.selling,
+                         txCtx->network,
+                         tmp_asset_code,
+                         sizeof(tmp_asset_code)))
     strlcat(G_ui_detail_value, tmp_asset_code, DETAIL_VALUE_MAX_LENGTH);
     format_operation_source_prepare(txCtx);
 }
 
 static void format_create_passive_sell_offer_sell(tx_ctx_t *txCtx) {
     strlcpy(G_ui_detail_caption, "Sell", DETAIL_CAPTION_MAX_LENGTH);
-    print_amount(txCtx->tx_details.op_details.create_passive_sell_offer_op.amount,
-                 &txCtx->tx_details.op_details.create_passive_sell_offer_op.selling,
-                 txCtx->network,
-                 G_ui_detail_value,
-                 DETAIL_VALUE_MAX_LENGTH);
+    FORMATTER_CHECK(print_amount(txCtx->tx_details.op_details.create_passive_sell_offer_op.amount,
+                                 &txCtx->tx_details.op_details.create_passive_sell_offer_op.selling,
+                                 txCtx->network,
+                                 G_ui_detail_value,
+                                 DETAIL_VALUE_MAX_LENGTH))
     push_to_formatter_stack(&format_create_passive_sell_offer_price);
 }
 
 static void format_create_passive_sell_offer_buy(tx_ctx_t *txCtx) {
     strlcpy(G_ui_detail_caption, "Buy", DETAIL_CAPTION_MAX_LENGTH);
-    print_asset(&txCtx->tx_details.op_details.create_passive_sell_offer_op.buying,
-                txCtx->network,
-                G_ui_detail_value,
-                DETAIL_VALUE_MAX_LENGTH);
+    FORMATTER_CHECK(print_asset(&txCtx->tx_details.op_details.create_passive_sell_offer_op.buying,
+                                txCtx->network,
+                                G_ui_detail_value,
+                                DETAIL_VALUE_MAX_LENGTH))
     push_to_formatter_stack(&format_create_passive_sell_offer_sell);
 }
 
@@ -923,102 +953,108 @@ static void format_create_passive_sell_offer(tx_ctx_t *txCtx) {
 
 static void format_path_payment_strict_receive_receive(tx_ctx_t *txCtx) {
     strlcpy(G_ui_detail_caption, "Receive", DETAIL_CAPTION_MAX_LENGTH);
-    print_amount(txCtx->tx_details.op_details.path_payment_strict_receive_op.dest_amount,
-                 &txCtx->tx_details.op_details.path_payment_strict_receive_op.dest_asset,
-                 txCtx->network,
-                 G_ui_detail_value,
-                 DETAIL_VALUE_MAX_LENGTH);
+    FORMATTER_CHECK(
+        print_amount(txCtx->tx_details.op_details.path_payment_strict_receive_op.dest_amount,
+                     &txCtx->tx_details.op_details.path_payment_strict_receive_op.dest_asset,
+                     txCtx->network,
+                     G_ui_detail_value,
+                     DETAIL_VALUE_MAX_LENGTH))
     format_operation_source_prepare(txCtx);
 }
 
 static void format_path_payment_strict_receive_destination(tx_ctx_t *txCtx) {
     strlcpy(G_ui_detail_caption, "Destination", DETAIL_CAPTION_MAX_LENGTH);
-    print_muxed_account(&txCtx->tx_details.op_details.path_payment_strict_receive_op.destination,
-                        G_ui_detail_value,
-                        DETAIL_VALUE_MAX_LENGTH,
-                        0,
-                        0);
+    FORMATTER_CHECK(print_muxed_account(
+        &txCtx->tx_details.op_details.path_payment_strict_receive_op.destination,
+        G_ui_detail_value,
+        DETAIL_VALUE_MAX_LENGTH,
+        0,
+        0))
     push_to_formatter_stack(&format_path_payment_strict_receive_receive);
 }
 
 static void format_path_payment_strict_receive(tx_ctx_t *txCtx) {
     strlcpy(G_ui_detail_caption, "Send Max", DETAIL_CAPTION_MAX_LENGTH);
-    print_amount(txCtx->tx_details.op_details.path_payment_strict_receive_op.send_max,
-                 &txCtx->tx_details.op_details.path_payment_strict_receive_op.send_asset,
-                 txCtx->network,
-                 G_ui_detail_value,
-                 DETAIL_VALUE_MAX_LENGTH);
+    FORMATTER_CHECK(
+        print_amount(txCtx->tx_details.op_details.path_payment_strict_receive_op.send_max,
+                     &txCtx->tx_details.op_details.path_payment_strict_receive_op.send_asset,
+                     txCtx->network,
+                     G_ui_detail_value,
+                     DETAIL_VALUE_MAX_LENGTH))
     push_to_formatter_stack(&format_path_payment_strict_receive_destination);
 }
 
 static void format_path_payment_strict_send_receive(tx_ctx_t *txCtx) {
     strlcpy(G_ui_detail_caption, "Receive Min", DETAIL_CAPTION_MAX_LENGTH);
-    print_amount(txCtx->tx_details.op_details.path_payment_strict_send_op.dest_min,
-                 &txCtx->tx_details.op_details.path_payment_strict_send_op.dest_asset,
-                 txCtx->network,
-                 G_ui_detail_value,
-                 DETAIL_VALUE_MAX_LENGTH);
+    FORMATTER_CHECK(
+        print_amount(txCtx->tx_details.op_details.path_payment_strict_send_op.dest_min,
+                     &txCtx->tx_details.op_details.path_payment_strict_send_op.dest_asset,
+                     txCtx->network,
+                     G_ui_detail_value,
+                     DETAIL_VALUE_MAX_LENGTH))
     format_operation_source_prepare(txCtx);
 }
 
 static void format_path_payment_strict_send_destination(tx_ctx_t *txCtx) {
     strlcpy(G_ui_detail_caption, "Destination", DETAIL_CAPTION_MAX_LENGTH);
-    print_muxed_account(&txCtx->tx_details.op_details.path_payment_strict_send_op.destination,
-                        G_ui_detail_value,
-                        DETAIL_VALUE_MAX_LENGTH,
-                        0,
-                        0);
+    FORMATTER_CHECK(
+        print_muxed_account(&txCtx->tx_details.op_details.path_payment_strict_send_op.destination,
+                            G_ui_detail_value,
+                            DETAIL_VALUE_MAX_LENGTH,
+                            0,
+                            0))
     push_to_formatter_stack(&format_path_payment_strict_send_receive);
 }
 
 static void format_path_payment_strict_send(tx_ctx_t *txCtx) {
     strlcpy(G_ui_detail_caption, "Send", DETAIL_CAPTION_MAX_LENGTH);
-    print_amount(txCtx->tx_details.op_details.path_payment_strict_send_op.send_amount,
-                 &txCtx->tx_details.op_details.path_payment_strict_send_op.send_asset,
-                 txCtx->network,
-                 G_ui_detail_value,
-                 DETAIL_VALUE_MAX_LENGTH);
+    FORMATTER_CHECK(
+        print_amount(txCtx->tx_details.op_details.path_payment_strict_send_op.send_amount,
+                     &txCtx->tx_details.op_details.path_payment_strict_send_op.send_asset,
+                     txCtx->network,
+                     G_ui_detail_value,
+                     DETAIL_VALUE_MAX_LENGTH))
     push_to_formatter_stack(&format_path_payment_strict_send_destination);
 }
 
 static void format_payment_destination(tx_ctx_t *txCtx) {
     strlcpy(G_ui_detail_caption, "Destination", DETAIL_CAPTION_MAX_LENGTH);
-    print_muxed_account(&txCtx->tx_details.op_details.payment_op.destination,
-                        G_ui_detail_value,
-                        DETAIL_VALUE_MAX_LENGTH,
-                        0,
-                        0);
+    FORMATTER_CHECK(print_muxed_account(&txCtx->tx_details.op_details.payment_op.destination,
+                                        G_ui_detail_value,
+                                        DETAIL_VALUE_MAX_LENGTH,
+                                        0,
+                                        0))
     format_operation_source_prepare(txCtx);
 }
 
 static void format_payment(tx_ctx_t *txCtx) {
     strlcpy(G_ui_detail_caption, "Send", DETAIL_CAPTION_MAX_LENGTH);
-    print_amount(txCtx->tx_details.op_details.payment_op.amount,
-                 &txCtx->tx_details.op_details.payment_op.asset,
-                 txCtx->network,
-                 G_ui_detail_value,
-                 DETAIL_VALUE_MAX_LENGTH);
+    FORMATTER_CHECK(print_amount(txCtx->tx_details.op_details.payment_op.amount,
+                                 &txCtx->tx_details.op_details.payment_op.asset,
+                                 txCtx->network,
+                                 G_ui_detail_value,
+                                 DETAIL_VALUE_MAX_LENGTH))
     push_to_formatter_stack(&format_payment_destination);
 }
 
 static void format_create_account_amount(tx_ctx_t *txCtx) {
     strlcpy(G_ui_detail_caption, "Starting Balance", DETAIL_CAPTION_MAX_LENGTH);
     asset_t asset = {.type = ASSET_TYPE_NATIVE};
-    print_amount(txCtx->tx_details.op_details.create_account_op.starting_balance,
-                 &asset,
-                 txCtx->network,
-                 G_ui_detail_value,
-                 DETAIL_VALUE_MAX_LENGTH);
+    FORMATTER_CHECK(print_amount(txCtx->tx_details.op_details.create_account_op.starting_balance,
+                                 &asset,
+                                 txCtx->network,
+                                 G_ui_detail_value,
+                                 DETAIL_VALUE_MAX_LENGTH))
     format_operation_source_prepare(txCtx);
 }
 
 static void format_create_account_destination(tx_ctx_t *txCtx) {
     strlcpy(G_ui_detail_caption, "Destination", DETAIL_CAPTION_MAX_LENGTH);
-    print_account_id(txCtx->tx_details.op_details.create_account_op.destination,
-                     G_ui_detail_value,
-                     DETAIL_VALUE_MAX_LENGTH,
-                     0,
-                     0);
+    FORMATTER_CHECK(print_account_id(txCtx->tx_details.op_details.create_account_op.destination,
+                                     G_ui_detail_value,
+                                     DETAIL_VALUE_MAX_LENGTH,
+                                     0,
+                                     0))
     push_to_formatter_stack(&format_create_account_amount);
 }
 
@@ -1042,11 +1078,11 @@ void format_create_claimable_balance_warning(tx_ctx_t *txCtx) {
 
 static void format_create_claimable_balance_balance(tx_ctx_t *txCtx) {
     strlcpy(G_ui_detail_caption, "Balance", DETAIL_CAPTION_MAX_LENGTH);
-    print_amount(txCtx->tx_details.op_details.create_claimable_balance_op.amount,
-                 &txCtx->tx_details.op_details.create_claimable_balance_op.asset,
-                 txCtx->network,
-                 G_ui_detail_value,
-                 DETAIL_VALUE_MAX_LENGTH);
+    FORMATTER_CHECK(print_amount(txCtx->tx_details.op_details.create_claimable_balance_op.amount,
+                                 &txCtx->tx_details.op_details.create_claimable_balance_op.asset,
+                                 txCtx->network,
+                                 G_ui_detail_value,
+                                 DETAIL_VALUE_MAX_LENGTH))
     push_to_formatter_stack(&format_create_claimable_balance_warning);
 }
 
@@ -1059,9 +1095,10 @@ static void format_create_claimable_balance(tx_ctx_t *txCtx) {
 
 static void format_claim_claimable_balance_balance_id(tx_ctx_t *txCtx) {
     strlcpy(G_ui_detail_caption, "Balance ID", DETAIL_CAPTION_MAX_LENGTH);
-    print_claimable_balance_id(&txCtx->tx_details.op_details.claim_claimable_balance_op.balance_id,
-                               G_ui_detail_value,
-                               DETAIL_VALUE_MAX_LENGTH);
+    FORMATTER_CHECK(print_claimable_balance_id(
+        &txCtx->tx_details.op_details.claim_claimable_balance_op.balance_id,
+        G_ui_detail_value,
+        DETAIL_VALUE_MAX_LENGTH))
     format_operation_source_prepare(txCtx);
 }
 
@@ -1074,11 +1111,12 @@ static void format_claim_claimable_balance(tx_ctx_t *txCtx) {
 
 static void format_claim_claimable_balance_sponsored_id(tx_ctx_t *txCtx) {
     strlcpy(G_ui_detail_caption, "Sponsored ID", DETAIL_CAPTION_MAX_LENGTH);
-    print_account_id(txCtx->tx_details.op_details.begin_sponsoring_future_reserves_op.sponsored_id,
-                     G_ui_detail_value,
-                     DETAIL_VALUE_MAX_LENGTH,
-                     0,
-                     0);
+    FORMATTER_CHECK(print_account_id(
+        txCtx->tx_details.op_details.begin_sponsoring_future_reserves_op.sponsored_id,
+        G_ui_detail_value,
+        DETAIL_VALUE_MAX_LENGTH,
+        0,
+        0))
     format_operation_source_prepare(txCtx);
 }
 
@@ -1098,12 +1136,12 @@ static void format_end_sponsoring_future_reserves(tx_ctx_t *txCtx) {
 
 static void format_revoke_sponsorship_account(tx_ctx_t *txCtx) {
     strlcpy(G_ui_detail_caption, "Account ID", DETAIL_CAPTION_MAX_LENGTH);
-    print_account_id(
+    FORMATTER_CHECK(print_account_id(
         txCtx->tx_details.op_details.revoke_sponsorship_op.ledger_key.account.account_id,
         G_ui_detail_value,
         DETAIL_VALUE_MAX_LENGTH,
         0,
-        0);
+        0))
     format_operation_source_prepare(txCtx);
 }
 
@@ -1111,50 +1149,52 @@ static void format_revoke_sponsorship_trust_line_asset(tx_ctx_t *txCtx) {
     if (txCtx->tx_details.op_details.revoke_sponsorship_op.ledger_key.trust_line.asset.type ==
         ASSET_TYPE_POOL_SHARE) {
         strlcpy(G_ui_detail_caption, "Liquidity Pool ID", DETAIL_CAPTION_MAX_LENGTH);
-        print_binary(txCtx->tx_details.op_details.revoke_sponsorship_op.ledger_key.trust_line.asset
-                         .liquidity_pool_id,
-                     LIQUIDITY_POOL_ID_SIZE,
-                     G_ui_detail_value,
-                     DETAIL_VALUE_MAX_LENGTH,
-                     0,
-                     0);
+        FORMATTER_CHECK(print_binary(txCtx->tx_details.op_details.revoke_sponsorship_op.ledger_key
+                                         .trust_line.asset.liquidity_pool_id,
+                                     LIQUIDITY_POOL_ID_SIZE,
+                                     G_ui_detail_value,
+                                     DETAIL_VALUE_MAX_LENGTH,
+                                     0,
+                                     0))
     } else {
         strlcpy(G_ui_detail_caption, "Asset", DETAIL_CAPTION_MAX_LENGTH);
-        print_asset((asset_t *) &txCtx->tx_details.op_details.revoke_sponsorship_op.ledger_key
-                        .trust_line.asset,
-                    txCtx->network,
-                    G_ui_detail_value,
-                    DETAIL_VALUE_MAX_LENGTH);
+        FORMATTER_CHECK(print_asset((asset_t *) &txCtx->tx_details.op_details.revoke_sponsorship_op
+                                        .ledger_key.trust_line.asset,
+                                    txCtx->network,
+                                    G_ui_detail_value,
+                                    DETAIL_VALUE_MAX_LENGTH))
     }
     format_operation_source_prepare(txCtx);
 }
 
 static void format_revoke_sponsorship_trust_line_account(tx_ctx_t *txCtx) {
     strlcpy(G_ui_detail_caption, "Account ID", DETAIL_CAPTION_MAX_LENGTH);
-    print_account_id(
+    FORMATTER_CHECK(print_account_id(
         txCtx->tx_details.op_details.revoke_sponsorship_op.ledger_key.trust_line.account_id,
         G_ui_detail_value,
         DETAIL_VALUE_MAX_LENGTH,
         0,
-        0);
+        0))
     push_to_formatter_stack(&format_revoke_sponsorship_trust_line_asset);
 }
 static void format_revoke_sponsorship_offer_offer_id(tx_ctx_t *txCtx) {
     strlcpy(G_ui_detail_caption, "Offer ID", DETAIL_CAPTION_MAX_LENGTH);
-    print_uint(txCtx->tx_details.op_details.revoke_sponsorship_op.ledger_key.offer.offer_id,
-               G_ui_detail_value,
-               DETAIL_VALUE_MAX_LENGTH);
+    FORMATTER_CHECK(
+        print_uint(txCtx->tx_details.op_details.revoke_sponsorship_op.ledger_key.offer.offer_id,
+                   G_ui_detail_value,
+                   DETAIL_VALUE_MAX_LENGTH))
 
     format_operation_source_prepare(txCtx);
 }
 
 static void format_revoke_sponsorship_offer_seller_id(tx_ctx_t *txCtx) {
     strlcpy(G_ui_detail_caption, "Seller ID", DETAIL_CAPTION_MAX_LENGTH);
-    print_account_id(txCtx->tx_details.op_details.revoke_sponsorship_op.ledger_key.offer.seller_id,
-                     G_ui_detail_value,
-                     DETAIL_VALUE_MAX_LENGTH,
-                     0,
-                     0);
+    FORMATTER_CHECK(print_account_id(
+        txCtx->tx_details.op_details.revoke_sponsorship_op.ledger_key.offer.seller_id,
+        G_ui_detail_value,
+        DETAIL_VALUE_MAX_LENGTH,
+        0,
+        0))
     push_to_formatter_stack(&format_revoke_sponsorship_offer_offer_id);
 }
 
@@ -1174,32 +1214,33 @@ static void format_revoke_sponsorship_data_data_name(tx_ctx_t *txCtx) {
 
 static void format_revoke_sponsorship_data_account(tx_ctx_t *txCtx) {
     strlcpy(G_ui_detail_caption, "Account ID", DETAIL_CAPTION_MAX_LENGTH);
-    print_account_id(txCtx->tx_details.op_details.revoke_sponsorship_op.ledger_key.data.account_id,
-                     G_ui_detail_value,
-                     DETAIL_VALUE_MAX_LENGTH,
-                     0,
-                     0);
+    FORMATTER_CHECK(print_account_id(
+        txCtx->tx_details.op_details.revoke_sponsorship_op.ledger_key.data.account_id,
+        G_ui_detail_value,
+        DETAIL_VALUE_MAX_LENGTH,
+        0,
+        0))
     push_to_formatter_stack(&format_revoke_sponsorship_data_data_name);
 }
 
 static void format_revoke_sponsorship_claimable_balance(tx_ctx_t *txCtx) {
     strlcpy(G_ui_detail_caption, "Balance ID", DETAIL_CAPTION_MAX_LENGTH);
-    print_claimable_balance_id(
+    FORMATTER_CHECK(print_claimable_balance_id(
         &txCtx->tx_details.op_details.revoke_sponsorship_op.ledger_key.claimable_balance.balance_id,
         G_ui_detail_value,
-        DETAIL_VALUE_MAX_LENGTH);
+        DETAIL_VALUE_MAX_LENGTH))
     format_operation_source_prepare(txCtx);
 }
 
 static void format_revoke_sponsorship_liquidity_pool(tx_ctx_t *txCtx) {
     strlcpy(G_ui_detail_caption, "Liquidity Pool ID", DETAIL_CAPTION_MAX_LENGTH);
-    print_binary(txCtx->tx_details.op_details.revoke_sponsorship_op.ledger_key.liquidity_pool
-                     .liquidity_pool_id,
-                 LIQUIDITY_POOL_ID_SIZE,
-                 G_ui_detail_value,
-                 DETAIL_VALUE_MAX_LENGTH,
-                 0,
-                 0);
+    FORMATTER_CHECK(print_binary(txCtx->tx_details.op_details.revoke_sponsorship_op.ledger_key
+                                     .liquidity_pool.liquidity_pool_id,
+                                 LIQUIDITY_POOL_ID_SIZE,
+                                 G_ui_detail_value,
+                                 DETAIL_VALUE_MAX_LENGTH,
+                                 0,
+                                 0))
     format_operation_source_prepare(txCtx);
 }
 
@@ -1209,15 +1250,18 @@ static void format_revoke_sponsorship_claimable_signer_signer_key_detail(tx_ctx_
 
     switch (key->type) {
         case SIGNER_KEY_TYPE_ED25519: {
-            print_account_id(key->ed25519, G_ui_detail_value, DETAIL_VALUE_MAX_LENGTH, 0, 0);
+            FORMATTER_CHECK(
+                print_account_id(key->ed25519, G_ui_detail_value, DETAIL_VALUE_MAX_LENGTH, 0, 0))
             break;
         }
         case SIGNER_KEY_TYPE_HASH_X: {
-            encode_hash_x_key(key->hash_x, G_ui_detail_value, DETAIL_VALUE_MAX_LENGTH);
+            FORMATTER_CHECK(
+                encode_hash_x_key(key->hash_x, G_ui_detail_value, DETAIL_VALUE_MAX_LENGTH))
             break;
         }
         case SIGNER_KEY_TYPE_PRE_AUTH_TX: {
-            encode_pre_auth_x_key(key->pre_auth_tx, G_ui_detail_value, DETAIL_VALUE_MAX_LENGTH);
+            FORMATTER_CHECK(
+                encode_pre_auth_x_key(key->pre_auth_tx, G_ui_detail_value, DETAIL_VALUE_MAX_LENGTH))
             break;
         }
         default:
@@ -1250,11 +1294,12 @@ static void format_revoke_sponsorship_claimable_signer_signer_key_type(tx_ctx_t 
 
 static void format_revoke_sponsorship_claimable_signer_account(tx_ctx_t *txCtx) {
     strlcpy(G_ui_detail_caption, "Account ID", DETAIL_CAPTION_MAX_LENGTH);
-    print_account_id(txCtx->tx_details.op_details.revoke_sponsorship_op.signer.account_id,
-                     G_ui_detail_value,
-                     DETAIL_VALUE_MAX_LENGTH,
-                     0,
-                     0);
+    FORMATTER_CHECK(
+        print_account_id(txCtx->tx_details.op_details.revoke_sponsorship_op.signer.account_id,
+                         G_ui_detail_value,
+                         DETAIL_VALUE_MAX_LENGTH,
+                         0,
+                         0))
     push_to_formatter_stack(&format_revoke_sponsorship_claimable_signer_signer_key_type);
 }
 
@@ -1301,21 +1346,21 @@ static void format_revoke_sponsorship(tx_ctx_t *txCtx) {
 
 static void format_clawback_from(tx_ctx_t *txCtx) {
     strlcpy(G_ui_detail_caption, "From", DETAIL_CAPTION_MAX_LENGTH);
-    print_muxed_account(&txCtx->tx_details.op_details.clawback_op.from,
-                        G_ui_detail_value,
-                        DETAIL_VALUE_MAX_LENGTH,
-                        0,
-                        0);
+    FORMATTER_CHECK(print_muxed_account(&txCtx->tx_details.op_details.clawback_op.from,
+                                        G_ui_detail_value,
+                                        DETAIL_VALUE_MAX_LENGTH,
+                                        0,
+                                        0))
     format_operation_source_prepare(txCtx);
 }
 
 static void format_clawback_amount(tx_ctx_t *txCtx) {
     strlcpy(G_ui_detail_caption, "Clawback Balance", DETAIL_CAPTION_MAX_LENGTH);
-    print_amount(txCtx->tx_details.op_details.clawback_op.amount,
-                 &txCtx->tx_details.op_details.clawback_op.asset,
-                 txCtx->network,
-                 G_ui_detail_value,
-                 DETAIL_VALUE_MAX_LENGTH);
+    FORMATTER_CHECK(print_amount(txCtx->tx_details.op_details.clawback_op.amount,
+                                 &txCtx->tx_details.op_details.clawback_op.asset,
+                                 txCtx->network,
+                                 G_ui_detail_value,
+                                 DETAIL_VALUE_MAX_LENGTH))
     push_to_formatter_stack(&format_clawback_from);
 }
 
@@ -1328,10 +1373,10 @@ static void format_clawback(tx_ctx_t *txCtx) {
 
 static void format_clawback_claimable_balance_balance_id(tx_ctx_t *txCtx) {
     strlcpy(G_ui_detail_caption, "Balance ID", DETAIL_CAPTION_MAX_LENGTH);
-    print_claimable_balance_id(
+    FORMATTER_CHECK(print_claimable_balance_id(
         &txCtx->tx_details.op_details.clawback_claimable_balance_op.balance_id,
         G_ui_detail_value,
-        DETAIL_VALUE_MAX_LENGTH);
+        DETAIL_VALUE_MAX_LENGTH))
     format_operation_source_prepare(txCtx);
 }
 
@@ -1368,20 +1413,20 @@ static void format_set_trust_line_clear_flags(tx_ctx_t *txCtx) {
 
 static void format_set_trust_line_asset(tx_ctx_t *txCtx) {
     strlcpy(G_ui_detail_caption, "Asset", DETAIL_CAPTION_MAX_LENGTH);
-    print_asset(&txCtx->tx_details.op_details.set_trust_line_flags_op.asset,
-                txCtx->network,
-                G_ui_detail_value,
-                DETAIL_VALUE_MAX_LENGTH);
+    FORMATTER_CHECK(print_asset(&txCtx->tx_details.op_details.set_trust_line_flags_op.asset,
+                                txCtx->network,
+                                G_ui_detail_value,
+                                DETAIL_VALUE_MAX_LENGTH))
     push_to_formatter_stack(&format_set_trust_line_clear_flags);
 }
 
 static void format_set_trust_line_trustor(tx_ctx_t *txCtx) {
     strlcpy(G_ui_detail_caption, "Trustor", DETAIL_CAPTION_MAX_LENGTH);
-    print_account_id(txCtx->tx_details.op_details.set_trust_line_flags_op.trustor,
-                     G_ui_detail_value,
-                     DETAIL_VALUE_MAX_LENGTH,
-                     0,
-                     0);
+    FORMATTER_CHECK(print_account_id(txCtx->tx_details.op_details.set_trust_line_flags_op.trustor,
+                                     G_ui_detail_value,
+                                     DETAIL_VALUE_MAX_LENGTH,
+                                     0,
+                                     0))
     push_to_formatter_stack(&format_set_trust_line_asset);
 }
 
@@ -1397,7 +1442,8 @@ static void format_liquidity_pool_deposit_max_price(tx_ctx_t *txCtx) {
     uint64_t price =
         ((uint64_t) txCtx->tx_details.op_details.liquidity_pool_deposit_op.max_price.n * 10000000) /
         txCtx->tx_details.op_details.liquidity_pool_deposit_op.max_price.d;
-    print_amount(price, NULL, txCtx->network, G_ui_detail_value, DETAIL_VALUE_MAX_LENGTH);
+    FORMATTER_CHECK(
+        print_amount(price, NULL, txCtx->network, G_ui_detail_value, DETAIL_VALUE_MAX_LENGTH))
     format_operation_source_prepare(txCtx);
 }
 
@@ -1406,38 +1452,42 @@ static void format_liquidity_pool_deposit_min_price(tx_ctx_t *txCtx) {
     uint64_t price =
         ((uint64_t) txCtx->tx_details.op_details.liquidity_pool_deposit_op.min_price.n * 10000000) /
         txCtx->tx_details.op_details.liquidity_pool_deposit_op.min_price.d;
-    print_amount(price, NULL, txCtx->network, G_ui_detail_value, DETAIL_VALUE_MAX_LENGTH);
+    FORMATTER_CHECK(
+        print_amount(price, NULL, txCtx->network, G_ui_detail_value, DETAIL_VALUE_MAX_LENGTH))
     push_to_formatter_stack(&format_liquidity_pool_deposit_max_price);
 }
 
 static void format_liquidity_pool_deposit_max_amount_b(tx_ctx_t *txCtx) {
     strlcpy(G_ui_detail_caption, "Max Amount B", DETAIL_CAPTION_MAX_LENGTH);
-    print_amount(txCtx->tx_details.op_details.liquidity_pool_deposit_op.max_amount_b,
-                 NULL,
-                 txCtx->network,
-                 G_ui_detail_value,
-                 DETAIL_VALUE_MAX_LENGTH);
+    FORMATTER_CHECK(
+        print_amount(txCtx->tx_details.op_details.liquidity_pool_deposit_op.max_amount_b,
+                     NULL,
+                     txCtx->network,
+                     G_ui_detail_value,
+                     DETAIL_VALUE_MAX_LENGTH))
     push_to_formatter_stack(&format_liquidity_pool_deposit_min_price);
 }
 
 static void format_liquidity_pool_deposit_max_amount_a(tx_ctx_t *txCtx) {
     strlcpy(G_ui_detail_caption, "Max Amount A", DETAIL_CAPTION_MAX_LENGTH);
-    print_amount(txCtx->tx_details.op_details.liquidity_pool_deposit_op.max_amount_a,
-                 NULL,
-                 txCtx->network,
-                 G_ui_detail_value,
-                 DETAIL_VALUE_MAX_LENGTH);
+    FORMATTER_CHECK(
+        print_amount(txCtx->tx_details.op_details.liquidity_pool_deposit_op.max_amount_a,
+                     NULL,
+                     txCtx->network,
+                     G_ui_detail_value,
+                     DETAIL_VALUE_MAX_LENGTH))
     push_to_formatter_stack(&format_liquidity_pool_deposit_max_amount_b);
 }
 
 static void format_liquidity_pool_deposit_liquidity_pool_id(tx_ctx_t *txCtx) {
     strlcpy(G_ui_detail_caption, "Liquidity Pool ID", DETAIL_CAPTION_MAX_LENGTH);
-    print_binary(txCtx->tx_details.op_details.liquidity_pool_deposit_op.liquidity_pool_id,
-                 LIQUIDITY_POOL_ID_SIZE,
-                 G_ui_detail_value,
-                 DETAIL_VALUE_MAX_LENGTH,
-                 0,
-                 0);
+    FORMATTER_CHECK(
+        print_binary(txCtx->tx_details.op_details.liquidity_pool_deposit_op.liquidity_pool_id,
+                     LIQUIDITY_POOL_ID_SIZE,
+                     G_ui_detail_value,
+                     DETAIL_VALUE_MAX_LENGTH,
+                     0,
+                     0))
     push_to_formatter_stack(&format_liquidity_pool_deposit_max_amount_a);
 }
 
@@ -1450,42 +1500,45 @@ static void format_liquidity_pool_deposit(tx_ctx_t *txCtx) {
 
 static void format_liquidity_pool_withdraw_min_amount_b(tx_ctx_t *txCtx) {
     strlcpy(G_ui_detail_caption, "Min Amount B", DETAIL_CAPTION_MAX_LENGTH);
-    print_amount(txCtx->tx_details.op_details.liquidity_pool_withdraw_op.min_amount_b,
-                 NULL,
-                 txCtx->network,
-                 G_ui_detail_value,
-                 DETAIL_VALUE_MAX_LENGTH);
+    FORMATTER_CHECK(
+        print_amount(txCtx->tx_details.op_details.liquidity_pool_withdraw_op.min_amount_b,
+                     NULL,
+                     txCtx->network,
+                     G_ui_detail_value,
+                     DETAIL_VALUE_MAX_LENGTH))
     format_operation_source_prepare(txCtx);
 }
 
 static void format_liquidity_pool_withdraw_min_amount_a(tx_ctx_t *txCtx) {
     strlcpy(G_ui_detail_caption, "Min Amount A", DETAIL_CAPTION_MAX_LENGTH);
-    print_amount(txCtx->tx_details.op_details.liquidity_pool_withdraw_op.min_amount_a,
-                 NULL,
-                 txCtx->network,
-                 G_ui_detail_value,
-                 DETAIL_VALUE_MAX_LENGTH);
+    FORMATTER_CHECK(
+        print_amount(txCtx->tx_details.op_details.liquidity_pool_withdraw_op.min_amount_a,
+                     NULL,
+                     txCtx->network,
+                     G_ui_detail_value,
+                     DETAIL_VALUE_MAX_LENGTH))
     push_to_formatter_stack(&format_liquidity_pool_withdraw_min_amount_b);
 }
 
 static void format_liquidity_pool_withdraw_amount(tx_ctx_t *txCtx) {
     strlcpy(G_ui_detail_caption, "Amount", DETAIL_CAPTION_MAX_LENGTH);
-    print_amount(txCtx->tx_details.op_details.liquidity_pool_withdraw_op.amount,
-                 NULL,
-                 txCtx->network,
-                 G_ui_detail_value,
-                 DETAIL_VALUE_MAX_LENGTH);
+    FORMATTER_CHECK(print_amount(txCtx->tx_details.op_details.liquidity_pool_withdraw_op.amount,
+                                 NULL,
+                                 txCtx->network,
+                                 G_ui_detail_value,
+                                 DETAIL_VALUE_MAX_LENGTH))
     push_to_formatter_stack(&format_liquidity_pool_withdraw_min_amount_a);
 }
 
 static void format_liquidity_pool_withdraw_liquidity_pool_id(tx_ctx_t *txCtx) {
     strlcpy(G_ui_detail_caption, "Liquidity Pool ID", DETAIL_CAPTION_MAX_LENGTH);
-    print_binary(txCtx->tx_details.op_details.liquidity_pool_withdraw_op.liquidity_pool_id,
-                 LIQUIDITY_POOL_ID_SIZE,
-                 G_ui_detail_value,
-                 DETAIL_VALUE_MAX_LENGTH,
-                 0,
-                 0);
+    FORMATTER_CHECK(
+        print_binary(txCtx->tx_details.op_details.liquidity_pool_withdraw_op.liquidity_pool_id,
+                     LIQUIDITY_POOL_ID_SIZE,
+                     G_ui_detail_value,
+                     DETAIL_VALUE_MAX_LENGTH,
+                     0,
+                     0))
     push_to_formatter_stack(&format_liquidity_pool_withdraw_amount);
 }
 
@@ -1526,14 +1579,14 @@ void format_confirm_operation(tx_ctx_t *txCtx) {
         size_t len;
         strlcpy(op_caption, "Operation ", OPERATION_CAPTION_MAX_LENGTH);
         len = strlen(op_caption);
-        print_uint(txCtx->tx_details.operation_index,
-                   op_caption + len,
-                   OPERATION_CAPTION_MAX_LENGTH - len);
+        FORMATTER_CHECK(print_uint(txCtx->tx_details.operation_index,
+                                   op_caption + len,
+                                   OPERATION_CAPTION_MAX_LENGTH - len))
         strlcat(op_caption, " of ", sizeof(op_caption));
         len = strlen(op_caption);
-        print_uint(txCtx->tx_details.operations_count,
-                   op_caption + len,
-                   OPERATION_CAPTION_MAX_LENGTH - len);
+        FORMATTER_CHECK(print_uint(txCtx->tx_details.operations_count,
+                                   op_caption + len,
+                                   OPERATION_CAPTION_MAX_LENGTH - len))
         push_to_formatter_stack(
             ((format_function_t) PIC(formatters[txCtx->tx_details.op_details.type])));
     } else {
@@ -1544,11 +1597,11 @@ void format_confirm_operation(tx_ctx_t *txCtx) {
 static void format_fee_bump_transaction_fee(tx_ctx_t *txCtx) {
     strlcpy(G_ui_detail_caption, "Max Fee", DETAIL_CAPTION_MAX_LENGTH);
     asset_t asset = {.type = ASSET_TYPE_NATIVE};
-    print_amount(txCtx->fee_bump_tx_details.fee,
-                 &asset,
-                 txCtx->network,
-                 G_ui_detail_value,
-                 DETAIL_VALUE_MAX_LENGTH);
+    FORMATTER_CHECK(print_amount(txCtx->fee_bump_tx_details.fee,
+                                 &asset,
+                                 txCtx->network,
+                                 G_ui_detail_value,
+                                 DETAIL_VALUE_MAX_LENGTH))
     push_to_formatter_stack(&format_transaction_details);
 }
 
@@ -1559,17 +1612,17 @@ static void format_fee_bump_transaction_source(tx_ctx_t *txCtx) {
         memcmp(txCtx->fee_bump_tx_details.fee_source.ed25519,
                G_context.raw_public_key,
                RAW_ED25519_PUBLIC_KEY_SIZE) == 0) {
-        print_muxed_account(&txCtx->fee_bump_tx_details.fee_source,
-                            G_ui_detail_value,
-                            DETAIL_VALUE_MAX_LENGTH,
-                            6,
-                            6);
+        FORMATTER_CHECK(print_muxed_account(&txCtx->fee_bump_tx_details.fee_source,
+                                            G_ui_detail_value,
+                                            DETAIL_VALUE_MAX_LENGTH,
+                                            6,
+                                            6))
     } else {
-        print_muxed_account(&txCtx->fee_bump_tx_details.fee_source,
-                            G_ui_detail_value,
-                            DETAIL_VALUE_MAX_LENGTH,
-                            0,
-                            0);
+        FORMATTER_CHECK(print_muxed_account(&txCtx->fee_bump_tx_details.fee_source,
+                                            G_ui_detail_value,
+                                            DETAIL_VALUE_MAX_LENGTH,
+                                            0,
+                                            0))
     }
     push_to_formatter_stack(&format_fee_bump_transaction_fee);
 }
