@@ -48,6 +48,9 @@ export default class StellarZemu extends Zemu {
         if (watchdog <= 0) throw "Timeout waiting for screen update";
         currentScreen = await this.snapshot();
       }
+    } else {
+      // A minimum delay is required
+      Zemu.delay(100)
     }
     // In GitHub Action, it is often encountered that the screen is only refreshed halfway 
     // before being snapshotted, which will cause the test to fail, so we made this change, 

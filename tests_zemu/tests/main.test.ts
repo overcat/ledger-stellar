@@ -177,7 +177,7 @@ describe('transactions', () => {
 
         const result = str.signTransaction("44'/148'/0'", tx.signatureBase())
         await sim.waitScreenChange(1000 * 60 * 60)
-        await sim.navigateAndCompareUntilText(".", `${m.prefix.toLowerCase()}-${c.filePath}`, 'Finalize', 1000 * 60 * 60)
+        await sim.navigateAndCompareUntilText(".", `${m.prefix.toLowerCase()}-${c.filePath}`, 'Finalize', true, undefined, 1000 * 60 * 60)
         const kp = Keypair.fromSecret("SAIYWGGWU2WMXYDSK33UBQBMBDKU4TTJVY3ZIFF24H2KQDR7RQW5KAEK")
         tx.sign(kp)
         expect((await result).signature).toStrictEqual(tx.signatures[0].signature());
@@ -204,7 +204,7 @@ describe('transactions', () => {
       expect(() => str.signTransaction("44'/148'/0'", tx.signatureBase())).rejects.toThrow(new Error("Transaction approval request was rejected"));
 
       await sim.waitScreenChange(1000 * 60 * 60)
-      await sim.navigateAndCompareUntilText(".", `${m.prefix.toLowerCase()}-tx-reject`, 'Cancel', 1000 * 60 * 60)
+      await sim.navigateAndCompareUntilText(".", `${m.prefix.toLowerCase()}-tx-reject`, 'Cancel', true, undefined, 1000 * 60 * 60)
     } finally {
       await sim.close();
     }
@@ -227,7 +227,7 @@ describe('transactions', () => {
       expect(() => str.signTransaction("44'/148'/0'", tx.signatureBase())).rejects.toThrow(new Error("Transaction approval request was rejected"));
 
       await sim.waitScreenChange(1000 * 60 * 60)
-      await sim.navigateAndCompareUntilText(".", `${m.prefix.toLowerCase()}-fee-bump-tx-reject`, 'Cancel', 1000 * 60 * 60)
+      await sim.navigateAndCompareUntilText(".", `${m.prefix.toLowerCase()}-fee-bump-tx-reject`, 'Cancel', true, undefined, 1000 * 60 * 60)
     } finally {
       await sim.close();
     }
@@ -243,7 +243,7 @@ describe('transactions', () => {
 
       const result = str.signTransaction("44'/148'/0'", tx.signatureBase())
       await sim.waitScreenChange(1000 * 60 * 60)
-      await sim.navigateAndCompareUntilText(".", `${m.prefix.toLowerCase()}-tx-hide-sequence`, 'Finalize', 1000 * 60 * 60)
+      await sim.navigateAndCompareUntilText(".", `${m.prefix.toLowerCase()}-tx-hide-sequence`, 'Finalize', true, undefined, 1000 * 60 * 60)
 
       const kp = Keypair.fromSecret("SAIYWGGWU2WMXYDSK33UBQBMBDKU4TTJVY3ZIFF24H2KQDR7RQW5KAEK")
       tx.sign(kp)
@@ -263,7 +263,7 @@ describe('transactions', () => {
 
       const result = str.signTransaction("44'/148'/0'", tx.signatureBase())
       await sim.waitScreenChange(1000 * 60 * 60)
-      await sim.navigateAndCompareUntilText(".", `${m.prefix.toLowerCase()}-fee-bump-tx-hide-sequence`, 'Finalize', 1000 * 60 * 60)
+      await sim.navigateAndCompareUntilText(".", `${m.prefix.toLowerCase()}-fee-bump-tx-hide-sequence`, 'Finalize', true, undefined, 1000 * 60 * 60)
 
       const kp = Keypair.fromSecret("SAIYWGGWU2WMXYDSK33UBQBMBDKU4TTJVY3ZIFF24H2KQDR7RQW5KAEK")
       tx.sign(kp)
