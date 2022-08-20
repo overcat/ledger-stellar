@@ -1,5 +1,21 @@
 # Release Notes
 
+## v4.0.0
+
+### Updated
+- Added a `Sequence Number` setting: `Displayed` or `NOT Displayed`, default to `NOT Displayed`.
+- Optimized the display of amount. (ex. `10000000 XLM` -> `10,000,000 XLM`)
+- Optimized the display of offer price.
+- In some common operations, the prompt for the operation type was removed.
+- Other UX improvements.
+- Other bugfixes.
+- Refactored this App based on [app-boilerplate](https://github.com/ledgerhq/app-boilerplate).
+- Refactored unit tests and added full e2e tests.
+
+### Breaking Changes
+- Removed support for the `KEEP_ALIVE` command at the app layer.
+- Removed keypair validation in `GET_PUBLIC_KEY` command. If necessary, we recommend that developers verify by constructing a transaction that includes a `Manage Data Op`.
+
 ## v3.0 Multi-operation details support and U2F connection keep-alive
 
 Support for showing details of multi-operation transactions has been added. Previously, multi-operation transactions could only be signed using the hash-signing method. Transaction envelopes of up to 1.5kb in size are supported*, covering most Stellar usage scenarios.
