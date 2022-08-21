@@ -6,6 +6,7 @@
 - Added a `Sequence Number` setting: `Displayed` or `NOT Displayed`, default to `NOT Displayed`.
 - Optimized the display of amount. (ex. `10000000 XLM` -> `10,000,000 XLM`)
 - Optimized the display of offer price.
+- Optimize the display of `Memo Text` and `Manage Data Value`, if they are printable ASCII characters, they will be printed directly, otherwise display the base64 encoded summary.
 - In some common operations, the prompt for the operation type was removed.
 - Other UX improvements.
 - Other bugfixes.
