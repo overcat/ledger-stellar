@@ -122,8 +122,8 @@ static void load_transaction_data(const char *filename, tx_ctx_t *tx_ctx) {
     FILE *f = fopen(filename, "rb");
     assert_non_null(f);
 
-    tx_ctx->raw_length = fread(tx_ctx->raw, 1, RAW_TX_MAX_SIZE, f);
-    assert_int_not_equal(tx_ctx->raw_length, 0);
+    tx_ctx->raw_size = fread(tx_ctx->raw, 1, RAW_TX_MAX_SIZE, f);
+    assert_int_not_equal(tx_ctx->raw_size, 0);
     fclose(f);
 }
 
@@ -187,7 +187,7 @@ static void test_tx(const char *filename) {
                             0xbd, 0x59, 0xce, 0xa9, 0x7,  0x9e, 0x7c, 0xc7, 0xc,  0xe7, 0xb1,
                             0xe1, 0x54, 0xf1, 0x14, 0xcd, 0xfe, 0x4e, 0x46, 0x6e, 0xcd};
     assert_true(
-        parse_tx_xdr(G_context.tx_info.raw, G_context.tx_info.raw_length, &G_context.tx_info));
+        parse_tx_xdr(G_context.tx_info.raw, G_context.tx_info.raw_size, &G_context.tx_info));
     memcpy(G_context.raw_public_key, public_key, sizeof(public_key));
 
     check_transaction_results(filename);

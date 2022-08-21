@@ -13,8 +13,8 @@ int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size) {
     }
     memcpy(&G_context.tx_info.raw, Data, Size);
     G_context.req_type = CONFIRM_TRANSACTION;
-    G_context.tx_info.raw_length = Size;
-    if (!parse_tx_xdr(G_context.tx_info.raw, G_context.tx_info.raw_length, &G_context.tx_info)) {
+    G_context.tx_info.raw_size = Size;
+    if (!parse_tx_xdr(G_context.tx_info.raw, G_context.tx_info.raw_size, &G_context.tx_info)) {
         return 0;
     }
     G_context.state = STATE_PARSED;

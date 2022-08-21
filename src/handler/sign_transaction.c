@@ -30,7 +30,7 @@ int handler_sign_tx(buffer_t *cdata, bool is_first_chunk, bool more) {
         explicit_bzero(&G_context, sizeof(G_context));
     }
 
-    if (G_context.tx_info.raw_length + cdata->size > RAW_TX_MAX_SIZE) {
+    if (G_context.tx_info.raw_size + cdata->size > RAW_TX_MAX_SIZE) {
         return io_send_sw(SW_WRONG_TX_LENGTH);
     }
 
@@ -46,29 +46,29 @@ int handler_sign_tx(buffer_t *cdata, bool is_first_chunk, bool more) {
         }
         size_t data_length = cdata->size - cdata->offset;
         memcpy(G_context.tx_info.raw, cdata->ptr + cdata->offset, data_length);
-        G_context.tx_info.raw_length += data_length;
+        G_context.tx_info.raw_size += data_length;
     } else {
         if (G_context.req_type != CONFIRM_TRANSACTION) {
             return io_send_sw(SW_BAD_STATE);
         }
-        memcpy(G_context.tx_info.raw + G_context.tx_info.raw_length, cdata->ptr, cdata->size);
-        G_context.tx_info.raw_length += cdata->size;
+        memcpy(G_context.tx_info.raw + G_context.tx_info.raw_size, cdata->ptr, cdata->size);
+        G_context.tx_info.raw_size += cdata->size;
     }
 
-    PRINTF("data size: %d\n", G_context.tx_info.raw_length);
+    PRINTF("data size: %d\n", G_context.tx_info.raw_size);
 
     if (more) {
         return io_send_sw(SW_OK);
     }
 
     if (cx_hash_sha256(G_context.tx_info.raw,
-                       G_context.tx_info.raw_length,
+                       G_context.tx_info.raw_size,
                        G_context.hash,
                        HASH_SIZE) != HASH_SIZE) {
         THROW(SW_TX_HASH_FAIL);
     }
 
-    if (!parse_tx_xdr(G_context.tx_info.raw, G_context.tx_info.raw_length, &G_context.tx_info)) {
+    if (!parse_tx_xdr(G_context.tx_info.raw, G_context.tx_info.raw_size, &G_context.tx_info)) {
         THROW(SW_TX_PARSING_FAIL);
     }
 

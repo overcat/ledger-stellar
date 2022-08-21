@@ -1721,7 +1721,7 @@ format_function_t get_formatter(tx_ctx_t *tx_ctx, bool forward) {
 
     // 1 == data_count_before_ops
     while (G_ui_current_data_index - 1 > tx_ctx->tx_details.operation_index) {
-        if (!parse_tx_xdr(tx_ctx->raw, tx_ctx->raw_length, tx_ctx)) {
+        if (!parse_tx_xdr(tx_ctx->raw, tx_ctx->raw_size, tx_ctx)) {
             return NULL;
         }
     }

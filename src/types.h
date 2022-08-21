@@ -108,7 +108,7 @@ typedef enum {
  */
 typedef struct {
     uint8_t raw[RAW_TX_MAX_SIZE];
-    uint32_t raw_length;
+    uint32_t raw_size;
     uint16_t offset;
     uint8_t network;
     envelope_type_t envelope_type;
