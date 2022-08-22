@@ -122,8 +122,8 @@ bool encode_ed25519_signed_payload(const ed25519_signed_payload_t *signed_payloa
     if (signed_payload->payload_len > 64 || signed_payload->payload_len <= 0) {
         return false;
     }
-    size_t payload_len = signed_payload->payload_len + ((4 - signed_payload->payload_len % 4) % 4);
-    size_t data_len = RAW_ED25519_PUBLIC_KEY_SIZE + 4 + payload_len;
+    uint8_t data_len = RAW_ED25519_PUBLIC_KEY_SIZE + 4 + signed_payload->payload_len +
+                       ((4 - signed_payload->payload_len % 4) % 4);
     uint8_t buffer[1 + 32 + 4 + 64 + 2] = {0};
     buffer[0] = VERSION_BYTE_ED25519_SIGNED_PAYLOAD;
     for (uint8_t i = 0; i < 32; i++) {
@@ -225,6 +225,35 @@ bool print_account_id(const account_id_t account_id,
     return encode_ed25519_public_key(account_id, out, out_len);
 }
 
+bool print_hash_x_key(const uint8_t raw_hash_x[static RAW_HASH_X_KEY_SIZE],
+                      char *out,
+                      size_t out_len,
+                      uint8_t num_chars_l,
+                      uint8_t num_chars_r) {
+    if (num_chars_l > 0) {
+        char buffer[ENCODED_HASH_X_KEY_LENGTH];
+        if (!encode_hash_x_key(raw_hash_x, buffer, sizeof(buffer))) {
+            return false;
+        }
+        return print_summary(buffer, out, out_len, num_chars_l, num_chars_r);
+    }
+    return encode_hash_x_key(raw_hash_x, out, out_len);
+}
+
+bool print_pre_auth_x_key(const uint8_t raw_pre_auth_tx[static RAW_PRE_AUTH_TX_KEY_SIZE],
+                          char *out,
+                          size_t out_len,
+                          uint8_t num_chars_l,
+                          uint8_t num_chars_r) {
+    if (num_chars_l > 0) {
+        char buffer[ENCODED_PRE_AUTH_TX_KEY_LENGTH];
+        if (!encode_pre_auth_x_key(raw_pre_auth_tx, buffer, sizeof(buffer))) {
+            return false;
+        }
+        return print_summary(buffer, out, out_len, num_chars_l, num_chars_r);
+    }
+    return encode_pre_auth_x_key(raw_pre_auth_tx, out, out_len);
+}
 bool print_ed25519_signed_payload(const ed25519_signed_payload_t *signed_payload,
                                   char *out,
                                   size_t out_len,

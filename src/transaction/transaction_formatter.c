@@ -521,7 +521,11 @@ static void format_set_option_signer_detail(tx_ctx_t *tx_ctx) {
             THROW(SW_TX_FORMATTING_FAIL);
             return;
     }
-    push_to_formatter_stack(&format_set_option_signer_weight);
+    if (tx_ctx->tx_details.op_details.set_options_op.signer.weight != 0) {
+        push_to_formatter_stack(&format_set_option_signer_weight);
+    } else {
+        format_operation_source_prepare(tx_ctx);
+    }
 }
 
 static void format_set_option_signer(tx_ctx_t *tx_ctx) {

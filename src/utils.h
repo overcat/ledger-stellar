@@ -57,6 +57,18 @@ bool print_account_id(account_id_t account_id,
                       uint8_t num_chars_l,
                       uint8_t num_chars_r);
 
+bool print_hash_x_key(const uint8_t raw_hash_x[static RAW_HASH_X_KEY_SIZE],
+                      char *out,
+                      size_t out_len,
+                      uint8_t num_chars_l,
+                      uint8_t num_chars_r);
+
+bool print_pre_auth_x_key(const uint8_t raw_pre_auth_tx[static RAW_PRE_AUTH_TX_KEY_SIZE],
+                          char *out,
+                          size_t out_len,
+                          uint8_t num_chars_l,
+                          uint8_t num_chars_r);
+
 bool print_ed25519_signed_payload(const ed25519_signed_payload_t *signed_payload,
                                   char *out,
                                   size_t out_len,
