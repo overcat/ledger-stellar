@@ -12,6 +12,7 @@
 - Other bugfixes.
 - Refactored this app based on [app-boilerplate](https://github.com/ledgerhq/app-boilerplate).
 - Refactored unit tests and added full e2e tests.
+- Added APDU documentation.
 
 ### Breaking Changes
 - Removed keypair validation in `GET_PUBLIC_KEY` command. If necessary, we recommend that you ask the user to confirm the address on the device.
