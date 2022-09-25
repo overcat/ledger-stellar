@@ -3,6 +3,14 @@
 [![Compilation & tests](https://github.com/overcat/ledger-stellar/actions/workflows/ci-workflow.yml/badge.svg?branch=develop)](https://github.com/overcat/ledger-stellar/actions/workflows/ci-workflow.yml)
 [![Swap function tests](https://github.com/overcat/ledger-stellar/actions/workflows/swap-ci-workflow.yml/badge.svg?branch=develop)](https://github.com/overcat/ledger-stellar/actions/workflows/swap-ci-workflow.yml)
 
+---
+
+**NOTE**
+
+This repository is now archived because it has been merged into [LedgerHQ/app-stellar](https://github.com/LedgerHQ/app-stellar).
+
+---
+
 ## Introduction
 
 This is the wallet app for the [Ledger Nano S](https://shop.ledger.com/products/ledger-nano-s), [Ledger Nano S Plus](https://shop.ledger.com/pages/ledger-nano-s-plus) and [Ledger Nano X](https://shop.ledger.com/pages/ledger-nano-x) that makes it possible to store [Stellar](https://www.stellar.org/)-based assets on those devices and generally sign any transaction for the Stellar network.
